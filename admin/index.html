@@ -261,10 +261,12 @@
                         }
                         
                         .poster-container-scaler {
-                          width: 580px;
+                          width: 100%;
+                          max-width: 580px;
                           height: 725px;
                           margin: 0 auto 1.5rem;
                           position: relative;
+                          overflow: hidden;
                         }
 
                         #weekly-honor-poster {
@@ -274,29 +276,16 @@
                           box-sizing: border-box;
                           position: absolute;
                           top: 0;
-                          left: 0;
+                          left: 50%;
+                          margin-left: -290px;
+                          transform: scale(var(--poster-scale, 1));
+                          transform-origin: top center;
                           font-family: var(--font-sans), sans-serif;
                           text-align: center;
                           border-radius: 12px;
                           box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
                           overflow: hidden;
                           direction: rtl;
-                        }
-
-                        /* Mobile scale transformation for the poster container */
-                        @media (max-width: 620px) {
-                          .poster-container-scaler {
-                            width: calc(100vw - 40px) !important;
-                            height: calc((100vw - 40px) * 725 / 580) !important;
-                            overflow: hidden !important;
-                          }
-                          #weekly-honor-poster {
-                            transform: scale(calc((100vw - 40px) / 580)) !important;
-                            transform-origin: top left !important;
-                            left: 0 !important;
-                            top: 0 !important;
-                            position: absolute !important;
-                          }
                         }
 
                         /* Temporary class overrides during high-res download */
@@ -307,9 +296,10 @@
                         }
                         #weekly-honor-poster.no-transform {
                           transform: none !important;
-                          position: relative !important;
-                          left: auto !important;
-                          top: auto !important;
+                          position: absolute !important;
+                          left: 0 !important;
+                          margin-left: 0 !important;
+                          top: 0 !important;
                           box-shadow: none !important;
                         }
                       
@@ -484,6 +474,7 @@
                         text-align: right;
                         box-sizing: border-box;
                         min-height: 58px;
+                        word-break: break-word;
                       }
                       .poster-row-medal {
                         width: 36px;

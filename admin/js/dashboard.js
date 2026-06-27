@@ -830,6 +830,9 @@ runWhenReady(() => {
 
     if (honorPosterWrapper) {
       honorPosterWrapper.style.display = "block";
+      if (typeof adjustPosterScale === "function") {
+        adjustPosterScale();
+      }
       if (scroll) {
         honorPosterWrapper.scrollIntoView({ behavior: 'smooth' });
       }
@@ -840,27 +843,173 @@ runWhenReady(() => {
     const node = document.getElementById('weekly-honor-poster');
     if (!node) return Promise.reject("Poster element not found");
     
-    // Explicitly kill absolute positioning scales causing the left clipping artifact during render capture
-    const originalTransform = node.style.transform;
-    node.style.transform = 'none';
+    // Create an offscreen container for export rendering
+    const exportContainer = document.createElement('div');
+    exportContainer.style.position = 'fixed';
+    exportContainer.style.left = '-9999px';
+    exportContainer.style.top = '-9999px';
+    exportContainer.style.width = '1240px'; // A4 width at 150 DPI
+    exportContainer.style.height = '1754px'; // A4 height at 150 DPI
+    document.body.appendChild(exportContainer);
     
-    const scaler = node.parentElement;
-    if (scaler) scaler.classList.add("no-transform-parent");
-    node.classList.add("no-transform");
+    // Clone the poster
+    const clone = node.cloneNode(true);
+    clone.id = 'weekly-honor-poster-export';
+    
+    // Apply strict A4 export styling to the clone
+    clone.style.width = '1240px';
+    clone.style.height = '1754px';
+    clone.style.padding = '4.5rem 5rem 3.5rem 5rem';
+    clone.style.transform = 'none';
+    clone.style.position = 'relative';
+    clone.style.left = '0';
+    clone.style.margin = '0';
+    clone.style.boxShadow = 'none';
+    clone.style.display = 'flex';
+    clone.style.flexDirection = 'column';
+    clone.style.justifyContent = 'space-between';
+    clone.style.boxSizing = 'border-box';
+    
+    // Scale child elements for A4 high-resolution crispness
+    const contentWrap = clone.querySelector('.poster-content-wrap');
+    if (contentWrap) {
+      contentWrap.style.marginTop = '0px';
+    }
+
+    const title = clone.querySelector('.poster-title-banner');
+    if (title) {
+      title.style.fontSize = '3.2rem';
+      title.style.padding = '0.5rem 4rem';
+      title.style.borderRadius = '60px';
+      title.style.marginBottom = '1rem';
+    }
+    const subtitle = clone.querySelector('.poster-subtitle');
+    if (subtitle) {
+      subtitle.style.fontSize = '1.8rem';
+      subtitle.style.marginBottom = '1.5rem';
+    }
+    
+    const logo = clone.querySelector('.poster-logo-container');
+    if (logo) {
+      logo.style.width = '140px';
+      logo.style.height = '140px';
+      logo.style.borderWidth = '5px';
+      logo.style.marginBottom = '1rem';
+      const logoImg = logo.querySelector('img');
+      if (logoImg) {
+        logoImg.style.width = '110px';
+        logoImg.style.height = '110px';
+      }
+    }
+
+    const rowsContainer = clone.querySelector('.poster-rows-container');
+    if (rowsContainer) {
+      rowsContainer.style.gap = '1rem';
+      rowsContainer.style.marginBottom = '1.5rem';
+    }
+    
+    const cards = clone.querySelectorAll('.poster-row-card');
+    cards.forEach(card => {
+      card.style.minHeight = '130px';
+      card.style.padding = '0.8rem 1.75rem';
+      card.style.gap = '1.75rem';
+      card.style.borderRadius = '16px';
+      card.style.borderRightWidth = '10px';
+      
+      const medal = card.querySelector('.poster-row-medal');
+      if (medal) {
+        medal.style.width = '80px';
+        medal.style.height = '100px';
+        const svg = medal.querySelector('svg');
+        if (svg) {
+          svg.setAttribute('width', '75');
+          svg.setAttribute('height', '95');
+        }
+      }
+      const iconCircle = card.querySelector('.poster-row-icon-circle');
+      if (iconCircle) {
+        iconCircle.style.width = '70px';
+        iconCircle.style.height = '70px';
+        iconCircle.style.borderWidth = '4px';
+        const svg = iconCircle.querySelector('svg');
+        if (svg) {
+          svg.setAttribute('width', '36');
+          svg.setAttribute('height', '36');
+        }
+      }
+      const badge = card.querySelector('.poster-row-title-badge');
+      if (badge) {
+        badge.style.fontSize = '1.4rem';
+        badge.style.borderRadius = '18px';
+        badge.style.padding = '0.3rem 1.2rem';
+      }
+      const name = card.querySelector('.poster-row-name');
+      if (name) {
+        name.style.fontSize = '2.4rem';
+        name.style.marginTop = '0.2rem';
+      }
+    });
+    
+    const footer = clone.querySelector('.poster-footer-text');
+    if (footer) {
+      footer.style.fontSize = '1.5rem';
+      footer.style.maxWidth = '1000px';
+      footer.style.lineHeight = '1.8';
+      footer.style.marginBottom = '1.5rem';
+    }
+    
+    const motto = clone.querySelector('.poster-motto-banner');
+    if (motto) {
+      motto.style.fontSize = '1.5rem';
+      motto.style.padding = '0.6rem 2.2rem';
+      motto.style.borderRadius = '40px';
+      motto.style.borderWidth = '2px';
+      const svg = motto.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('width', '28');
+        svg.setAttribute('height', '28');
+        svg.setAttribute('stroke-width', '3');
+      }
+    }
+    
+    const lanterns = clone.querySelectorAll('.poster-lantern-left, .poster-lantern-right');
+    lanterns.forEach(l => {
+      l.style.top = '40px';
+      const svg = l.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('width', '60');
+        svg.setAttribute('height', '90');
+      }
+    });
+    if (clone.querySelector('.poster-lantern-left')) clone.querySelector('.poster-lantern-left').style.left = '45px';
+    if (clone.querySelector('.poster-lantern-right')) clone.querySelector('.poster-lantern-right').style.right = '45px';
+    
+    const decorBg = clone.querySelector('.poster-decorations-bg');
+    if (decorBg) {
+      decorBg.style.padding = '0 30px';
+    }
+    const decor = clone.querySelectorAll('.poster-decorations-svg');
+    decor.forEach(d => {
+      d.setAttribute('width', '160');
+      d.setAttribute('height', '120');
+    });
+
+    const innerBorder = clone.querySelector('.poster-inner-border');
+    if (innerBorder) {
+      innerBorder.style.inset = '20px';
+      innerBorder.style.borderRadius = '16px';
+      innerBorder.style.borderWidth = '4px';
+    }
+    
+    exportContainer.appendChild(clone);
     
     const genderLabel = activeHonorGender === "females" ? "إناث" : "ذكور";
     const weekName = wizardWeekName.value || "الأسبوع";
     const fileName = `لوحة_الشرف_مسجد_الشهداء_${genderLabel}_${weekName}_${Date.now()}.jpg`;
 
-    const cleanup = () => {
-      node.style.transform = originalTransform;
-      if (scaler) scaler.classList.remove("no-transform-parent");
-      node.classList.remove("no-transform");
-    };
-
     const options = {
-      width: 580,
-      height: 725,
+      width: 1240,
+      height: 1754,
       style: {
         transform: 'none',
         left: '0',
@@ -872,9 +1021,9 @@ runWhenReady(() => {
       quality: 0.98
     };
     
-    return domtoimage.toJpeg(node, options)
+    return domtoimage.toJpeg(clone, options)
       .then(function (dataUrl) {
-        cleanup();
+        exportContainer.remove();
         if (dataUrl.length < 2000) {
           throw new Error("dom-to-image returned empty image");
         }
@@ -884,27 +1033,22 @@ runWhenReady(() => {
         link.click();
       })
       .catch(function (error) {
-        console.warn("dom-to-image failed, falling back to html2canvas:", error);
-        // Strict standalone fallback execution path
-        return html2canvas(node, { 
+        console.warn("dom-to-image failed on clone, trying html2canvas fallback:", error);
+        return html2canvas(clone, { 
           useCORS: true, 
-          scale: 2, 
+          scale: 1, 
           logging: false,
           backgroundColor: activeHonorGender === "females" ? "#fff9fa" : "#fbfaf6",
-          width: 580,
-          height: 725,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: 580,
-          windowHeight: 725
+          width: 1240,
+          height: 1754
         }).then(canvas => {
-          cleanup();
+          exportContainer.remove();
           const link = document.createElement('a');
           link.download = fileName;
           link.href = canvas.toDataURL('image/jpeg', 0.98);
           link.click();
         }).catch(err => {
-          cleanup();
+          exportContainer.remove();
           console.error("html2canvas fallback failed:", err);
           alert("حدث خطأ أثناء محاولة توليد الصورة وتحميلها. يرجى المحاولة مرة أخرى.");
         });
@@ -946,9 +1090,23 @@ runWhenReady(() => {
     }
   }
 
+  // Adjust poster scale to fit mobile screen without clipping
+  function adjustPosterScale() {
+    const scaler = document.querySelector('.poster-container-scaler');
+    const poster = document.getElementById('weekly-honor-poster');
+    if (!scaler || !poster) return;
+    const scalerWidth = scaler.clientWidth;
+    const scale = Math.min(1, scalerWidth / 580);
+    poster.style.setProperty('--poster-scale', scale);
+    scaler.style.height = (725 * scale) + 'px';
+  }
+  window.adjustPosterScale = adjustPosterScale;
+  window.addEventListener('resize', adjustPosterScale);
+
   // تحديث حالة الزر فور التحميل
   updateToggleUI();
 
   // Load Dashboard Data
   loadDashboard();
+  setTimeout(adjustPosterScale, 150);
 });

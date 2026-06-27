@@ -1639,6 +1639,8 @@ runWhenReady(() => {
         processSnapshot(snapshot);
       }, (err) => {
         console.error("[Teacher] Error listening to sessions:", err);
+        const loadingIndicator = document.getElementById("archive-loading-text");
+        if (loadingIndicator) loadingIndicator.style.display = "none";
         // Only set error message if archive is still empty
         if (cachedArchivedSessions.length === 0) {
           listContainer.innerHTML = `<div style="text-align: center; padding: 2rem; color: #ff4d4d;">❌ فشل تحميل الأرشيف من السيرفر.</div>`;
