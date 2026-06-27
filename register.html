@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسجيل الطلاب | مسجد الشهداء</title>
+    <meta name="description" content="استمارة التسجيل في الدورة الصيفية القرآنية التربوية بمسجد الشهداء - قرية ايباشيرن" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      .register-container {
+        max-width: 42rem;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.22);
+        outline-offset: -5px;
+      }
+      .form-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+      .form-subtitle {
+        color: var(--text-muted);
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+      }
+      .submit-btn {
+        width: 100%;
+        margin-top: 1.5rem;
+      }
+      .success-message {
+        display: none;
+        text-align: center;
+        padding: 3rem 1rem;
+        animation: fadeIn 0.5s var(--ease);
+      }
+      .success-icon {
+        font-size: 4rem;
+        color: var(--green);
+        margin-bottom: 1.5rem;
+      }
+      .success-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        margin-bottom: 1rem;
+      }
+      .success-desc {
+        color: var(--text-muted);
+        line-height: 1.8;
+        max-width: 28rem;
+        margin: 0 auto 2rem;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+    <link rel="icon" type="image/png" href="images/masjidlogo.png" />
+    <link rel="apple-touch-icon" href="images/masjidlogo.png" />
+  </head>
+  <body class="page-quran">
+    <div class="page-transition-overlay" aria-hidden="true"></div>
+
+<header class="navbar" aria-label="التنقل الرئيسي">
+<div class="container navbar__inner">
+<a href="index.html" class="navbar-brand">
+<img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+<span class="navbar-brand__text">
+<span class="navbar-brand__title">مسجد الشهداء</span>
+<span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+</span>
+</a>
+<button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+<span></span><span></span><span></span>
+</button>
+<nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+<ul class="nav-links">
+<li><a href="index.html">الرئيسية</a></li>
+<li class="nav-dropdown">
+<a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+<ul class="dropdown-menu">
+<li><a href="register-adult.html">التسجيل للكبار</a></li>
+<li><a href="adult-portal.html">متابعة التقدم</a></li>
+</ul>
+</li>
+<li class="nav-dropdown">
+<a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+<ul class="dropdown-menu">
+<li><a href="register.html">التسجيل للصغار</a></li>
+<li><a href="parent-portal.html">متابعة ابني</a></li>
+</ul>
+</li>
+<li><a href="lessons.html">الدروس</a></li>
+<li><a href="ramadan.html">قفة رمضان</a></li>
+<li><a href="location.html">الموقع</a></li>
+</ul>
+</nav>
+</div>
+</header>
+
+<header class="page-hero page-hero--quran" style="min-height: auto; padding: calc(var(--nav-h) + 2rem) 0 3rem;">
+<div class="page-hero__bg" aria-hidden="true"></div>
+<div class="container page-hero__content reveal" style="text-align: center;">
+<span class="eyebrow eyebrow--light">التسجيل الإلكتروني</span>
+<h1 class="page-hero__title" style="font-size: 2.2rem; margin-bottom: 0;">استمارة تسجيل الطلاب</h1>
+</div>
+</header>
+
+<main class="page-main">
+<section class="section">
+<div class="container">
+<div class="register-container reveal" id="register-container">
+<h2 class="form-title">معلومات تسجيل الطالب</h2>
+<p class="form-subtitle">يرجى ملء جميع الحقول التالية بدقة لتسجيل ابنكم في الدورة الصيفية.</p>
+
+<!-- بانر خطوات التسجيل -->
+<div style="background: linear-gradient(135deg, rgba(30,80,50,0.04), rgba(212,175,55,0.07)); border: 1.5px solid rgba(212,175,55,0.35); border-radius: 12px; padding: 1.5rem 1.75rem; margin-bottom: 2rem; position: relative; overflow: hidden;">
+<div style="position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: linear-gradient(180deg, var(--green), var(--gold, #d4af37));"></div>
+<h3 style="font-size: 1.05rem; font-weight: 800; color: var(--green-dark); margin: 0 0 1rem 0; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+<i class="ph ph-arrow-circle-down" style="color: var(--gold); font-size: 1.2rem;"></i> خطوات التسجيل في الدورة الصيفية
+</h3>
+<div style="display: flex; flex-direction: column; gap: 0.85rem;">
+<div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+<span style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--green, #1e5032); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">1</span>
+<div>
+<strong style="color: var(--green-dark); font-size: 0.95rem;">التسجيل الأولي عبر الإنترنت</strong>
+<p style="margin: 0.2rem 0 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">قم بملء الاستمارة أدناه بجميع المعلومات المطلوبة وأرسلها إلكترونياً.</p>
+</div>
+</div>
+<div style="width: 2px; height: 16px; background: rgba(212,175,55,0.3); margin-right: 15px;"></div>
+<div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+<span style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #c5a028); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">2</span>
+<div>
+<strong style="color: var(--green-dark); font-size: 0.95rem;">التأكيد بالتوجه إلى إدارة المسجد</strong>
+<p style="margin: 0.2rem 0 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">بعد إرسال الاستمارة، يجب على ولي الأمر التوجه شخصياً إلى إدارة المسجد لتأكيد التسجيل وإتمام الإجراءات.</p>
+</div>
+</div>
+</div>
+<p style="margin: 1rem 0 0; padding-top: 0.75rem; border-top: 1px dashed rgba(212,175,55,0.25); color: var(--text-muted); font-size: 0.82rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+<i class="ph ph-warning-circle" style="color: #b8860b; font-size: 1.05rem;"></i> لن يُعتبر التسجيل نهائياً إلا بعد التأكيد الشخصي لدى الإدارة.
+</p>
+</div>
+
+
+<form class="register-form" id="student-register-form">
+<div class="form-row" style="grid-template-columns: 2fr 1fr; gap: 1rem;">
+<div class="form-field">
+<label for="studentName">اسم الطالب كامل</label>
+<input type="text" id="studentName" required placeholder="الاسم واللقب" />
+</div>
+<div class="form-field">
+<label for="studentGender">الجنس</label>
+<select id="studentGender" required style="width: 100%;">
+<option value="ذكر" selected>ذكر</option>
+<option value="أنثى">أنثى</option>
+</select>
+</div>
+</div>
+
+<div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+<div class="form-field">
+<label for="ageGroup">الفئة العمرية</label>
+<select id="ageGroup" required>
+<option value="" disabled selected>اختر الفئة العمرية</option>
+<option value="أشبال (6 - 11 سنة)">أشبال (6 - 11 سنة)</option>
+<option value="شباب (12 - 18 سنة)">شباب (12 - 18 سنة)</option>
+<option value="كبار (أكثر من 18 سنة)">كبار (أكثر من 18 سنة)</option>
+</select>
+</div>
+<div class="form-field">
+<label for="age">السن (بالسنوات)</label>
+<input type="number" id="age" min="5" max="90" required placeholder="مثال: 10" />
+</div>
+</div>
+
+<div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+<div class="form-field">
+<label for="quranLevel">المستوى القرآني الحالي</label>
+<select id="quranLevel" required>
+<option value="" disabled selected>اختر المستوى...</option>
+<option value="مبتدئ (لم يبدأ الحفظ بعد)">مبتدئ (لم يبدأ الحفظ بعد)</option>
+<option value="حفظ أقل من حزب">حفظ أقل من حزب</option>
+<option value="حفظ من حزب إلى 10 أحزاب">حفظ من حزب إلى 10 أحزاب</option>
+<option value="حفظ أكثر من 10 أحزاب">حفظ أكثر من 10 أحزاب</option>
+<option value="حافظ لكتاب الله كاملاً (60 حزباً)">حافظ لكتاب الله كاملاً (60 حزباً)</option>
+</select>
+</div>
+<div class="form-field">
+<label for="studyLevel">المستوى الدراسي</label>
+<input type="text" id="studyLevel" required placeholder="مثال: السنة الرابعة ابتدائي" />
+</div>
+</div>
+
+<div class="form-field">
+<label for="parentName">اسم ولي الأمر</label>
+<input type="text" id="parentName" required placeholder="الاسم الكامل لولي الأمر" />
+</div>
+
+<div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+<div class="form-field">
+<label for="phone">رقم الهاتف</label>
+<input type="tel" id="phone" required placeholder="0xxxxxxxxx" pattern="^0[567][0-9]{8}$" title="يرجى إدخال رقم هاتف جزائري صالح (10 أرقام ويبدأ بـ 05 أو 06 أو 07)" />
+</div>
+<div class="form-field">
+<label for="backupPhone">رقم هاتف احتياطي</label>
+<input type="tel" id="backupPhone" required placeholder="0xxxxxxxxx" pattern="^0[567][0-9]{8}$" title="يرجى إدخال رقم هاتف جزائري صالح (10 أرقام ويبدأ بـ 05 أو 06 أو 07)" />
+</div>
+</div>
+
+<!-- بنود الميثاق والالتزامات -->
+<div style="margin-top: 2.5rem; margin-bottom: 2rem;">
+<h3 style="font-size: 1.25rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.75rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+<i class="ph ph-scroll" style="color: var(--gold);"></i> ميثاق التزامات الدورة الصيفية
+</h3>
+<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-bottom: 1.75rem; line-height: 1.6;">يرجى قراءة الميثاق والالتزام ببنوده لإنجاح الدورة المباركة وتحقيق أهدافها.</p>
+
+                  <!-- 3. التزامات إدارة الدورة (العمود الأزرق) -->
+                  <div style="background: rgba(59, 130, 246, 0.03); border: 1.5px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 1.5rem; outline: 1px solid rgba(59, 130, 246, 0.15); outline-offset: -5px;">
+                    <h4 style="font-size: 1.05rem; font-weight: 800; color: #1e3a8a; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid rgba(59, 130, 246, 0.18); padding-bottom: 0.5rem;">
+                      <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #3b82f6; color: #fff; font-size: 0.8rem; font-weight: 800;">3</span>
+                      التزامات إدارة الدورة
+                    </h4>
+                    <ul style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 0.65rem;">
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> توفير بيئة تعليمية آمنة ومناسبة.</li>
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> تقديم برنامج تعليمي وتربوي متكامل.</li>
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> المتابعة اليومية والتقييم الدوري.</li>
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> التواصل المستمر مع ولي الأمر.</li>
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> تقديم تقارير أسبوعية عن مستوى الطالب.</li>
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> تقديم شهادة تقدير في نهاية الدورة.</li>
+                      <li style="font-size: 0.88rem; color: var(--text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem;"><span style="color: #3b82f6; font-weight: 900;">•</span> حماية خصوصية الطالب وبياناته.</li>
+                    </ul>
+                  </div>
+
+                </div>
+
+                <!-- Note -->
+                <p style="background: rgba(212, 175, 55, 0.05); border-right: 4px solid var(--gold); padding: 1rem; border-radius: 4px 8px 8px 4px; font-size: 0.84rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem;">
+                  <strong>ملاحظة:</strong> هذا الميثاق أخلاقي تربوي، الهدف منه تعزيز الالتزام وتحميل كل طرف مسؤوليته، وليس وثيقة قانونية ملزمة. نسأل الله أن يبارك في هذا الجهد وأن يجعل أبناءنا من حفظة كتابه الكريم.
+                </p>
+
+                <!-- Agreement Checkbox -->
+                <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; font-size: 0.95rem; font-weight: 700; color: var(--green-dark); line-height: 1.6; padding: 0.5rem 0; margin-bottom: 1rem;">
+                  <input type="checkbox" required style="width: 1.25rem; height: 1.25rem; accent-color: var(--gold); margin-top: 0.2rem; cursor: pointer;" />
+                  <span id="lbl-agreement-charter">أقر بصفتي ولي أمر الطالب بالموافقة والالتزام ببنود الميثاق المذكورة أعلاه.</span>
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-primary submit-btn" id="submit-btn">إرسال طلب التسجيل</button>
+            </form>
+          </div>
+
+          <div class="register-container reveal success-message" id="success-container">
+            <i class="ph ph-check-circle" style="font-size: 4.5rem; color: var(--green); display: block; margin: 0 auto 1.5rem;"></i>
+            <h2 class="success-title">تم إرسال طلبك بنجاح!</h2>
+            <p class="success-desc">
+              نشكركم على تسجيل ابنكم في الدورة الصيفية القرآنية لمسجد الشهداء.
+              تم حفظ بياناتكم بنجاح — وقد أتممتم <strong>الخطوة الأولى</strong> (التسجيل الأولي عبر الإنترنت).
+            </p>
+
+            <!-- معرف الطالب للاختبار والمتابعة -->
+            <div style="background: linear-gradient(135deg, rgba(13, 92, 70, 0.05), rgba(212, 175, 55, 0.08)); border: 2px solid var(--gold); padding: 1.5rem; border-radius: 12px; margin: 0 auto 1.5rem; max-width: 28rem; text-align: center; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15); outline: 1px solid rgba(212, 175, 55, 0.25); outline-offset: -4px;">
+              <span style="font-size: 0.9rem; color: var(--green-dark); display: block; font-weight: 800; margin-bottom: 0.5rem;">معرف الطالب الفريد (ID) للمتابعة:</span>
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin: 0.75rem 0;">
+                <span id="display-student-id" style="font-size: 1.8rem; color: var(--green-dark); font-weight: 900; letter-spacing: 1.5px; margin: 0; background: var(--white); border: 2.5px solid var(--gold); padding: 0.35rem 1.25rem; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); min-width: 140px; display: inline-block;">-</span>
+                <button type="button" id="copy-student-id-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.35rem; background: var(--green); color: var(--white); border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; height: 38px; box-sizing: border-box; justify-content: center;">
+                  <i class="ph-bold ph-copy"></i>
+                  <span id="copy-btn-text">نسخ المعرف</span>
+                </button>
+              </div>
+              <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: #b8860b; font-weight: 800; line-height: 1.6;">⚠️ يرجى حفظ هذا المعرف ونسخه بعناية، ستحتاجه للدخول لبوابة أولياء الأمور لمتابعة ابنكم.</p>
+            </div>
+
+
+            <!-- تذكير بالخطوة الثانية -->
+            <div style="background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(30,80,50,0.05)); border: 1.5px solid rgba(212,175,55,0.4); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 0 auto 1.75rem; max-width: 26rem; text-align: center;">
+              <p style="margin: 0 0 0.5rem; font-weight: 700; color: var(--green-dark); font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <i class="ph ph-clipboard-text" style="color: var(--green); font-size: 1.2rem;"></i> الخطوة الثانية المطلوبة
+              </p>
+              <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem; line-height: 1.7;">
+                يرجى <strong style="color: var(--green-dark);">التوجه شخصياً إلى إدارة مسجد الشهداء</strong> لتأكيد التسجيل وإتمام الإجراءات النهائية.
+              </p>
+              <p style="margin: 0.75rem 0 0; color: #b8860b; font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <i class="ph ph-warning-circle" style="color: #b8860b; font-size: 1rem;"></i> لن يُعتبر التسجيل نهائياً إلا بعد التأكيد الشخصي لدى الإدارة.
+              </p>
+            </div>
+            <a href="quran-course.html" class="btn btn-secondary">العودة لصفحة الدورة القرآنية</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+    <script type="module" src="admin/js/db.js?v=40"></script>
+    <script type="module">
+      document.getElementById('student-register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-btn');
+        const formContainer = document.getElementById('register-container');
+        const successContainer = document.getElementById('success-container');
+
+        // Capture values
+        const photoPerm = document.querySelector('input[name="photo_permission"]:checked')?.value || 'غير محدد';
+        const studentData = {
+          name: document.getElementById('studentName').value.trim(),
+          gender: document.getElementById('studentGender').value,
+          ageGroup: document.getElementById('ageGroup').value,
+          age: parseInt(document.getElementById('age').value),
+          quranLevel: document.getElementById('quranLevel').value,
+          studyLevel: document.getElementById('studyLevel').value.trim(),
+          parentName: `${document.getElementById('parentName').value.trim()} (التصوير: ${photoPerm})`,
+          phone: document.getElementById('phone').value.trim(),
+          backupPhone: document.getElementById('backupPhone').value.trim()
+        };
+
+        // Loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جاري إرسال البيانات...';
+
+        let finalStudentId = "";
+
+        try {
+          if (!window.DB || !window.DB.registerStudent) {
+            throw new Error("قاعدة البيانات غير مهيأة بعد.");
+          }
+          const res = await window.DB.registerStudent(studentData, false);
+          finalStudentId = res;
+          console.log("[Register] Registered successfully with Firestore ID:", finalStudentId);
+        } catch (error) {
+          console.error('Registration failed:', error);
+          alert("❌ حدث خطأ أثناء التسجيل: " + (error.message || error));
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'إرسال طلب التسجيل';
+          return;
+        }
+
+        // Show student ID on success screen
+        document.getElementById('display-student-id').textContent = finalStudentId;
+
+        // Copy button event handler
+        const copyBtn = document.getElementById('copy-student-id-btn');
+        const copyText = document.getElementById('copy-btn-text');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(finalStudentId).then(() => {
+              if (copyText) copyText.textContent = "تم النسخ!";
+              copyBtn.style.background = "var(--gold)";
+              setTimeout(() => {
+                if (copyText) copyText.textContent = "نسخ المعرف";
+                copyBtn.style.background = "var(--green)";
+              }, 2000);
+            }).catch(err => {
+              console.error("Failed to copy text: ", err);
+            });
+          });
+        }
+
+        // Save local copy with the final ID
+        try {
+          const d = new Date();
+          const regDate = `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getFullYear()}`;
+          const localStudent = {
+            id: finalStudentId,
+            name: studentData.name,
+            gender: studentData.gender,
+            ageGroup: studentData.ageGroup,
+            age: studentData.age,
+            quranLevel: studentData.quranLevel,
+            studyLevel: studentData.studyLevel,
+            parentName: studentData.parentName,
+            phone: studentData.phone,
+            backupPhone: studentData.backupPhone,
+            regDate: regDate,
+            status: "قيد المراجعة",
+            cumulativeStars: 0,
+            level: "برونزي"
+          };
+          let localList = [];
+          try {
+            localList = JSON.parse(localStorage.getItem("masjid_students") || "[]");
+          } catch(err) {}
+          localList.push(localStudent);
+          localStorage.setItem("masjid_students", JSON.stringify(localList));
+        } catch (e) {
+          console.warn("[Register] Error saving local copy:", e);
+        }
+
+        // Show success screen
+        formContainer.style.display = 'none';
+        successContainer.style.display = 'block';
+        window.scrollTo({ top: formContainer.offsetTop - 100, behavior: 'smooth' });
+      });
+    </script>
+  </body>
+</html>

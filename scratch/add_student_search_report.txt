@@ -1,0 +1,20 @@
+admin\index.html (Line 20): navigator.serviceWorker.register('sw.js');
+admin\index.html (Line 179): <strong style="font-size: 2rem; color: var(--green-dark); border-bottom: 2px dashed var(--gold); padding: 0 1.5rem; display: inline-block; margin: 0.5rem 0;" id="appr-student-name">...</strong><br>
+admin\lessons.html (Line 164): navigator.serviceWorker.register('sw.js');
+admin\login.html (Line 168): navigator.serviceWorker.register('sw.js');
+admin\news.html (Line 191): navigator.serviceWorker.register('sw.js');
+admin\students.html (Line 20): navigator.serviceWorker.register('sw.js');
+admin\teacher.html (Line 20): navigator.serviceWorker.register('sw.js');
+admin\teacher.html (Line 416): <div id="loading-students" style="text-align: center; padding: 3rem;">
+admin\js\dashboard.js (Line 148): <td style="padding: 0.6rem 0.5rem; font-weight: 700;">${item.studentName}</td>
+admin\js\dashboard.js (Line 229): <td style="padding: 0.75rem 0.5rem; font-weight: 700; color: var(--green-dark);">${student.name}</td>
+admin\js\dashboard.js (Line 230): <td style="padding: 0.75rem 0.5rem; text-align: center; font-weight: 800; color: var(--green);">${student.points}</td>
+admin\js\dashboard.js (Line 231): <td style="padding: 0.75rem 0.5rem; text-align: center; font-weight: 800; color: var(--gold);">${student.stars} <i class="ph-fill ph-star" style="vertical-align: middle;"></i></td>
+admin\js\dashboard.js (Line 234): <button onclick="printAppreciationCertificate('${student.name.replace(/'/g, "\\'")}')" class="btn" style="background: var(--green); color: var(--white); border: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 800; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;">
+admin\js\db.js (Line 305): async registerStudent(studentData, isSupervisor) {
+admin\js\db.js (Line 349): console.error("[DB] registerStudent failed:", error);
+admin\js\db.js (Line 520): studentIdsToRecalculate.add(docSnap.data().StudentID);
+admin\js\students.js (Line 212): if (student.status === 'مقبول') statusSpan.classList.add('badge-accepted');
+admin\js\students.js (Line 213): else if (student.status === 'مرفوض') statusSpan.classList.add('badge-rejected');
+admin\js\teacher.js (Line 325): studentsListGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">لا يوجد طلاب مقبولون يطابقون البحث حالياً.</div>`;
+admin\js\teacher.js (Line 402): studentFilter.addEventListener("input", renderStudentsGrid);

@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة الطلاب والقبول | مسجد الشهداء</title>
+    <link rel="stylesheet" href="../css/style.css?v=52" />
+    <link rel="stylesheet" href="css/admin.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="module" src="js/auth.js?v=52"></script>
+    <script>
+      if (!sessionStorage.getItem("masjid_auth") && !localStorage.getItem("masjid_auth")) {
+        window.location.href = "login.html";
+      }
+    </script>
+    <link rel="icon" type="image/png" href="../images/masjidlogo.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <!-- ══ NAVBAR ══ -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="#" class="navbar-brand" style="cursor: default;" onclick="event.preventDefault();">
+          <img src="../images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        
+        <a href="#" id="pwa-install-btn" class="pwa-install-btn-header" style="display: none;">
+          <i class="ph ph-download-simple" style="font-size: 1.15rem; vertical-align: middle;"></i>
+          <span>تثبيت التطبيق</span>
+        </a>
+        
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html"><i class="ph ph-chart-pie"></i><span>الرئيسية</span></a></li>
+            <li><a href="students.html" class="active"><i class="ph ph-users"></i><span>الطلاب</span></a></li>
+            <li><a href="teacher.html"><i class="ph ph-notebook"></i><span>الحلقة</span></a></li>
+            <li><a href="lessons.html"><i class="ph ph-books"></i><span>الدروس</span></a></li>
+            <li><a href="#" id="logout-btn" class="nav-cta"><i class="ph ph-sign-out"></i><span>خروج</span></a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="admin-container container">
+      <main class="main-content">
+        <header class="section-header">
+          <span class="section-label">الدورة الصيفية القرآنية</span>
+          <h1 class="section-title">إدارة شؤون الطلاب والقبول</h1>
+          <p class="section-sub">متابعة طلبات التسجيل، وتعديل بيانات الطلاب وقبولهم أو رفضهم.</p>
+        </header>
+
+        <!-- Stats Grid -->
+        <section class="stats-inner">
+          <div class="stat-item">
+            <i class="ph-light ph-users stat-icon"></i>
+            <div class="stat-num-static" id="total-students">0</div>
+            <div class="stat-label">إجمالي المسجلين</div>
+          </div>
+          <div class="stat-item" style="border-color: rgba(13, 92, 70, 0.35);">
+            <i class="ph-light ph-gender-male stat-icon" style="color: var(--green);"></i>
+            <div class="stat-num-static" id="total-males" style="color: var(--green);">0</div>
+            <div class="stat-label">قائمة الذكور</div>
+          </div>
+          <div class="stat-item" style="border-color: rgba(212, 175, 55, 0.35);">
+            <i class="ph-light ph-gender-female stat-icon" style="color: var(--gold);"></i>
+            <div class="stat-num-static" id="total-females" style="color: var(--gold);">0</div>
+            <div class="stat-label">قائمة الإناث</div>
+          </div>
+        </section>
+
+        <!-- Student List Cards -->
+        <section class="about-card">
+          <div class="section-header" style="margin-bottom: 1rem; border-bottom: none; padding-bottom: 0;">
+            <!-- Division Selection -->
+            <div class="division-tabs" id="division-tabs" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; border-bottom: 2px solid rgba(13, 92, 70, 0.1); padding-bottom: 0.75rem;">
+              <button class="div-tab-btn active" data-division="صغار" style="background: none; border: none; font-family: inherit; font-size: 1.1rem; font-weight: 800; color: var(--green-dark); padding: 0.5rem 1.5rem; cursor: pointer; border-bottom: 3px solid var(--gold); margin-bottom: -0.95rem; transition: all var(--transition);">
+                قسم الصغار (الأشبال والشباب) (<span id="div-count-children">0</span>)
+              </button>
+              <button class="div-tab-btn" data-division="كبار" style="background: none; border: none; font-family: inherit; font-size: 1.1rem; font-weight: 700; color: var(--text-muted); padding: 0.5rem 1.5rem; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -0.95rem; transition: all var(--transition);">
+                قسم الكبار (الرجال والنساء) (<span id="div-count-adults">0</span>)
+              </button>
+            </div>
+            
+            <!-- Gender Selection -->
+            <div class="gender-tabs" id="gender-tabs" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; margin-bottom: 0.5rem;">
+              <button class="gender-tab-btn active" data-gender="ذكر" style="background: rgba(13, 92, 70, 0.05); border: 1px solid rgba(13, 92, 70, 0.15); font-family: inherit; font-size: 0.95rem; font-weight: 800; color: var(--green-dark); padding: 0.4rem 1.25rem; cursor: pointer; border-radius: 20px; transition: all var(--transition);">
+                الذكور (البنين / الرجال) (<span id="gender-count-male">0</span>)
+              </button>
+              <button class="gender-tab-btn" data-gender="أنثى" style="background: none; border: 1px solid transparent; font-family: inherit; font-size: 0.95rem; font-weight: 700; color: var(--text-muted); padding: 0.4rem 1.25rem; cursor: pointer; border-radius: 20px; transition: all var(--transition);">
+                الإناث (البنات / النساء) (<span id="gender-count-female">0</span>)
+              </button>
+            </div>
+          </div>
+
+          <div id="registration-list-view" style="margin-top: 1.5rem;">
+            <div class="search-actions-row" style="margin-bottom: 1.5rem;">
+              <div class="search-input-field">
+                <div class="search-box" style="width: 100%; min-width: 100%;">
+                  <i class="ph ph-magnifying-glass search-icon"></i>
+                  <input type="text" id="student-search" placeholder="ابحث بالاسم، اسم ولي الأمر، أو الهاتف..." style="width: 100%;" />
+                </div>
+              </div>
+              <button id="add-student-btn" class="btn btn-primary" style="white-space: nowrap; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 800;">
+                <i class="ph-bold ph-user-plus" style="font-size: 1.2rem;"></i> إضافة طالب جديد
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <div class="list-header-row" style="display: grid; grid-template-columns: 2fr 1fr 2fr 1.5fr 1fr; gap: 1rem; padding: 0.75rem 1rem; font-weight: 800; border-bottom: 2px solid var(--gold); color: var(--green-dark); font-size: 0.95rem; align-items: center;">
+                <div class="student-name-col" id="col-hdr-name">اسم الطالب الكامل</div>
+                <div class="student-age-col" id="col-hdr-age">السن</div>
+                <div class="student-parent-col" id="col-hdr-parent">اسم ولي الأمر</div>
+                <div class="student-phone-col" id="col-hdr-phone">رقم الهاتف</div>
+                <div class="student-status-col" id="col-hdr-status">حالة الطلب</div>
+              </div>
+              
+              <div id="students-grid" class="members-grid" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <!-- Loaded dynamically via students.js -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Teams Management Section -->
+        <section id="teams-management-section" class="about-card" style="border: 1.5px solid var(--gold); background: var(--white); margin: 2rem 0; padding: 1.5rem;">
+          <h3 style="color: var(--green-dark); font-weight: 900; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.5rem; margin-bottom: 1.25rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ph-bold ph-users-three" style="color: var(--gold);"></i> إدارة الفرق القرآنية للطلاب الصغار
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+            قم بإنشاء وتعديل الفرق وتعيين الطلاب إليها لتسهيل توزيع المجموعات والحلقات.
+          </p>
+          
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+            <button type="button" id="btn-open-create-team-modal" class="btn" style="background: var(--green); color: white; font-weight: 800; padding: 0.65rem 1.5rem; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-plus-circle"></i> إنشاء فريق جديد وتعيين الطلاب
+            </button>
+          </div>
+
+          <div class="teams-split-grid">
+            <!-- Left panel: list of active teams -->
+            <div class="teams-left-panel">
+              <h4 style="color: var(--green-dark); font-weight: 800; font-size: 1rem; margin-bottom: 0.75rem;">الفرق المتاحة</h4>
+              <div id="teams-list-group" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto;">
+                <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">لا توجد فرق حالياً.</p>
+              </div>
+            </div>
+            
+            <!-- Right panel: members list and bulk actions -->
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div id="team-assign-container" style="display: none; height: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                  <h4 style="color: var(--green-dark); font-weight: 800; font-size: 1rem; margin: 0;">
+                    أعضاء فريق: <span id="selected-team-lbl" style="color: var(--gold); font-weight: 900;">-</span>
+                  </h4>
+                  <button id="btn-delete-team" class="btn" style="background: transparent; color: #ff4d4d; border: 1px solid rgba(255,68,68,0.3); padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 800; border-radius: 4px; cursor: pointer; transition: all 0.2s;">حذف الفريق</button>
+                </div>
+                
+
+
+                <h5 style="font-weight: 800; color: var(--green-dark); font-size: 0.9rem; margin-bottom: 0.5rem;">الأعضاء الحاليون بالفريق:</h5>
+                <div id="team-members-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                  <!-- Current members will be loaded here -->
+                  <p style="color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 1rem;">لا يوجد أعضاء في هذا الفريق.</p>
+                </div>
+              </div>
+              <div id="team-no-selection" style="display: flex; align-items: center; justify-content: center; height: 100%; min-height: 150px; color: var(--text-muted); font-size: 0.9rem; border: 1px dashed rgba(200, 161, 90, 0.2); border-radius: 8px;">
+                الرجاء اختيار فريق من القائمة الجانبية لإدارته وعرض أعضائه.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Student Profile KYC Modal -->
+    <div id="profile-modal" class="profile-modal">
+      <div class="profile-card animate-modal">
+        <div class="profile-header">
+          <h3 id="pm-name">اسم الطالب</h3>
+          <button id="close-profile-btn" class="close-btn"><i class="ph-light ph-x"></i></button>
+        </div>
+        
+        <div class="profile-content">
+          <div class="profile-info">
+            <div class="profile-info-row">
+              <span class="profile-info-label"><i class="ph ph-user"></i> الاسم الكامل:</span>
+              <span id="pm-name-val" class="profile-info-value"></span>
+            </div>
+            <div class="profile-info-row" style="background: rgba(13, 92, 70, 0.03); border: 1.5px solid var(--gold); border-radius: 6px; padding: 0.5rem 0.75rem; margin: 0.5rem 0; display: flex; justify-content: space-between; align-items: center;">
+              <span class="profile-info-label" style="font-weight: 800; color: var(--green-dark); margin: 0;"><i class="ph ph-identification-card" style="color: var(--gold); vertical-align: middle; margin-left: 0.25rem;"></i> معرف التسجيل (ID):</span>
+              <span id="pm-id" class="profile-info-value" style="font-weight: 900; color: var(--green-dark); font-size: 1.15rem; letter-spacing: 0.5px; margin: 0;"></span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label"><i class="ph ph-gender-neuter"></i> الجنس / القسم:</span>
+              <span id="pm-gender" class="profile-info-value"></span>
+            </div>
+            <div class="profile-info-row" id="pm-team-row">
+              <span class="profile-info-label"><i class="ph ph-users-three"></i> الفريق / المجموعة:</span>
+              <span id="pm-team-name" class="profile-info-value" style="font-weight: 800; color: var(--gold);">غير معين لفريق</span>
+            </div>
+            
+            <!-- Children-only fields -->
+            <div id="pm-child-fields-group">
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-users"></i> الفئة العمرية:</span>
+                <span id="pm-age-group" class="profile-info-value"></span>
+              </div>
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-calendar"></i> السن:</span>
+                <span id="pm-age" class="profile-info-value"></span>
+              </div>
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-book-open"></i> المستوى القرآني:</span>
+                <span id="pm-quran-level" class="profile-info-value"></span>
+              </div>
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-graduation-cap"></i> المستوى الدراسي:</span>
+                <span id="pm-study-level" class="profile-info-value"></span>
+              </div>
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-user-focus"></i> اسم ولي الأمر:</span>
+                <span id="pm-parent-name" class="profile-info-value"></span>
+              </div>
+            </div>
+
+            <!-- Adult-only fields -->
+            <div id="pm-adult-fields-group" style="display: none;">
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-book-open"></i> المستوى القرآني:</span>
+                <span id="pm-adult-quranLevel" class="profile-info-value"></span>
+              </div>
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-calendar"></i> السن / العمر:</span>
+                <span id="pm-adult-age" class="profile-info-value"></span>
+              </div>
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="ph ph-book-bookmark"></i> الحفظ الأولي:</span>
+                <span id="pm-adult-prior" class="profile-info-value"></span>
+              </div>
+            </div>
+
+            <div class="profile-info-row">
+              <span class="profile-info-label"><i class="ph ph-phone"></i> رقم الهاتف:</span>
+              <span id="pm-phone" class="profile-info-value" dir="ltr"></span>
+            </div>
+
+            <!-- Child-only backup phone -->
+            <div class="profile-info-row" id="pm-child-backup-phone-row">
+              <span class="profile-info-label"><i class="ph ph-phone-call"></i> رقم احتياطي:</span>
+              <span id="pm-backup-phone" class="profile-info-value" dir="ltr"></span>
+            </div>
+
+            <div class="profile-info-row">
+              <span class="profile-info-label"><i class="ph ph-calendar-blank"></i> تاريخ التسجيل:</span>
+              <span id="pm-reg-date" class="profile-info-value"></span>
+            </div>
+
+            <!-- Child-only rewards block -->
+            <div id="pm-child-rewards-block" style="grid-column: 1 / -1; background: rgba(212, 175, 55, 0.03); border: 1px dashed var(--gold); border-radius: 6px; padding: 0.75rem 1rem; margin: 0.5rem 0; display: block;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <span class="profile-info-label" style="font-weight: 800; color: var(--green-dark); margin: 0;"><i class="ph ph-star" style="color: var(--gold); vertical-align: middle;"></i> النجوم التراكمية:</span>
+                <span id="pm-cumulative-stars" class="profile-info-value" style="font-weight: 800;"></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <span class="profile-info-label" style="font-weight: 800; color: var(--green-dark); margin: 0;"><i class="ph ph-crown" style="color: var(--gold); vertical-align: middle;"></i> المستوى (الرتبة):</span>
+                <span id="pm-level" class="profile-info-value" style="font-weight: 800;"></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <span class="profile-info-label" style="font-weight: 800; color: var(--green-dark); margin: 0;"><i class="ph ph-book-open" style="color: var(--gold); vertical-align: middle;"></i> آخر سورة وصل إليها:</span>
+                <span id="pm-last-surah" class="profile-info-value" style="font-weight: 800;"></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <span class="profile-info-label" style="font-weight: 800; color: var(--green-dark); margin: 0;"><i class="ph ph-book-bookmark" style="color: var(--gold); vertical-align: middle;"></i> إجمالي الآيات المحفوظة:</span>
+                <span id="pm-total-ayahs" class="profile-info-value" style="font-weight: 800;"></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="profile-info-label" style="font-weight: 800; color: var(--green-dark); margin: 0;"><i class="ph ph-calendar-check" style="color: var(--gold); vertical-align: middle;"></i> نسبة الحضور التقريبية:</span>
+                <span id="pm-attendance-rate" class="profile-info-value" style="font-weight: 800;"></span>
+              </div>
+            </div>
+            <div class="profile-info-row no-border">
+              <span class="profile-info-label"><i class="ph ph-info"></i> حالة الطلب:</span>
+              <span id="pm-status" class="badge"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="pm-delete-btn" class="btn btn-outline" style="border-color: rgba(255, 68, 68, 0.4); color: #ff4d4d;">حذف نهائياً</button>
+          <button id="pm-edit-btn" class="btn btn-secondary">تعديل البيانات</button>
+          <button id="pm-reject-btn" class="btn btn-outline" style="border-color: rgba(212, 175, 55, 0.4); color: #cda21b;">رفض الطلب</button>
+          <button id="pm-accept-btn" class="btn btn-primary">تأكيد التسجيل</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="edit-modal" class="profile-modal">
+      <div class="profile-card animate-modal">
+        <div class="profile-header">
+          <h3>تعديل بيانات الطالب</h3>
+          <button id="close-edit-btn" class="close-btn"><i class="ph-light ph-x"></i></button>
+        </div>
+        
+        <div class="profile-content">
+          <form id="edit-student-form">
+            <div class="form-row" style="grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="edit-name">اسم الطالب كامل</label>
+                <input type="text" id="edit-name" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-gender">الجنس</label>
+                <select id="edit-gender" required style="width: 100%;">
+                  <option value="ذكر">ذكر</option>
+                  <option value="أنثى">أنثى</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="edit-age-group">الفئة العمرية</label>
+                <select id="edit-age-group" required>
+                  <option value="أشبال (6 - 11 سنة)">أشبال (6 - 11 سنة)</option>
+                  <option value="شباب (12 - 18 سنة)">شباب (12 - 18 سنة)</option>
+                  <option value="كبار (أكثر من 18 سنة)">كبار (أكثر من 18 سنة)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-age">السن</label>
+                <input type="number" id="edit-age" min="5" max="90" required />
+              </div>
+            </div>
+
+            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="edit-quran-level">المستوى القرآني</label>
+                <select id="edit-quran-level" required>
+                  <option value="مبتدئ (لم يبدأ الحفظ بعد)">مبتدئ (لم يبدأ الحفظ بعد)</option>
+                  <option value="حفظ أقل من حزب">حفظ أقل من حزب</option>
+                  <option value="حفظ من حزب إلى 10 أحزاب">حفظ من حزب إلى 10 أحزاب</option>
+                  <option value="حفظ أكثر من 10 أحزاب">حفظ أكثر من 10 أحزاب</option>
+                  <option value="حافظ لكتاب الله كاملاً">حافظ لكتاب الله كاملاً</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-study-level">المستوى الدراسي</label>
+                <input type="text" id="edit-study-level" required />
+              </div>
+            </div>
+
+            <div class="form-group full-width" style="margin-bottom: 1rem;">
+              <label for="edit-parent-name">اسم ولي الأمر</label>
+              <input type="text" id="edit-parent-name" required />
+            </div>
+
+            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="edit-phone">رقم الهاتف</label>
+                <input type="tel" id="edit-phone" required pattern="^0[567][0-9]{8}$" />
+              </div>
+              <div class="form-group">
+                <label for="edit-backup-phone">رقم هاتف احتياطي</label>
+                <input type="tel" id="edit-backup-phone" required pattern="^0[567][0-9]{8}$" />
+              </div>
+            </div>
+
+            <!-- حقول إضافية لتعديل البيانات التراكمية الابتدائية -->
+            <div id="edit-old-student-fields" style="background: rgba(212, 175, 55, 0.05); border: 1px dashed var(--gold); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+              <h4 style="color: var(--green-dark); margin-bottom: 0.75rem; font-weight: 800; font-size: 0.95rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">البيانات التراكمية الابتدائية (للطلاب القدامى)</h4>
+              
+              <div class="form-row" style="grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 0.5rem;">
+                <div class="form-group">
+                  <label for="edit-initial-stars">النجوم الابتدائية</label>
+                  <input type="number" id="edit-initial-stars" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="edit-initial-level">المستوى الابتدائي</label>
+                  <select id="edit-initial-level" style="width: 100%;">
+                    <option value="بذرة المسجد">بذرة المسجد</option>
+                    <option value="نبتة المسجد">نبتة المسجد</option>
+                    <option value="شجرة المسجد">شجرة المسجد</option>
+                    <option value="نجم المسجد">نجم المسجد</option>
+                    <option value="فارس المسجد">فارس المسجد</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row" style="grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                <div class="form-group">
+                  <label for="edit-initial-surah">آخر سورة (ابتدائية)</label>
+                  <input type="text" id="edit-initial-surah" placeholder="اسم السورة" />
+                </div>
+                <div class="form-group">
+                  <label for="edit-initial-to-verse">آخر آية</label>
+                  <input type="number" id="edit-initial-to-verse" min="1" placeholder="الآية" />
+                </div>
+                <div class="form-group">
+                  <label for="edit-initial-attendance">الحضور الابتدائي (%)</label>
+                  <input type="number" id="edit-initial-attendance" min="0" max="100" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group full-width" style="margin-bottom: 1.5rem;">
+              <label for="edit-status">حالة الطلب</label>
+              <select id="edit-status" required>
+                <option value="قيد المراجعة">قيد المراجعة</option>
+                <option value="مقبول">مقبول</option>
+                <option value="مرفوض">مرفوض</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">حفظ التغييرات</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="add-modal" class="profile-modal">
+      <div class="profile-card animate-modal">
+        <div class="profile-header">
+          <h3>إضافة طالب جديد</h3>
+          <button id="close-add-btn" class="close-btn"><i class="ph-light ph-x"></i></button>
+        </div>
+        
+        <div class="profile-content">
+          <form id="add-student-form">
+            <!-- فئة الطالب: صغار أو كبار -->
+            <div class="form-group full-width" style="margin-bottom: 1rem;">
+              <label for="add-category">فئة الطالب</label>
+              <select id="add-category" style="width: 100%;">
+                <option value="صغير" selected>صغير (الأشبال والشباب)</option>
+                <option value="كبير">كبير (حلقات الكبار)</option>
+              </select>
+            </div>
+
+            <div class="form-row" style="grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="add-name">الاسم واللقب الكامل</label>
+                <input type="text" id="add-name" required />
+              </div>
+              <div class="form-group">
+                <label for="add-gender">الجنس</label>
+                <select id="add-gender" required style="width: 100%;">
+                  <option value="ذكر">ذكر</option>
+                  <option value="أنثى">أنثى</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- حقول مخصصة للصغار فقط -->
+            <div id="add-child-fields-wrapper">
+              <div class="form-group full-width" style="margin-bottom: 1rem;">
+                <label for="add-student-type">نوع الطالب</label>
+                <select id="add-student-type" style="width: 100%;">
+                  <option value="new">طالب جديد (يبدأ بـ 0 نقاط)</option>
+                  <option value="old">طالب قديم (لديه نقاط ومستوى سابق)</option>
+                </select>
+              </div>
+
+              <!-- حقول إضافية للطالب القديم -->
+              <div id="old-student-fields" style="display: none; background: rgba(212, 175, 55, 0.05); border: 1px dashed var(--gold); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                <h4 style="color: var(--green-dark); margin-bottom: 0.75rem; font-weight: 800; font-size: 0.95rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">البيانات التراكمية السابقة</h4>
+                
+                <div class="form-row" style="grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 0.5rem;">
+                  <div class="form-group">
+                    <label for="add-initial-stars">عدد النجوم التراكمية</label>
+                    <input type="number" id="add-initial-stars" min="0" value="0" />
+                  </div>
+                  <div class="form-group">
+                    <label for="add-initial-level">المستوى (الرتبة)</label>
+                    <select id="add-initial-level" style="width: 100%;">
+                      <option value="بذرة المسجد">بذرة المسجد</option>
+                      <option value="نبتة المسجد">نبتة المسجد</option>
+                      <option value="شجرة المسجد">شجرة المسجد</option>
+                      <option value="نجم المسجد">نجم المسجد</option>
+                      <option value="فارس المسجد">فارس المسجد</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-row" style="grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                  <div class="form-group">
+                    <label for="add-initial-surah" id="lbl-add-initial-surah">آخر سورة وصل إليها</label>
+                    <input type="text" id="add-initial-surah" placeholder="مثلاً: الكهف" />
+                  </div>
+                  <div class="form-group">
+                    <label for="add-initial-to-verse" id="lbl-add-initial-to-verse">آخر آية</label>
+                    <input type="number" id="add-initial-to-verse" min="1" placeholder="رقم الآية" />
+                  </div>
+                  <div class="form-group">
+                    <label for="add-initial-attendance">الحضور (%)</label>
+                    <input type="number" id="add-initial-attendance" min="0" max="100" placeholder="مثلاً: 90" />
+                  </div>
+                </div>
+                
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; margin-top: 0.25rem;">* ملاحظة: سيتم احتساب النقاط تلقائياً (النقاط = عدد النجوم × 2).</p>
+              </div>
+
+              <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1rem;">
+                <div class="form-group">
+                  <label for="add-age-group">الفئة العمرية</label>
+                  <select id="add-age-group">
+                    <option value="أشبال (6 - 11 سنة)">أشبال (6 - 11 سنة)</option>
+                    <option value="شباب (12 - 18 سنة)">شباب (12 - 18 سنة)</option>
+                    <option value="كبار (أكثر من 18 سنة)">كبار (أكثر من 18 سنة)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="add-study-level">المستوى الدراسي</label>
+                  <input type="text" id="add-study-level" placeholder="مثال: الرابعة ابتدائي" />
+                </div>
+              </div>
+
+              <div class="form-group full-width" style="margin-bottom: 1rem;">
+                <label for="add-parent-name">اسم ولي الأمر</label>
+                <input type="text" id="add-parent-name" />
+              </div>
+            </div>
+
+            <!-- حقل السن المشترك والمستوى القرآني بالأحزاب -->
+            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="add-age">السن / العمر</label>
+                <input type="number" id="add-age" min="5" max="90" required />
+              </div>
+              <div class="form-group">
+                <label for="add-quran-level">المستوى القرآني</label>
+                <select id="add-quran-level" required style="width: 100%;">
+                  <option value="مبتدئ (لم يبدأ الحفظ بعد)">مبتدئ (لم يبدأ الحفظ بعد)</option>
+                  <option value="حفظ أقل من حزب">حفظ أقل من حزب</option>
+                  <option value="حفظ من حزب إلى 10 أحزاب">حفظ من حزب إلى 10 أحزاب</option>
+                  <option value="حفظ أكثر من 10 أحزاب">حفظ أكثر من 10 أحزاب</option>
+                  <option value="حافظ لكتاب الله كاملاً">حافظ لكتاب الله كاملاً</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- حقول الحفظ المسبق للكبار -->
+            <div id="add-adult-prior-wrapper" style="display: none; background: rgba(200, 161, 90, 0.05); border: 1px dashed var(--gold); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+              <h4 style="color: var(--green-dark); margin-bottom: 0.75rem; font-weight: 800; font-size: 0.95rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">تفاصيل آخر حفظ (اختياري)</h4>
+              <div class="form-row" style="grid-template-columns: 1.5fr 1fr; gap: 1rem;">
+                <div class="form-group" style="margin: 0;">
+                  <label for="add-adult-last-surah">آخر سورة تم حفظها:</label>
+                  <input type="text" id="add-adult-last-surah" placeholder="مثال: البقرة" />
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="add-adult-last-verse">آخر آية:</label>
+                  <input type="number" id="add-adult-last-verse" min="0" placeholder="رقم الآية" />
+                </div>
+              </div>
+            </div>
+
+            <!-- الهاتف والهاتف الاحتياطي -->
+            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="add-phone">رقم الهاتف</label>
+                <input type="tel" id="add-phone" required pattern="^0[567][0-9]{8}$" />
+              </div>
+              <div class="form-group" id="add-backup-phone-wrapper">
+                <label for="add-backup-phone">رقم هاتف احتياطي</label>
+                <input type="tel" id="add-backup-phone" pattern="^0[567][0-9]{8}$" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">إضافة وتأكيد القبول</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Team Modal -->
+    <div id="create-team-modal" class="profile-modal">
+      <div class="profile-card animate-modal" style="max-width: 500px;">
+        <div class="profile-header">
+          <h3>إنشاء فريق قرآني جديد</h3>
+          <button id="close-create-team-modal" class="close-btn"><i class="ph-light ph-x"></i></button>
+        </div>
+        <div class="profile-content">
+          <form id="create-team-form" class="form-grid">
+            <div class="form-group full-width">
+              <label for="new-team-name">اسم الفريق الجديد:</label>
+              <input type="text" id="new-team-name" required placeholder="مثال: فريق الفرسان، النخبة..." style="width: 100%;" />
+            </div>
+            
+            <div class="form-group full-width" style="margin-top: 0.5rem;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 800;">اختر الطلاب للانضمام للفريق:</label>
+              <div id="team-student-checklist" style="max-height: 250px; overflow-y: auto; border: 1.5px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 0.75rem; background: rgba(13, 92, 70, 0.01); display: flex; flex-direction: column; gap: 0.5rem; text-align: right;">
+                <!-- Dynamically loaded kids checklist -->
+              </div>
+            </div>
+            
+            <div class="modal-actions" style="width: 100%; margin-top: 1.5rem;">
+              <button type="button" id="btn-cancel-create-team" class="btn" style="background: rgba(13, 92, 70, 0.05); color: var(--green-dark); border: 1px solid rgba(13, 92, 70, 0.15);">إلغاء</button>
+              <button type="submit" class="btn">تأكيد وإنشاء الفريق</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script loading -->
+    <script type="module" src="js/db.js?v=52"></script>
+    <script type="module" src="js/students.js?v=52"></script>
+  </body>
+</html>

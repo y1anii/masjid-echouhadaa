@@ -1,0 +1,143 @@
+============================================================
+File: js\daily.js
+============================================================
+  Line 54: const result = await window.DB.readParentPortal(studentId, phone);
+============================================================
+File: js\main.js
+============================================================
+============================================================
+File: js\parent.js
+============================================================
+  Line 94: const result = await window.DB.readParentPortal(studentId, phone);
+============================================================
+File: js\reports.js
+============================================================
+  Line 81: const result = await window.DB.readParentPortal(studentId, phone);
+============================================================
+File: admin\js\auth.js
+============================================================
+  Line 169: if (window.DB && window.DB.syncPendingQueue) {
+  Line 172: window.DB.syncPendingQueue().then(res => {
+  Line 189: if (window.DB && window.DB.syncPendingQueue) {
+  Line 190: window.DB.syncPendingQueue();
+  Line 196: if (navigator.onLine && window.DB && window.DB.syncPendingQueue) {
+  Line 197: window.DB.syncPendingQueue();
+============================================================
+File: admin\js\dashboard.js
+============================================================
+  Line 19: const data = await window.DB.readDashboardData();
+  Line 179: const students = await window.DB.getAllStudents();
+  Line 294: await fetch(window.DB._webAppUrl, {
+============================================================
+File: admin\js\db.js
+============================================================
+  Line 128: window.DB = {
+  Line 166: localDB.saveStudents(data.students);
+  Line 170: return localDB.getStudents();
+  Line 193: const students = localDB.getStudents();
+  Line 197: localDB.saveStudents(students);
+  Line 202: const students = localDB.getStudents();
+  Line 206: localDB.saveStudents(students);
+  Line 230: const students = localDB.getStudents();
+  Line 232: localDB.saveStudents(filtered);
+  Line 236: const students = localDB.getStudents();
+  Line 238: localDB.saveStudents(filtered);
+  Line 254: localDB.saveLessons(data.lessons || []);
+  Line 258: return localDB.getLessons();
+  Line 278: const list = localDB.getLessons();
+  Line 281: localDB.saveLessons(list);
+  Line 303: const list = localDB.getLessons();
+  Line 307: localDB.saveLessons(list);
+  Line 329: const list = localDB.getLessons();
+  Line 331: localDB.saveLessons(filtered);
+  Line 347: localDB.saveNews(data.news || []);
+  Line 351: return localDB.getNews();
+  Line 369: const list = localDB.getNews();
+  Line 374: localDB.saveNews(list);
+  Line 394: const list = localDB.getNews();
+  Line 398: localDB.saveNews(list);
+  Line 420: const list = localDB.getNews();
+  Line 422: localDB.saveNews(filtered);
+  Line 462: const sessions = localDB.getSessions();
+  Line 474: localDB.saveSessions(sessions);
+  Line 520: localDB.saveSessions(data.sessions || []);
+  Line 524: return localDB.getSessions();
+  Line 541: const attList = localDB.getAttendance().filter(a => a.sessionId === sessionId);
+  Line 542: const evalList = localDB.getEvaluations().filter(e => e.sessionId === sessionId);
+  Line 543: const quranList = localDB.getQuranProgress().filter(q => q.sessionId === sessionId);
+  Line 642: const sessions = localDB.getSessions();
+  Line 653: localDB.saveSessions(sessions);
+  Line 668: const sessions = localDB.getSessions();
+  Line 669: const attendance = localDB.getAttendance();
+  Line 670: const evaluations = localDB.getEvaluations();
+  Line 671: const quranProgress = localDB.getQuranProgress();
+  Line 672: const students = localDB.getStudents();
+  Line 680: localDB.saveSessions(filteredSessions);
+  Line 681: localDB.saveAttendance(filteredAttendance);
+  Line 682: localDB.saveEvaluations(filteredEvaluations);
+  Line 683: localDB.saveQuranProgress(filteredQuranProgress);
+  Line 726: localDB.saveRewards(Object.values(rewardsMap));
+  Line 740: localDB.saveStudents(students);
+  Line 788: const sessions = localDB.getSessions();
+  Line 797: localDB.saveSessions(sessions);
+  Line 800: const attList = localDB.getAttendance();
+  Line 801: const evalList = localDB.getEvaluations();
+  Line 802: const quranProgress = localDB.getQuranProgress();
+  Line 803: const rewardsList = localDB.getRewards();
+  Line 804: const students = localDB.getStudents();
+  Line 904: localDB.saveAttendance(attList);
+  Line 905: localDB.saveEvaluations(evalList);
+  Line 906: localDB.saveQuranProgress(quranProgress);
+  Line 907: localDB.saveRewards(rewardsList);
+  Line 908: localDB.saveStudents(students);
+  Line 931: const students = localDB.getStudents();
+  Line 932: const sessions = localDB.getSessions();
+  Line 933: const attendance = localDB.getAttendance();
+  Line 934: const rewards = localDB.getRewards();
+  Line 935: const quranProgress = localDB.getQuranProgress();
+  Line 936: const evaluations = localDB.getEvaluations();
+  Line 1040: const students = localDB.getStudents();
+  Line 1057: const attList = localDB.getAttendance();
+  Line 1058: const sessions = localDB.getSessions();
+  Line 1085: const qProgressList = localDB.getQuranProgress();
+  Line 1114: const rewardsList = localDB.getRewards();
+  Line 1127: const evalList = localDB.getEvaluations();
+  Line 1198: if (window.DB._syncing) return { success: false, error: "Sync in progress" };
+  Line 1199: window.DB._syncing = true;
+  Line 1203: window.DB._syncing = false;
+  Line 1287: window.DB._syncing = false;
+============================================================
+File: admin\js\lessons.js
+============================================================
+  Line 22: const rawLessons = await DB.getAllLessons();
+  Line 107: const success = await DB.deleteLesson(lesson.id);
+  Line 173: const success = await DB.updateLesson(editingId, lessonData);
+  Line 184: const success = await DB.addLesson(lessonData);
+============================================================
+File: admin\js\news.js
+============================================================
+  Line 106: const rawNews = await DB.getAllNews();
+  Line 209: const success = await DB.deleteNews(item.id);
+  Line 303: const result = await DB.updateNews(editingId, newsData);
+  Line 314: const result = await DB.addNews(newsData);
+============================================================
+File: admin\js\students.js
+============================================================
+  Line 39: const rawStudents = await DB.getAllStudents();
+  Line 253: const success = await DB.deleteStudent(student.id);
+  Line 272: const success = await DB.updateStudent(student.id, updated);
+  Line 291: const success = await DB.updateStudent(student.id, updated);
+  Line 350: const success = await DB.updateStudent(student.id, updatedData);
+============================================================
+File: admin\js\teacher.js
+============================================================
+  Line 207: const res = await window.DB.startSession(supervisor, selectedCourses, circle);
+  Line 275: await window.DB.deleteSession(sessionId);
+  Line 297: const students = await window.DB.getAllStudents();
+  Line 1076: success = await window.DB.updateSession(
+  Line 1094: success = await window.DB.endSession(activeSession.sessionId, evaluationsArray, liveSelectedCourses);
+  Line 1136: const sessions = await window.DB.getAllSessions();
+  Line 1198: const sessions = await window.DB.getAllSessions();
+  Line 1206: const evals = await window.DB.getSessionEvaluations(sessionId);
+  Line 1231: const students = await window.DB.getAllStudents();
+  Line 1262: const success = await window.DB.deleteSession(sessionId);

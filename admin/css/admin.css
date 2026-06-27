@@ -1,0 +1,1433 @@
+/* ═══════════════════════════════════════════════
+   مسجد الشهداء — لوحة تحكم إدارة الطلاب
+   Consolidated styling using the main design variables
+   ═══════════════════════════════════════════════ */
+
+/* Layout & Page Specifics */
+body {
+  background: var(--ivory) !important;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: 
+    var(--texture-grain),
+    var(--ivory) !important;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: var(--pattern);
+}
+
+.admin-container { 
+  position: relative;
+  z-index: 1;
+  padding-top: calc(var(--nav-h) + 40px); 
+  padding-bottom: 80px;
+}
+
+.main-content {
+  position: relative;
+  z-index: 5;
+}
+
+/* ── Navbar Overrides for Admin ── */
+.nav-links a.nav-cta {
+  background: rgba(255, 68, 68, 0.12);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  color: #ff4d4d;
+}
+
+.nav-links a.nav-cta:hover {
+  background: #ff4d4d;
+  color: var(--white);
+  box-shadow: 0 0.25rem 1rem rgba(255, 68, 68, 0.3);
+}
+
+.pwa-install-btn-header {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: var(--gold) !important;
+  border: 1.5px solid var(--gold) !important;
+  padding: 0.35rem 0.8rem !important;
+  font-weight: 800 !important;
+  font-size: 0.78rem !important;
+  border-radius: 30px !important;
+  cursor: pointer !important;
+  transition: all var(--transition) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-inline-start: auto;
+  margin-inline-end: 1rem;
+  order: 2;
+}
+
+.pwa-install-btn-header:hover {
+  background: var(--gold) !important;
+  color: var(--green-dark) !important;
+  transform: translateY(-1px);
+}
+
+/* ── Section Header ── */
+.section-header {
+  text-align: right;
+  margin-bottom: 2.5rem;
+}
+
+.section-label {
+  font-family: var(--font-serif);
+  color: var(--gold);
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--green-dark);
+}
+
+.section-sub {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+/* ── Card Containers ── */
+.about-card {
+  background: rgba(255, 255, 255, 0.94);
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(200, 161, 90, 0.2);
+  box-shadow: var(--shadow);
+  outline: 1px solid rgba(212, 175, 55, 0.22);
+  outline-offset: -5px;
+  position: relative;
+}
+
+/* ── Stats Grid ── */
+.stats-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(200, 161, 90, 0.18);
+  border-radius: var(--radius-sm);
+  outline: 1px solid rgba(212, 175, 55, 0.15);
+  outline-offset: -5px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform var(--transition), box-shadow var(--transition);
+  box-shadow: var(--shadow);
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gold);
+}
+
+.stat-icon {
+  font-size: 2.2rem;
+  color: var(--green);
+  margin-bottom: 0.75rem;
+}
+
+.stat-num-static {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--green-dark);
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ── Table & List Rows ── */
+.table-responsive {
+  margin-top: 1.5rem;
+}
+
+.list-header-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1.4fr 1.6fr 1.3fr 1fr;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0 1.5rem 1rem;
+  color: var(--green-dark);
+  font-size: 0.95rem;
+  font-weight: 800;
+  border-bottom: 2px solid rgba(13, 92, 70, 0.15);
+}
+
+.members-grid {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  gap: 0.75rem;
+}
+
+.member-list-item {
+  display: grid;
+  grid-template-columns: 2.2fr 1.4fr 1.6fr 1.3fr 1fr;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(200, 161, 90, 0.15);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 12px rgba(13, 92, 70, 0.04);
+}
+
+.member-list-item:hover {
+  transform: translateY(-2px);
+  background: var(--white);
+  box-shadow: var(--shadow);
+  border-color: var(--gold);
+}
+
+/* Student Columns and Stack helper */
+.student-info-group {
+  display: contents;
+}
+
+.student-name-col {
+  font-weight: 800;
+  color: var(--green-dark);
+  font-size: 1.1rem;
+  text-align: right;
+}
+
+.student-age-col {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+.student-parent-col {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+.student-phone-col {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: right;
+  font-family: inherit;
+}
+
+.student-status-col {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Form Controls inside Admin ── */
+.form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.form-group {
+  flex: 1 1 calc(50% - 0.75rem);
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  flex: 1 1 100%;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  text-align: right;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dcd3;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  text-align: right;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12);
+}
+
+/* ── Badges ── */
+.badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: inline-block;
+  text-align: center;
+}
+
+.badge-pending {
+  background: rgba(212, 175, 55, 0.12);
+  color: #cda21b;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.badge-accepted {
+  background: rgba(13, 92, 70, 0.08);
+  color: var(--green);
+  border: 1px solid rgba(13, 92, 70, 0.2);
+}
+
+.badge-rejected {
+  background: rgba(255, 68, 68, 0.08);
+  color: #ff4d4d;
+  border: 1px solid rgba(255, 68, 68, 0.2);
+}
+
+/* ── Modal (Drawer) ── */
+.profile-modal {
+  position: fixed; 
+  inset: 0; 
+  background: rgba(8, 59, 45, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 1.25rem;
+  opacity: 0; 
+  pointer-events: none; 
+  transition: opacity var(--transition);
+}
+
+.profile-modal.active,
+.profile-modal.is-visible {
+  opacity: 1; 
+  pointer-events: all;
+}
+
+.profile-card {
+  background: var(--white); 
+  width: 100%; 
+  max-width: 32rem;
+  border-radius: var(--radius); 
+  border: 1px solid rgba(200, 161, 90, 0.25); 
+  box-shadow: var(--shadow-lg);
+  outline: 1px solid rgba(212, 175, 55, 0.22);
+  outline-offset: -5px;
+  overflow: hidden;
+  display: flex; 
+  flex-direction: column;
+  transform: translateY(20px);
+  transition: transform var(--transition);
+}
+
+@media (min-width: 768px) {
+  .profile-card {
+    max-width: 48rem; /* عرض أكبر على البيسي */
+  }
+  
+  .profile-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 2rem;
+  }
+  
+  .profile-info-row {
+    border-bottom: 1px solid rgba(200, 161, 90, 0.12);
+  }
+
+  .admin-tabs {
+    justify-content: center;
+  }
+}
+
+.profile-modal.active .profile-card,
+.profile-modal.is-visible .profile-card {
+  transform: translateY(0);
+}
+
+.profile-header {
+  padding: 1.5rem 2rem; 
+  border-bottom: 1px solid rgba(200, 161, 90, 0.15);
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+}
+
+.profile-header h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--green-dark);
+}
+
+.profile-content { 
+  padding: 1.5rem 2rem; 
+  overflow-y: auto; 
+  max-height: 60vh;
+}
+
+.profile-info { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.25rem; 
+}
+
+.profile-info-row { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  border-bottom: 1px solid rgba(200, 161, 90, 0.1); 
+  padding: 0.85rem 0;
+}
+
+.profile-info-row.no-border { 
+  border-bottom: none; 
+}
+
+.profile-info-label { 
+  color: var(--text-muted); 
+  font-size: 0.95rem; 
+  display: flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+}
+
+.profile-info-label i { 
+  color: var(--gold); 
+  font-size: 1.1rem; 
+}
+
+.profile-info-value { 
+  color: var(--text); 
+  font-weight: 700; 
+  text-align: left; 
+}
+
+.profile-actions {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(200, 161, 90, 0.15);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  background: var(--ivory);
+}
+
+.profile-actions .btn {
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  justify-content: center;
+  min-width: max-content;
+}
+
+/* ── Utilities ── */
+.empty-state {
+  text-align: center; 
+  padding: 4rem 1.5rem;
+  color: var(--text-muted); 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 1rem;
+  width: 100%;
+}
+
+.empty-state i { 
+  font-size: 3.5rem; 
+  opacity: 0.4; 
+  color: var(--gold); 
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.close-btn:hover {
+  color: var(--green-dark);
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  gap: 1rem;
+  color: var(--text-muted);
+  width: 100%;
+}
+
+.spinner-circle {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(13, 92, 70, 0.1);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-card {
+  max-width: 25rem;
+  width: 100%;
+  padding: 3rem 2.5rem;
+}
+
+/* ═══════════════════════════════════════════════
+   تنسيقات التجاوب مع الهواتف المحمولة (Responsive Mobile)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+
+  .admin-container {
+    padding-top: calc(var(--nav-h) + 20px);
+    padding-bottom: 40px;
+  }
+
+  /* تقليل حجم عنوان القسم على الهاتف لتفادي التداخل مع الشريط العلوي */
+  .section-header {
+    margin-bottom: 1.25rem !important;
+  }
+
+  .section-label {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .section-title {
+    font-size: 1.45rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .section-sub {
+    font-size: 0.85rem !important;
+    margin-top: 0.15rem !important;
+  }
+
+  .about-card {
+    padding: 1.25rem 1rem;
+  }
+
+  /* إخفاء ترويسة الجدول على الهاتف وتكديس البيانات */
+  .list-header-row {
+    display: none !important;
+  }
+
+  .member-list-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .student-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+    text-align: right;
+  }
+
+  .student-name-col {
+    font-size: 1rem;
+  }
+
+  .student-age-col {
+    font-size: 0.85rem;
+  }
+
+  .student-parent-col,
+  .student-phone-col {
+    display: none;
+  }
+
+  .student-status-col {
+    flex-shrink: 0;
+  }
+
+  /* أزرار التبويبات القابلة للتمرير الأفقي على الهاتف */
+  .admin-tabs {
+    gap: 0.25rem !important;
+    overflow-x: auto;
+    padding-bottom: 0.75rem !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .admin-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 0.6rem !important;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* الهواتف: أزرار التحكم في بطاقة الطالب بشكل شبكي 2x2 لتفادي تداخل النصوص */
+  .profile-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .profile-actions .btn {
+    width: 100%;
+    font-size: 0.85rem !important;
+    padding: 0.65rem 0.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  /* جعل إحصائيات لوحة التحكم تظهر بشكل 2x2 بدلاً من عمود واحد طويل */
+  .stats-inner {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-item {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .stat-num-static {
+    font-size: 1.8rem;
+  }
+
+  .stat-icon {
+    font-size: 1.8rem;
+  }
+
+}
+
+/* ── Centering elements inside grid layouts (e.g. Lessons Admin Grid) ── */
+.lessons-admin-grid:has(.empty-state),
+.lessons-admin-grid:has(.spinner-container) {
+  display: block !important;
+  width: 100% !important;
+}
+
+.lessons-admin-grid .empty-state,
+.lessons-admin-grid .spinner-container {
+  grid-column: 1 / -1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+
+/* ── Premium Search Box ── */
+.search-box {
+  position: relative;
+  min-width: 240px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.6rem 2.5rem 0.6rem 1.25rem !important; /* right padding for icon in RTL */
+  font-size: 0.95rem;
+  border: 1px solid rgba(13, 92, 70, 0.15) !important;
+  border-radius: 30px !important;
+  background: var(--white) !important;
+  font-family: inherit;
+  outline: none;
+  transition: all var(--transition);
+  text-align: right;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.search-box input:focus {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12) !important;
+}
+
+.search-box .search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════
+   تنسيق الهاتف المتقدم: شريط التنقل السفلي PWA Mobile Navigation Bar
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  /* إخفاء زر التبديل القابل للضغط العلوي */
+  .nav-toggle {
+    display: none !important;
+  }
+
+  /* موازنة المسافات العلوية والسفلية لمحتوى الصفحة */
+  .admin-container {
+    padding-top: calc(var(--nav-h) + 20px) !important;
+    padding-bottom: 110px !important;
+  }
+
+  /* تحويل القائمة الجانبية المنسدلة إلى شريط سفلي ثابت */
+  .navbar-nav {
+    display: block !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    background: linear-gradient(180deg, #0d5c46, #083b2d) !important; /* التدرج الأخضر المميز للمسجد */
+    border-top: 2px solid var(--gold) !important;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2) !important;
+    z-index: 10000 !important;
+    padding: 0.35rem 0 0.5rem 0 !important; /* مساحة أمان للهواتف الحديثة */
+    height: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: none !important;
+  }
+
+  .nav-links {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  .nav-links li {
+    flex: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+    transition: none !important;
+  }
+
+
+  .nav-links a {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    padding: 0.25rem 0 !important;
+    gap: 0.2rem !important;
+    border: none !important;
+    background: none !important;
+    border-radius: 0 !important;
+    transition: all var(--transition) !important;
+    text-shadow: none !important;
+  }
+
+  /* تنسيق الأيقونات داخل الشريط السفلي */
+  .nav-links a i {
+    display: block !important;
+    font-size: 1.35rem !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    margin: 0 !important;
+    transition: all var(--transition) !important;
+  }
+
+  /* علامة التبويب النشطة (Active) باللون الذهبي البراق */
+  .nav-links a.active,
+  .nav-links a.active i {
+    color: var(--gold) !important;
+    transform: scale(1.05);
+  }
+
+
+  /* تكييف زر الخروج (Logout) ليتناسب مع الشريط السفلي */
+  .nav-links a.nav-cta {
+    background: none !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0.25rem 0 !important;
+  }
+  
+  .nav-links a.nav-cta i {
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+  
+  .nav-links a.nav-cta:active,
+  .nav-links a.nav-cta:active i {
+    color: #ff4d4d !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* تنسيق الأيقونات بجانب النص على الأجهزة المكتبية لمظهر فخم */
+  .nav-links a i {
+    margin-left: 0.35rem; /* إزاحة الأيقونة لليسار في RTL */
+    font-size: 1.1rem;
+    vertical-align: middle;
+    display: inline-block;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   إصلاح شامل لجميع صفحات لوحة التحكم على الهواتف
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+  /* ─── عام: مسافة كافية تحت كل محتوى لتفادي الشريط السفلي ─── */
+  .admin-container {
+    padding-bottom: 110px !important;
+  }
+
+  /* ─── بطاقات about-card: تقليل padding على الهواتف ─── */
+  .about-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  /* ─── form-grid: عمود واحد في جميع النماذج ─── */
+  .admin-container .form-grid,
+  .form-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* ─── form-group: عرض كامل ─── */
+  .form-group {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* ════════════════════════════════════
+     صفحة index.html — لوحة الإحصائيات
+     ════════════════════════════════════ */
+
+  /* بطاقة إدارة الدورة: stack عمودي */
+  .admin-container > main > section[class="about-card"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* زر تفعيل نهاية الدورة: عرض كامل */
+  #toggle-course-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    font-size: 0.9rem !important;
+    padding: 0.65rem 1rem !important;
+  }
+
+  /* جدول الشهادات: scroll أفقي */
+  #admin-certificates-section > div[style*="overflow-x"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* شبكة المتفوقين والترتيب: عمود واحد */
+  div.form-grid[style*="grid-template-columns: 1fr 1fr"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* التبويبات الفرعية للوحة الشرف */
+  .dash-sub-tab-btn {
+    font-size: 0.78rem !important;
+    padding: 0.2rem 0.35rem !important;
+  }
+
+  /* جدول الترتيب: scroll أفقي */
+  #admin-certificates-section table,
+  div[style*="overflow-y: auto"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* ════════════════════════════════════
+     صفحة students.html — إدارة الطلاب
+     ════════════════════════════════════ */
+
+  /* بار البحث + زر الإضافة: stack عمودي */
+  #registration-list-view > div:first-child {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  #registration-list-view > div:first-child .form-group {
+    min-width: 0 !important;
+  }
+
+  #add-student-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ────── إحصائيات الطلاب: تكديس عمودي لمنع الفراغات ────── */
+  .stats-inner {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ════════════════════════════════════
+     صفحة teacher.html — دفتر التقييم
+     ════════════════════════════════════ */
+
+  /* بطاقة البدء بالحلقة */
+  #no-session-view {
+    padding: 2rem 1rem !important;
+  }
+  #no-session-view i {
+    font-size: 3.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  #no-session-view h2 {
+    font-size: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  #no-session-view p {
+    font-size: 0.85rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  #start-session-btn {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.95rem !important;
+    justify-content: center !important;
+  }
+
+  /* أرشيف الحلقات */
+  #sessions-archive-card {
+    padding: 1rem !important;
+  }
+
+  /* شريط معلومات الحلقة النشطة */
+  .session-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 1rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .session-info-details {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  #cancel-session-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* بطاقة مقرر النشاط اليومي */
+  #daily-agenda-checkboxes {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* شبكة بطاقات الطلاب في الحلقة */
+  .teacher-student-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* ضغط بطاقة الطالب */
+  .teacher-student-card {
+    padding: 1rem !important;
+    min-height: auto !important;
+  }
+
+  /* شريط الرصد العائم السفلي */
+  .floating-action-container {
+    bottom: 85px !important;
+    width: 94% !important;
+    max-width: 400px !important;
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .floating-action-btn {
+    font-size: 0.82rem !important;
+    padding: 0.5rem 0.75rem !important;
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+
+  /* ════════════════════════════════════
+     صفحة lessons.html — إدارة الدروس
+     ════════════════════════════════════ */
+
+  /* نموذج الإضافة */
+  .lesson-form-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  /* أزرار الإجراءات في النموذج */
+  .form-actions {
+    flex-direction: column !important;
+  }
+
+  .form-actions .btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* شبكة بطاقات الدروس */
+  .lessons-admin-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* قسم "البرنامج الأسبوعي الحالي" */
+  .about-card[style*="padding: 2rem"] {
+    padding: 1rem !important;
+  }
+
+  /* ════════════════════════════════════
+     المودالات (جميع الصفحات)
+     ════════════════════════════════════ */
+
+  /* تقليل padding المودال */
+  .profile-modal {
+    padding: 0.75rem !important;
+    align-items: flex-end !important;
+  }
+
+  /* تكبير المودال ليأخذ معظم الشاشة */
+  .profile-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: var(--radius) var(--radius) 0 0 !important;
+    max-height: 90vh !important;
+  }
+
+  /* رأس المودال */
+  .profile-header {
+    padding: 1rem 1.25rem !important;
+  }
+
+  .profile-header h3 {
+    font-size: 1.1rem !important;
+  }
+
+  /* محتوى المودال: scroll كافٍ */
+  .profile-content {
+    padding: 1rem 1.25rem !important;
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* أزرار الإجراءات في المودال */
+  .profile-actions {
+    flex-direction: column !important;
+    padding: 0.85rem 1rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .profile-actions .btn {
+    width: 100% !important;
+    font-size: 0.88rem !important;
+    padding: 0.65rem 0.75rem !important;
+    justify-content: center !important;
+  }
+
+  /* أزرار modal-actions */
+  .modal-actions {
+    flex-direction: column-reverse !important;
+    gap: 0.5rem !important;
+    margin-top: 1.25rem !important;
+  }
+
+  .modal-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* شبكة نجوم التقييم: عمود واحد */
+  .stars-input-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem !important;
+  }
+
+  /* شبكة الشارات: 2 أعمدة */
+  #badges-checkbox-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  /* حقول eval-card-section */
+  .eval-card-section div[style*="display: grid"],
+  .eval-card-section div[style*="display:grid"],
+  .eval-card-section div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ════════════════════════════════════
+     منع تكديس الإحصائيات على الهواتف
+     ════════════════════════════════════ */
+  @media (max-width: 576px) {
+    .stats-inner {
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
+    }
+
+    .stat-item {
+      padding: 1rem 0.6rem !important;
+    }
+
+    .stat-num-static {
+      font-size: 1.6rem !important;
+    }
+
+    .stat-icon {
+      font-size: 1.6rem !important;
+    }
+  }
+}
+
+
+
+
+
+/* ── Custom Split Layout for Honor Board Live Preview ── */
+.honor-split-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 1.25rem;
+}
+.honor-wizard-form-col {
+  flex: 1.2;
+  min-width: 320px;
+  width: 100%;
+}
+.honor-preview-col {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(200, 161, 90, 0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 991px) {
+  .honor-split-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── Search Actions Row and Constraints ── */
+.search-actions-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.search-input-field {
+  flex: 1;
+  max-width: 450px; /* Constrain on PC */
+}
+#add-student-btn {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 800;
+  max-width: 200px; /* Constrain on PC */
+}
+
+@media (max-width: 768px) {
+  .search-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-input-field {
+    max-width: 100%;
+    width: 100%;
+  }
+  #add-student-btn {
+    max-width: 100% !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+
+/* ── Unified Shape Uniformity Override ── */
+.about-card, 
+.stat-item, 
+.btn, 
+.btn-primary, 
+.btn--secondary,
+.btn-secondary, 
+input[type="text"], 
+input[type="date"], 
+input[type="tel"], 
+input[type="password"],
+input[type="number"],
+select, 
+textarea,
+.modal-content, 
+.table-responsive,
+.list-header-row,
+.member-list-item,
+.division-tabs button,
+.team-item {
+  border-radius: 12px !important;
+}
+
+/* ── Teams Management Split Grid Layout (Responsive) ── */
+.teams-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px dashed rgba(200, 161, 90, 0.25);
+  padding-top: 1.5rem;
+  min-height: 200px;
+}
+.teams-left-panel {
+  border-left: 1px solid #eee;
+  padding-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .teams-split-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .teams-left-panel {
+    border-left: none !important;
+    border-bottom: 1.5px dashed rgba(200, 161, 90, 0.2) !important;
+    padding-left: 0 !important;
+    padding-bottom: 1.5rem !important;
+  }
+}
+
+/* ── Global Input Styling & Borders Unification ── */
+input, 
+select, 
+textarea {
+  border: 1px solid rgba(13, 92, 70, 0.15) !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 12px !important;
+  outline: none !important;
+  background-color: var(--white) !important;
+  transition: border-color var(--transition), box-shadow var(--transition) !important;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+input:focus, 
+select:focus, 
+textarea:focus {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12) !important;
+}
+
+/* Force global border radius on other inputs, buttons, tables, and cards */
+.about-card, 
+.stat-item, 
+.btn, 
+.btn-primary, 
+.btn--secondary,
+.btn-secondary, 
+.modal-content, 
+.table-responsive,
+.list-header-row,
+.member-list-item,
+.division-tabs button,
+.team-item,
+.teacher-student-card {
+  border-radius: 12px !important;
+}
+
+/* ── Teacher Student Card Layout ── */
+.teacher-student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.teacher-student-card {
+  background: var(--white);
+  border: 1px solid rgba(13, 92, 70, 0.1);
+  border-radius: 12px !important;
+  padding: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+  min-height: 80px;
+  box-sizing: border-box;
+  text-align: right;
+  direction: rtl;
+}
+
+.teacher-student-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13, 92, 70, 0.08);
+  border-color: rgba(13, 92, 70, 0.25);
+}
+
+.teacher-student-card.absent {
+  border-right: 5px solid #ff4d4d !important;
+  background: rgba(255, 77, 77, 0.02) !important;
+}
+
+.teacher-student-card.provisional {
+  border-right: 5px solid var(--green) !important;
+  background: rgba(13, 92, 70, 0.01) !important;
+}
+
+.student-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.student-card-name {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--green-dark);
+}
+
+.student-card-level {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.level-seed { background: rgba(13, 92, 70, 0.08); color: var(--green-dark); }
+.level-sprout { background: #e8f5e9; color: #2e7d32; }
+.level-tree { background: #e0f2f1; color: #00695c; }
+.level-star { background: #fff8e1; color: #f57f17; }
+.level-knight { background: rgba(212, 175, 55, 0.12); color: var(--gold); }
+
+.student-card-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.student-card-meta strong {
+  color: #555;
+}
+
+.student-card-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.status-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stars-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold);
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}

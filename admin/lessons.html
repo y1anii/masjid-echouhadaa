@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة الدروس الأسبوعية | مسجد الشهداء</title>
+    <link rel="stylesheet" href="../css/style.css?v=52" />
+    <link rel="stylesheet" href="css/admin.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="module" src="js/auth.js?v=52"></script>
+    <script>
+      if (!sessionStorage.getItem("masjid_auth") && !localStorage.getItem("masjid_auth")) {
+        window.location.href = "login.html";
+      }
+    </script>
+    <style>
+      /* ── Lesson Form ── */
+      .lesson-form-card {
+        background: rgba(255, 255, 255, 0.94);
+        padding: 2rem 2.5rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.22);
+        outline-offset: -5px;
+        margin-bottom: 2.5rem;
+      }
+
+      .form-row-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-row-grid .form-group {
+        flex: none;
+        min-width: 0;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: var(--gold);
+        cursor: pointer;
+      }
+
+      .checkbox-group label {
+        font-weight: 700;
+        color: var(--green-dark);
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+
+      /* ── Lesson Admin Cards ── */
+      .lessons-admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .lesson-admin-card {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(200, 161, 90, 0.18);
+        border-radius: var(--radius-sm);
+        padding: 1.5rem;
+        outline: 1px solid rgba(212, 175, 55, 0.15);
+        outline-offset: -5px;
+        transition: transform var(--transition), box-shadow var(--transition);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .lesson-admin-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+        border-color: var(--gold);
+      }
+
+      .lesson-admin-card--featured {
+        border-color: var(--gold);
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.04), rgba(255, 255, 255, 0.95));
+      }
+
+      .lesson-admin-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .lesson-admin-card__day {
+        font-family: var(--font-serif);
+        color: var(--gold);
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .lesson-admin-card__title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        margin: 0;
+      }
+
+      .lesson-admin-card__meta {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .lesson-admin-card__meta i {
+        color: var(--gold);
+      }
+
+      .lesson-admin-card__desc {
+        color: var(--text);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        margin: 0.25rem 0 0;
+      }
+
+      .lesson-admin-card__actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(200, 161, 90, 0.12);
+      }
+
+      @media (max-width: 767px) {
+        .lesson-form-card {
+          padding: 1.25rem 1rem;
+        }
+
+        .lessons-admin-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <link rel="icon" type="image/png" href="../images/masjidlogo.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <!-- ══ NAVBAR ══ -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="#" class="navbar-brand" style="cursor: default;" onclick="event.preventDefault();">
+          <img src="../images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        
+        <a href="#" id="pwa-install-btn" class="pwa-install-btn-header" style="display: none;">
+          <i class="ph ph-download-simple" style="font-size: 1.15rem; vertical-align: middle;"></i>
+          <span>تثبيت التطبيق</span>
+        </a>
+        
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html"><i class="ph ph-chart-pie"></i><span>الرئيسية</span></a></li>
+            <li><a href="students.html"><i class="ph ph-users"></i><span>الطلاب</span></a></li>
+            <li><a href="teacher.html"><i class="ph ph-notebook"></i><span>الحلقة</span></a></li>
+            <li><a href="lessons.html" class="active"><i class="ph ph-books"></i><span>الدروس</span></a></li>
+            <li><a href="#" id="logout-btn" class="nav-cta"><i class="ph ph-sign-out"></i><span>خروج</span></a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="admin-container container">
+      <main class="main-content">
+        <header class="section-header">
+          <span class="section-label">لوحة تحكم المسجد</span>
+          <h1 class="section-title">إدارة الدروس الأسبوعية</h1>
+          <p class="section-sub">إضافة وتعديل وحذف الدروس والخطب المقدمة في المسجد خلال أيام الأسبوع.</p>
+        </header>
+
+        <!-- ── نموذج إضافة/تعديل درس ── -->
+        <div class="lesson-form-card">
+          <h2 id="form-title" style="font-size: 1.3rem; font-weight: 800; color: var(--green-dark); margin-bottom: 1.25rem;">إضافة درس جديد</h2>
+
+          <form id="lesson-form">
+            <div class="form-row-grid">
+              <div class="form-group">
+                <label for="lesson-day">اليوم</label>
+                <select id="lesson-day" required>
+                  <option value="" disabled selected>اختر اليوم</option>
+                  <option value="السبت">السبت</option>
+                  <option value="الأحد">الأحد</option>
+                  <option value="الإثنين">الإثنين</option>
+                  <option value="الثلاثاء">الثلاثاء</option>
+                  <option value="الأربعاء">الأربعاء</option>
+                  <option value="الخميس">الخميس</option>
+                  <option value="الجمعة">الجمعة</option>
+                  <option value="يومياً">يومياً (درس يومي)</option>
+                  <option value="من السبت إلى الخميس">من السبت إلى الخميس</option>
+                  <option value="من الأحد إلى الخميس">من الأحد إلى الخميس</option>
+                  <option value="custom">أخرى (كتابة يدوية / من يوم إلى يوم)...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="lesson-time">التوقيت</label>
+                <input type="text" id="lesson-time" required placeholder="مثال: بعد صلاة المغرب" />
+              </div>
+            </div>
+
+            <!-- Custom day/range input (shown when dropdown value is 'custom') -->
+            <div class="form-group" id="custom-day-group" style="display: none; margin-bottom: 1.25rem;">
+              <label for="lesson-day-custom">اليوم أو الفترة المخصصة (مثال: من السبت إلى الإثنين أو درس يومي)</label>
+              <input type="text" id="lesson-day-custom" placeholder="اكتب اليوم أو الفترة المخصصة هنا..." />
+            </div>
+
+            <div class="form-group full-width" style="margin-bottom: 1rem;">
+              <label for="lesson-title">عنوان الدرس</label>
+              <input type="text" id="lesson-title" required placeholder="مثال: تفسير القرآن الكريم" />
+            </div>
+
+            <div class="form-row-grid">
+              <div class="form-group">
+                <label for="lesson-speaker">الملقي / الأستاذ</label>
+                <input type="text" id="lesson-speaker" placeholder="مثال: إمام المسجد" />
+              </div>
+              <div class="form-group">
+                <label for="lesson-desc">وصف مختصر</label>
+                <input type="text" id="lesson-desc" placeholder="وصف مختصر للدرس (اختياري)" />
+              </div>
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="lesson-featured" />
+              <label for="lesson-featured">درس مميز (يظهر بشكل بارز في الموقع)</label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="lesson-submit-btn" class="btn btn-primary" style="flex: 1;">إضافة الدرس</button>
+              <button type="button" id="cancel-edit-btn" class="btn btn-outline" style="display: none; border-color: rgba(255,68,68,0.3); color: #ff4d4d; flex: 0.5;">إلغاء التعديل</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ── قائمة الدروس ── -->
+        <section class="about-card" style="padding: 2rem;">
+          <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--green-dark); margin-bottom: 1.5rem;">
+            <i class="ph-light ph-calendar" style="color: var(--gold);"></i>
+            البرنامج الأسبوعي الحالي
+          </h2>
+          <div id="lessons-grid" class="lessons-admin-grid">
+            <!-- يتم تحميلها ديناميكياً -->
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/db.js?v=52"></script>
+    <script type="module" src="js/lessons.js?v=52"></script>
+  </body>
+</html>

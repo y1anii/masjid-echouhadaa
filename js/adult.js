@@ -1,0 +1,350 @@
+/**
+ * مسجد الشهداء — بوابة متابعة الكبار (التعليم القرآني والشرعي)
+ */
+
+import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const auth = window.DB.auth;
+  const db = window.DB.db;
+
+  // --- UI Elements ---
+  const portalLoginView = document.getElementById("portal-login-view");
+  const portalDashboardView = document.getElementById("portal-dashboard-view");
+  const loginForm = document.getElementById("adult-login-form");
+  const loginSubmitBtn = document.getElementById("btn-login-submit");
+  const adultIdInput = document.getElementById("adult-id");
+  const adultPhoneInput = document.getElementById("adult-phone");
+
+  const welcomeAdultName = document.getElementById("welcome-adult-name");
+  const badgeAdultId = document.getElementById("badge-adult-id");
+  const badgeAdultSection = document.getElementById("badge-adult-section");
+  const badgeAdultPhone = document.getElementById("badge-adult-phone");
+  const badgeAdultQuranLevel = document.getElementById("badge-adult-quranLevel");
+  const badgeAdultPriorBlock = document.getElementById("badge-adult-prior-block");
+  const badgeAdultPrior = document.getElementById("badge-adult-prior");
+
+  const adultTargetHizbSelect = document.getElementById("adult-target-hizb");
+  
+  const statMemorizedVerses = document.getElementById("stat-memorized-verses");
+  const statTargetVerses = document.getElementById("stat-target-verses");
+  const statAttendanceCount = document.getElementById("stat-attendance-count");
+  
+  const adultHistoryList = document.getElementById("adult-history-list");
+  const noHistoryMsg = document.getElementById("no-history-msg");
+  const adultLogoutBtn = document.getElementById("adult-logout-btn");
+
+  // --- State ---
+  let activeAdultId = null;
+  let activeAdultPhone = null;
+  let cachedProfileData = null;
+
+  // --- Boot Check ---
+  checkAdultSession();
+
+  function checkAdultSession() {
+    const isLogged = sessionStorage.getItem("masjid_adult_logged") === "true";
+    if (isLogged) {
+      activeAdultId = sessionStorage.getItem("masjid_adult_id");
+      activeAdultPhone = sessionStorage.getItem("masjid_adult_phone");
+      
+      const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        unsubscribe();
+        if (user) {
+          fetchAndLoadAdultPortal(activeAdultId, activeAdultPhone, false);
+        } else {
+          try {
+            await signInAnonymously(auth);
+            fetchAndLoadAdultPortal(activeAdultId, activeAdultPhone, false);
+          } catch (err) {
+            console.warn("[Adult Portal] Anonymous auth failed, attempting layout load anyway:", err);
+            fetchAndLoadAdultPortal(activeAdultId, activeAdultPhone, false);
+          }
+        }
+      });
+    } else {
+      portalLoginView.style.display = "block";
+      portalDashboardView.style.display = "none";
+    }
+  }
+
+  // --- Login Form Submit ---
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const adultId = adultIdInput.value.trim().toUpperCase();
+    const phone = adultPhoneInput.value.trim();
+
+    if (!adultId || !phone) {
+      alert("يرجى ملء كافة الحقول المطلوبة.");
+      return;
+    }
+
+    fetchAndLoadAdultPortal(adultId, phone, true);
+  });
+
+  async function fetchAndLoadAdultPortal(adultId, phone, isManualLogin) {
+    if (isManualLogin) {
+      loginSubmitBtn.disabled = true;
+      loginSubmitBtn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> جاري التحقق من البيانات...`;
+    }
+
+    try {
+      if (isManualLogin) {
+        let uid = null;
+        try {
+          const userCredential = await signInAnonymously(auth);
+          uid = userCredential.user.uid;
+        } catch (authErr) {
+          console.warn("[Adult Portal] Anonymous sign-in failed during login:", authErr);
+        }
+
+        if (uid) {
+          try {
+            await setDoc(doc(db, "adult_sessions", uid), {
+              adultId: adultId,
+              phone: phone,
+              createdAt: serverTimestamp()
+            });
+          } catch (sessionErr) {
+            console.warn("[Adult Portal] Session logger failed:", sessionErr);
+          }
+        }
+      }
+
+      const result = await window.DB.readAdultProfile(adultId, phone);
+      if (result.success) {
+        cachedProfileData = result;
+        activeAdultId = adultId;
+        activeAdultPhone = phone;
+
+        sessionStorage.setItem("masjid_adult_logged", "true");
+        sessionStorage.setItem("masjid_adult_id", adultId);
+        sessionStorage.setItem("masjid_adult_phone", phone);
+
+        populateDashboard();
+        
+        portalLoginView.style.display = "none";
+        portalDashboardView.style.display = "block";
+
+        if (isManualLogin && typeof confetti === "function") {
+          // Play confetti on successful manual login
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+      } else {
+        alert(result.error || "عذراً، فشل التحقق من هويتك. يرجى مراجعة البيانات.");
+        if (isManualLogin) {
+          logoutAdult();
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      alert("فشل الاتصال بالسيرفر للتحقق من الحساب.");
+      if (isManualLogin) {
+        logoutAdult();
+      }
+    } finally {
+      if (isManualLogin) {
+        loginSubmitBtn.disabled = false;
+        loginSubmitBtn.innerHTML = `<i class="ph-bold ph-sign-in"></i> تسجيل الدخول`;
+      }
+    }
+  }
+
+  // --- Populate Dashboard ---
+  function populateDashboard() {
+    const p = cachedProfileData.participant;
+    const logs = cachedProfileData.progressLogs || [];
+
+    // Set Welcome info
+    welcomeAdultName.textContent = p.name;
+    badgeAdultId.textContent = p.id;
+    badgeAdultSection.textContent = p.section === "نساء" ? "قسم النساء (إناث)" : "قسم الرجال (ذكور)";
+    badgeAdultPhone.textContent = p.phone;
+    if (badgeAdultQuranLevel) {
+      badgeAdultQuranLevel.textContent = p.quranLevel || "غير محدد";
+    }
+    if (p.lastSurah) {
+      if (badgeAdultPriorBlock) badgeAdultPriorBlock.style.display = "flex";
+      if (badgeAdultPrior) badgeAdultPrior.textContent = `سورة ${p.lastSurah} (آية ${p.lastVerse || 1})`;
+    } else {
+      if (badgeAdultPriorBlock) badgeAdultPriorBlock.style.display = "none";
+    }
+
+    // Set Target Selector Dropdown
+    adultTargetHizbSelect.value = String(p.target || 60);
+
+    // Compute progress & stats
+    updateProgressAndStats();
+
+    // Render list
+    renderHistoryList(logs);
+  }
+
+  function updateProgressAndStats() {
+    const targetHizb = parseInt(adultTargetHizbSelect.value) || 60;
+    const logs = cachedProfileData.progressLogs || [];
+
+    // Total verses count mapping for targets
+    // 60 Hizb = 6236 verses. Linear mapping: Math.round(targetHizb * (6236 / 60))
+    const targetVersesCount = Math.round(targetHizb * (6236 / 60));
+
+    // Calculate unique verses from "حفظ" logs
+    const uniqueVerses = new Set();
+    let presentCount = 0;
+
+    logs.forEach(log => {
+      if (log.attendance === "حاضر") {
+        presentCount++;
+        const isQuran = (log.courseName === "تحفيظ القرآن" || log.courseName === "حفظ القرآن ومراجعته" || log.activityType === "حفظ" || log.activityType === "مراجعة");
+        if (isQuran && (log.activityType === "حفظ" || log.activityType === "حفظ جديد")) {
+          const surah = (log.surah || "").trim();
+          const from = Number(log.fromVerse) || 0;
+          const to = Number(log.toVerse) || 0;
+          if (surah && from > 0 && to >= from) {
+            for (let i = from; i <= to; i++) {
+              uniqueVerses.add(`${surah}:${i}`);
+            }
+          }
+        }
+      }
+    });
+
+    const memorizedCount = uniqueVerses.size;
+    const percentage = targetVersesCount > 0 ? Math.min(100, Math.round((memorizedCount / targetVersesCount) * 100)) : 0;
+
+    // Update UI Stats
+    statMemorizedVerses.textContent = `${memorizedCount} آية`;
+    statTargetVerses.textContent = `${targetVersesCount} آية`;
+    statAttendanceCount.textContent = `${presentCount} حصة`;
+
+    // Animate Progress Circle
+    const progressCircleFill = document.getElementById("progress-circle-fill");
+    const progressCirclePercent = document.getElementById("progress-circle-percent");
+    if (progressCircleFill) {
+      const circumference = 439.82;
+      const offset = circumference - (percentage / 100) * circumference;
+      progressCircleFill.style.strokeDashoffset = offset;
+    }
+    if (progressCirclePercent) {
+      progressCirclePercent.textContent = `${percentage}%`;
+    }
+  }
+
+  // --- Handle Target Selector Change ---
+  adultTargetHizbSelect.addEventListener("change", async () => {
+    const newTarget = parseInt(adultTargetHizbSelect.value) || 60;
+    
+    // Save to Cache
+    cachedProfileData.participant.target = newTarget;
+    
+    // Update local display immediately
+    updateProgressAndStats();
+
+    // Persist in DB
+    try {
+      await window.DB.updateAdultParticipantTarget(activeAdultId, newTarget);
+    } catch (err) {
+      console.error("[Adult Portal] Saving new target failed:", err);
+    }
+  });
+
+  // --- Render History Logs ---
+  function renderHistoryList(logs) {
+    adultHistoryList.innerHTML = "";
+    
+    if (logs.length === 0) {
+      noHistoryMsg.style.display = "block";
+      return;
+    }
+    
+    noHistoryMsg.style.display = "none";
+    
+    logs.forEach(log => {
+      const isAbsent = (log.attendance === "غائب");
+      
+      let badgeClass = "type-quran";
+      if (log.activityType === "فقه" || log.courseName === "علوم الفقه") {
+        badgeClass = "type-fiqh";
+      } else if (log.activityType === "تفسير" || log.courseName === "تفسير القرآن") {
+        badgeClass = "type-tafsir";
+      }
+
+      let contentHTML = "";
+      if (isAbsent) {
+        contentHTML = `<span style="color: #ff4d4d; font-weight: 800;">غائب عن الحضور</span>`;
+      } else {
+        const surahVal = log.surah || "غير محدد";
+        const fromVal = Number(log.fromVerse) || 0;
+        const toVal = Number(log.toVerse) || 0;
+        const rangeText = (fromVal > 0 && toVal >= fromVal) ? ` (الآيات: ${fromVal} إلى ${toVal})` : "";
+        contentHTML = `<strong>المحتوى:</strong> ${surahVal}${rangeText}`;
+      }
+
+      let starsHTML = "";
+      if (log.stars > 0) {
+        starsHTML = `
+          <div style="display: flex; gap: 3px; align-items: center; margin-top: 0.5rem; border-top: 1px dashed rgba(200,161,90,0.1); padding-top: 0.5rem;">
+        `;
+        for (let i = 1; i <= 5; i++) {
+          if (i <= log.stars) {
+            starsHTML += `<i class="ph-fill ph-star" style="color: var(--gold); font-size: 1.1rem;"></i>`;
+          } else {
+            starsHTML += `<i class="ph ph-star" style="color: #ccc; font-size: 1.1rem;"></i>`;
+          }
+        }
+        starsHTML += `
+          <span style="font-size: 0.85rem; color: var(--green-dark); font-weight: 800; margin-inline-start: 0.5rem; background: rgba(212,175,55,0.1); padding: 0.15rem 0.5rem; border-radius: 4px;">+${log.points || (log.stars * 2)} نقاط</span>
+          </div>
+        `;
+      }
+
+      const itemHTML = `
+        <div class="history-item" style="${isAbsent ? 'background: rgba(255, 68, 68, 0.01); border-color: rgba(255, 68, 68, 0.15);' : ''}">
+          <div class="history-item-header">
+            <span class="history-date"><i class="ph-bold ph-calendar-check" style="color: var(--gold); vertical-align: middle; margin-left:0.25rem;"></i> حصة يوم ${log.date}</span>
+            <span class="history-type-badge ${badgeClass}">${log.activityType || log.courseName || "تسميع"}</span>
+          </div>
+          <div class="history-grid">
+            <div class="history-col">
+              <span class="history-lbl">موضوع الإنجاز اليومي</span>
+              <div class="history-val">${contentHTML}</div>
+            </div>
+            <div class="history-col">
+              <span class="history-lbl">ملاحظات المشرف وتقييمه</span>
+              <div class="history-val" style="font-weight: 700; color: var(--text-muted); font-style: italic;">
+                ${log.notes || (isAbsent ? "تم رصد الغياب عن الحلقة" : "ممتاز، واصل تقدمك في طلب العلم")}
+              </div>
+            </div>
+          </div>
+          ${starsHTML}
+        </div>
+      `;
+      adultHistoryList.insertAdjacentHTML("beforeend", itemHTML);
+    });
+  }
+
+  // --- Logout ---
+  function logoutAdult() {
+    sessionStorage.removeItem("masjid_adult_logged");
+    sessionStorage.removeItem("masjid_adult_id");
+    sessionStorage.removeItem("masjid_adult_phone");
+    activeAdultId = null;
+    activeAdultPhone = null;
+    cachedProfileData = null;
+
+    portalLoginView.style.display = "block";
+    portalDashboardView.style.display = "none";
+    loginForm.reset();
+  }
+
+  adultLogoutBtn.addEventListener("click", () => {
+    if (confirm("هل تريد تسجيل الخروج من بوابة المتابعة؟")) {
+      logoutAdult();
+    }
+  });
+});

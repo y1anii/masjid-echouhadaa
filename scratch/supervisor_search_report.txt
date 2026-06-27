@@ -1,0 +1,6 @@
+register.html: supervisor=0, مشرف=2
+js\daily.js: supervisor=4, مشرف=2
+admin\index.html: supervisor=0, مشرف=1
+admin\teacher.html: supervisor=2, مشرف=2
+admin\js\db.js: supervisor=25, مشرف=2
+admin\js\teacher.js: supervisor=21, مشرف=2

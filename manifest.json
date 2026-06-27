@@ -1,0 +1,24 @@
+{
+  "name": "بوابة مسجد الشهداء",
+  "short_name": "بوابة الأولياء",
+  "description": "بوابة مسجد الشهداء لمتابعة الحلقات والدورة القرآنية الصيفية",
+  "start_url": "parent-portal.html",
+  "display": "standalone",
+  "background_color": "#083b2d",
+  "theme_color": "#083b2d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "images/parent-portal-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/parent-portal-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

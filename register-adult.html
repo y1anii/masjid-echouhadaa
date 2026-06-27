@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسجيل الكبار | مسجد الشهداء</title>
+    <meta name="description" content="استمارة التسجيل في حلقات التعليم القرآني والشرعي للكبار بمسجد الشهداء - قرية ايباشيرن" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      .register-container {
+        max-width: 42rem;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.22);
+        outline-offset: -5px;
+      }
+      .form-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+      .form-subtitle {
+        color: var(--text-muted);
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+      }
+      .submit-btn {
+        width: 100%;
+        margin-top: 1.5rem;
+      }
+      .success-message {
+        display: none;
+        text-align: center;
+        padding: 3rem 1rem;
+        animation: fadeIn 0.5s var(--ease);
+      }
+      .success-icon {
+        font-size: 4rem;
+        color: var(--green);
+        margin-bottom: 1.5rem;
+      }
+      .success-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        margin-bottom: 1rem;
+      }
+      .success-desc {
+        color: var(--text-muted);
+        line-height: 1.8;
+        max-width: 28rem;
+        margin: 0 auto 2rem;
+      }
+      .courses-checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .course-checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(13, 92, 70, 0.03);
+        border: 1px solid rgba(200, 161, 90, 0.15);
+        padding: 0.85rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--green-dark);
+        transition: all 0.2s ease;
+      }
+      .course-checkbox-label:hover {
+        background: rgba(13, 92, 70, 0.06);
+        border-color: var(--gold);
+      }
+      .course-checkbox-label input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--green);
+        cursor: pointer;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (max-width: 600px) {
+        .register-container {
+          padding: 1.5rem 1rem;
+          margin: 1rem auto;
+          outline-width: 0;
+        }
+        .form-title {
+          font-size: 1.4rem;
+        }
+      }
+    </style>
+    <link rel="icon" type="image/png" href="images/masjidlogo.png" />
+    <link rel="apple-touch-icon" href="images/masjidlogo.png" />
+  </head>
+  <body class="page-quran">
+    <div class="page-transition-overlay" aria-hidden="true"></div>
+
+    <!-- NAVBAR -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="index.html" class="navbar-brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle active" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html" class="active">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <header class="page-hero page-hero--quran">
+      <div class="page-hero__bg" aria-hidden="true"></div>
+      <div class="container page-hero__content reveal">
+        <span class="eyebrow eyebrow--light">التعليم القرآني والشرعي للكبار</span>
+        <h1 class="page-hero__title">استمارة تسجيل الكبار</h1>
+        <p class="page-hero__quote">«مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ»</p>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <section class="section">
+        <div class="container">
+          
+          <!-- Program Definition Intro Card -->
+          <div class="register-container" style="margin-bottom: 2rem; border-bottom: 4px solid var(--gold); padding: 2rem;">
+            <h2 class="form-title" style="margin-bottom: 1rem;"><i class="ph-bold ph-book-open-text" style="color: var(--gold); vertical-align: middle; margin-left: 0.5rem;"></i> برنامج التعليم القرآني والشرعي للكبار</h2>
+            <div style="line-height: 1.8; color: var(--text-dark); text-align: justify; font-size: 0.98rem;">
+              <p style="margin-bottom: 1rem; font-weight: 700; color: var(--green-dark);">يرحب بكم مسجد الشهداء للانضمام إلى حلقات الكبار المخصصة للرجال والنساء، ويهدف هذا البرنامج المبارك إلى تحقيق الأهداف التالية:</p>
+              <ul style="list-style: none; padding-inline-start: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+                <li><i class="ph-bold ph-check-square" style="color: var(--green); margin-inline-end: 0.5rem; vertical-align: middle;"></i> <strong>تحفيظ القرآن الكريم:</strong> حلقات مرنة للتسميع والحفظ والمراجعة الفردية تناسب قدرة كل طالب علم.</li>
+                <li><i class="ph-bold ph-check-square" style="color: var(--green); margin-inline-end: 0.5rem; vertical-align: middle;"></i> <strong>علوم التجويد:</strong> دراسة وتطبيق أحكام التجويد لتحسين تلاوة كتاب الله عز وجل.</li>
+                <li><i class="ph-bold ph-check-square" style="color: var(--green); margin-inline-end: 0.5rem; vertical-align: middle;"></i> <strong>الدروس الشرعية:</strong> دروس مبسطة لتبصير المسلم بأمور دينه وعباداته.</li>
+              </ul>
+              <div style="background: rgba(200, 161, 90, 0.05); border-right: 4px solid var(--gold); padding: 1rem; margin-top: 1rem; border-radius: 0 6px 6px 0;">
+                <h4 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><i class="ph-bold ph-calendar-blank"></i> أوقات التعليم وحلقات الكبار:</h4>
+                <p style="margin: 0; font-weight: 700; color: var(--text-dark);">- للرجال: أيام الثلاثاء والخميس والجمعة بعد صلاة المغرب.</p>
+                <p style="margin: 0; font-weight: 700; color: var(--text-dark);">- للنساء: يوم الجمعة فقط بعد صلاة الجمعة.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Registration form container -->
+          <div class="register-container" id="register-container">
+            <h2 class="form-title">طلب تسجيل جديد للكبار</h2>
+            <p class="form-subtitle">يرجى ملء الاستمارة بالمعلومات الصحيحة للانضمام لحلقات الكبار (رجال ونساء).</p>
+
+            <form id="adult-register-form">
+              
+              <!-- Full Name -->
+              <div class="form-field">
+                <label for="adultName">الاسم واللقب الكامل:</label>
+                <input type="text" id="adultName" required placeholder="مثال: محمد بن علي..." />
+              </div>
+
+              <!-- Gender & Phone in a row -->
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="adultGender">القسم (الجنس):</label>
+                  <select id="adultGender" required>
+                    <option value="" disabled selected>اختر الجنس...</option>
+                    <option value="ذكر">قسم الرجال (ذكور)</option>
+                    <option value="أنثى">قسم النساء (إناث)</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label for="phone">رقم الهاتف للتواصل والدخول:</label>
+                  <input type="tel" id="phone" required placeholder="مثال: 0550123456" pattern="0[567][0-9]{8}" title="يرجى إدخال رقم هاتف جزائري صحيح مكون من 10 أرقام ويبدأ بـ 05 أو 06 أو 07" />
+                </div>
+              </div>
+
+              <!-- Age group row -->
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="adultAge">السن / العمر (سنوات):</label>
+                  <input type="number" id="adultAge" min="15" required placeholder="مثال: 35" />
+                </div>
+              </div>
+
+              <!-- Quranic Level Select -->
+              <div class="form-field">
+                <label for="quranLevel">المستوى القرآني الحالي (مقدار الحفظ):</label>
+                <select id="quranLevel" required>
+                  <option value="" disabled selected>اختر مستواك الحالي في حفظ القرآن...</option>
+                  <option value="مبتدئ (لم يبدأ الحفظ بعد)">مبتدئ (لم يبدأ الحفظ بعد)</option>
+                  <option value="حفظ أقل من حزب">حفظ أقل من حزب</option>
+                  <option value="حفظ من حزب إلى 10 أحزاب">حفظ من حزب إلى 10 أحزاب</option>
+                  <option value="حفظ أكثر من 10 أحزاب">حفظ أكثر من 10 أحزاب</option>
+                  <option value="حافظ لكتاب الله كاملاً (60 حزباً)">حافظ لكتاب الله كاملاً (60 حزباً)</option>
+                </select>
+              </div>
+
+              <!-- Prior Memorization (Optional) -->
+              <div class="form-field" style="background: rgba(200, 161, 90, 0.03); padding: 1.25rem; border-radius: 8px; border: 1px dashed rgba(200, 161, 90, 0.25); margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                <div style="font-weight: 700; color: var(--green-dark); font-size: 0.95rem; margin-bottom: 1rem;">
+                  <i class="ph-bold ph-book-bookmark" style="color: var(--gold); margin-left: 0.25rem; vertical-align: middle;"></i> تفاصيل آخر حفظ (إذا كان لديك حفظ سابق):
+                </div>
+                <div class="form-row">
+                  <div class="form-field" style="margin: 0;">
+                    <label for="lastSurah" style="font-size: 0.85rem;">آخر سورة وصلتها:</label>
+                    <input type="text" id="lastSurah" placeholder="مثال: البقرة" />
+                  </div>
+                  <div class="form-field" style="margin: 0;">
+                    <label for="lastVerse" style="font-size: 0.85rem;">آخر آية وصلتها:</label>
+                    <input type="number" id="lastVerse" min="0" placeholder="رقم الآية" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-field" style="text-align: center; margin-top: 1.5rem; margin-bottom: 0;">
+                <p style="color: #b8860b; font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem;"><i class="ph-bold ph-warning-circle" style="vertical-align: middle; margin-inline-end: 0.25rem;"></i> يرجى التأكد من كتابة رقم الهاتف بشكل صحيح، حيث سيُستخدم لتسجيل الدخول ومتابعة تقدمك لاحقاً.</p>
+                <button type="submit" id="submit-btn" class="btn btn-primary submit-btn">إرسال طلب التسجيل للكبار</button>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- Success Screen -->
+          <div class="register-container success-message" id="success-container">
+            <div class="success-icon"><i class="ph-bold ph-check-circle"></i></div>
+            <h2 class="success-title">تم إرسال طلبك بنجاح!</h2>
+            <div class="success-desc">
+              <p>تم تسجيل طلب انضمامك لحلقات الكبار بمسجد الشهداء بنجاح وهو الآن <strong>قيد المراجعة</strong> من قبل إدارة المسجد.</p>
+              <p style="margin-top: 1rem; font-weight: 700;">معرف التسجيل الخاص بك هو:</p>
+              
+              <div style="background: rgba(13, 92, 70, 0.05); border: 2px dashed var(--gold); border-radius: 8px; padding: 1rem; max-width: 18rem; margin: 1rem auto; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                <span id="display-student-id" style="font-size: 1.6rem; font-weight: 900; color: var(--green-dark); letter-spacing: 1px;">-</span>
+                <button type="button" id="copy-student-id-btn" class="btn" style="padding: 0.4rem 0.75rem; background: var(--green); color: #fff; font-size: 0.85rem; border: none; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer;">
+                  <i class="ph-bold ph-copy"></i>
+                  <span id="copy-btn-text">نسخ</span>
+                </button>
+              </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 22rem; margin: 0 auto;">
+              <a href="adult-portal.html" class="btn btn-primary" style="justify-content: center;">الانتقال لبوابة المتابعة للكبار</a>
+              <a href="index.html" class="btn btn-secondary" style="justify-content: center;">العودة للرئيسية</a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+    <script type="module" src="admin/js/db.js?v=52"></script>
+    <script type="module">
+      document.getElementById('adult-register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-btn');
+        const formContainer = document.getElementById('register-container');
+        const successContainer = document.getElementById('success-container');
+
+        const adultData = {
+          name: document.getElementById('adultName').value.trim(),
+          gender: document.getElementById('adultGender').value,
+          phone: document.getElementById('phone').value.trim(),
+          age: Number(document.getElementById('adultAge').value) || 0,
+          quranLevel: document.getElementById('quranLevel').value,
+          lastSurah: document.getElementById('lastSurah').value.trim(),
+          lastVerse: Number(document.getElementById('lastVerse').value) || 0
+        };
+
+        // Loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'جاري إرسال طلبك...';
+
+        let finalAdultId = "";
+
+        try {
+          if (!window.DB || !window.DB.registerAdultParticipant) {
+            throw new Error("قاعدة البيانات غير مهيأة بعد.");
+          }
+          finalAdultId = await window.DB.registerAdultParticipant(adultData);
+          console.log("[Register Adult] Registered successfully with ID:", finalAdultId);
+        } catch (error) {
+          console.error('Registration failed:', error);
+          alert("حدث خطأ أثناء التسجيل: " + (error.message || error));
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'إرسال طلب التسجيل للكبار';
+          return;
+        }
+
+        // Show adult ID on success screen
+        document.getElementById('display-student-id').textContent = finalAdultId;
+
+        // Copy button event handler
+        const copyBtn = document.getElementById('copy-student-id-btn');
+        const copyText = document.getElementById('copy-btn-text');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(finalAdultId).then(() => {
+              if (copyText) copyText.textContent = "تم النسخ!";
+              copyBtn.style.background = "var(--gold)";
+              setTimeout(() => {
+                if (copyText) copyText.textContent = "نسخ";
+                copyBtn.style.background = "var(--green)";
+              }, 2000);
+            }).catch(err => {
+              console.error("Failed to copy ID: ", err);
+            });
+          });
+        }
+
+        // Show success screen
+        formContainer.style.display = 'none';
+        successContainer.style.display = 'block';
+        window.scrollTo({ top: formContainer.offsetTop - 100, behavior: 'smooth' });
+      });
+    </script>
+  </body>
+</html>

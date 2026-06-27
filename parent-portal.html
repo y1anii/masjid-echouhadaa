@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوابة أولياء الأمور | مسجد الشهداء</title>
+    <meta name="description" content="بوابة متابعة أولياء الأمور لطلاب الدورة الصيفية القرآنية بمسجد الشهداء" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      if (sessionStorage.getItem('masjid_parent_logged') === 'true') {
+        document.write('<style id="session-override">#portal-login-view { display: none !important; } #portal-dashboard-view { display: block !important; }</style>');
+      }
+    </script>
+    <link rel="icon" type="image/png" href="images/parent-portal-icon.png" />
+    <link rel="apple-touch-icon" href="images/parent-portal-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+    <!-- Confetti Library for Graduation Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+      /* Animation for premium certificate reveal */
+      @keyframes certReveal {
+        0% {
+          opacity: 0;
+          transform: scale(0.92) translateY(40px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .cert-reveal-animation {
+        animation: certReveal 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      /* Parent Portal Custom Premium Styles */
+      .portal-container {
+        padding-top: calc(var(--nav-h) + 40px);
+        padding-bottom: 80px;
+        min-height: 80vh;
+      }
+      .login-card {
+        max-width: 480px;
+        margin: 3rem auto;
+      }
+      .portal-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 2px solid rgba(13, 92, 70, 0.08);
+        padding-bottom: 1.5rem;
+      }
+      .portal-user-welcome h1 {
+        font-size: 1.8rem;
+        color: var(--green-dark);
+        font-weight: 900;
+        margin: 0;
+      }
+      .student-badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+      }
+      .student-badge-item {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.15);
+        outline-offset: -5px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .student-badge-icon {
+        font-size: 2.2rem;
+        color: var(--gold);
+        background: rgba(212, 175, 55, 0.08);
+        padding: 0.5rem;
+        border-radius: 8px;
+        display: flex;
+      }
+      .student-badge-details {
+        display: flex;
+        flex-direction: column;
+      }
+      .student-badge-lbl {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .student-badge-val {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: var(--green-dark);
+      }
+      .student-card-level {
+        font-size: 0.85rem;
+        font-weight: 800;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+      }
+      .level-seed {
+        background: rgba(230, 126, 34, 0.12) !important;
+        color: #d35400 !important;
+        border: 1px solid rgba(230, 126, 34, 0.25) !important;
+      }
+      .level-sprout {
+        background: rgba(46, 204, 113, 0.12) !important;
+        color: #2ecc71 !important;
+        border: 1px solid rgba(46, 204, 113, 0.25) !important;
+      }
+      .level-tree {
+        background: rgba(212, 175, 55, 0.12) !important;
+        color: var(--gold) !important;
+        border: 1px solid rgba(212, 175, 55, 0.25) !important;
+      }
+      .level-star {
+        background: rgba(0, 168, 204, 0.12) !important;
+        color: #00a8cc !important;
+        border: 1px solid rgba(0, 168, 204, 0.25) !important;
+      }
+      .level-knight {
+        background: rgba(156, 39, 176, 0.12) !important;
+        color: #9c27b0 !important;
+        border: 1px solid rgba(156, 39, 176, 0.25) !important;
+      }
+      
+      /* Accordion styles for Weekly Reports */
+      .report-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .accordion-item {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(200, 161, 90, 0.18);
+        border-radius: var(--radius-sm);
+        outline: 1px solid rgba(212, 175, 55, 0.12);
+        outline-offset: -5px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: all var(--transition);
+      }
+      .accordion-trigger {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        text-align: right;
+        font-family: inherit;
+        transition: background var(--transition);
+      }
+      .accordion-trigger:hover {
+        background: rgba(13, 92, 70, 0.03);
+      }
+      .accordion-title-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .accordion-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--green-dark);
+      }
+      .accordion-status-tags {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .tag-approved-sig {
+        background: rgba(13, 92, 70, 0.08);
+        color: var(--green);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid rgba(13, 92, 70, 0.15);
+      }
+      .tag-pending-sig {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--gold);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+      }
+      .accordion-arrow {
+        font-size: 1.2rem;
+        color: var(--gold);
+        transition: transform var(--transition);
+      }
+      .accordion-item.is-open .accordion-arrow {
+        transform: rotate(180deg);
+      }
+      .accordion-content {
+        display: none;
+        padding: 0 2rem 2rem;
+        border-top: 1px dashed rgba(200, 161, 90, 0.15);
+        background: var(--white);
+      }
+      .accordion-item.is-open .accordion-content {
+        display: block;
+      }
+      
+      /* Student Details Card Grid */
+      .daily-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+      .details-block {
+        border-right: 3px solid var(--gold);
+        padding-right: 1rem;
+        margin-bottom: 1rem;
+      }
+      .details-block-title {
+        font-weight: 800;
+        color: var(--green-dark);
+        margin-bottom: 0.5rem;
+        font-size: 1.05rem;
+      }
+      .details-block-val {
+        color: var(--text);
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      /* Premium form fields for Parent Portal Login */
+      .form-group input {
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        border: 1px solid rgba(200, 161, 90, 0.25);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 1rem;
+        background: var(--white);
+        transition: all var(--transition);
+        text-align: right;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      }
+      .form-group input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12), inset 0 2px 4px rgba(0,0,0,0.01);
+      }
+      .form-group label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--green-dark);
+        margin-bottom: 0.5rem;
+        text-align: right;
+      }
+      .quran-log-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid rgba(200, 161, 90, 0.15);
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        background: #fff;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s ease;
+      }
+      .quran-log-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 92, 70, 0.04);
+      }
+      
+      /* PWA Custom Modal styling */
+      .profile-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        padding: 1rem;
+      }
+      .profile-card {
+        background: var(--white);
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 500px;
+        overflow: hidden;
+        animation: fadeIn 0.3s ease;
+      }
+      .profile-header {
+        background: var(--green-dark);
+        color: var(--white);
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid var(--gold);
+      }
+      .profile-header h3 {
+        margin: 0;
+        color: var(--white);
+        font-weight: 850;
+        font-size: 1.15rem;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        color: var(--white);
+        font-size: 1.5rem;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+      }
+      .close-btn:hover {
+        opacity: 1;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Mobile Responsive Style Overrides */
+      @media (max-width: 600px) {
+        .portal-container {
+          padding-top: calc(var(--nav-h) + 20px);
+          padding-bottom: 40px;
+        }
+        .portal-header-info {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+          margin-bottom: 1.5rem;
+        }
+        .portal-user-welcome h1 {
+          font-size: 1.4rem !important;
+        }
+        .student-badge-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          margin-bottom: 1.5rem !important;
+        }
+        .student-badge-item {
+          padding: 1rem 0.75rem !important;
+          gap: 0.5rem !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          text-align: center !important;
+        }
+        .student-badge-icon {
+          font-size: 1.8rem !important;
+          padding: 0.4rem !important;
+        }
+        .student-badge-val {
+          font-size: 0.95rem !important;
+        }
+        .accordion-trigger {
+          padding: 1rem 1.25rem !important;
+        }
+        .accordion-title {
+          font-size: 1.05rem !important;
+        }
+        .accordion-content {
+          padding: 0 1.25rem 1.5rem !important;
+        }
+        .daily-details-grid {
+          grid-template-columns: 1fr !important;
+          gap: 1rem !important;
+        }
+        .details-block {
+          padding-right: 0.75rem !important;
+          margin-bottom: 0.5rem !important;
+        }
+        .calc-stat-box {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          padding: 1rem !important;
+        }
+        .calc-stat-val {
+          font-size: 1.25rem !important;
+        }
+        .admin-tabs {
+          flex-wrap: wrap !important;
+          gap: 0.25rem !important;
+        }
+        .admin-tabs .tab-btn {
+          font-size: 0.9rem !important;
+          padding: 0.4rem 0.6rem !important;
+        }
+        .quran-log-item {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 0.5rem !important;
+        }
+        .quran-log-item > div:last-child {
+          width: 100% !important;
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          border-top: 1px dashed #eee !important;
+          padding-top: 0.5rem !important;
+        }
+        
+        /* Responsive Graduation Certificate */
+        #certificate-print-area {
+          margin: 1.5rem auto 1rem auto !important;
+          padding: 0 0.5rem !important;
+        }
+        #certificate-print-area > div {
+          padding: 1.5rem 1rem !important;
+          border-width: 6px !important;
+          outline-width: 2px !important;
+          outline-offset: -10px !important;
+        }
+        #certificate-print-area h1 {
+          font-size: 1.6rem !important;
+        }
+        #certificate-print-area p {
+          font-size: 0.95rem !important;
+        }
+        #certificate-print-area div {
+          font-size: 1rem !important;
+          line-height: 1.8 !important;
+          margin: 1.5rem 0 !important;
+        }
+        #certificate-print-area strong {
+          font-size: 1.25rem !important;
+        }
+        #cert-student-name {
+          font-size: 1.4rem !important;
+          padding: 0 0.5rem !important;
+        }
+        /* Weekly Honor Board Card - Males Theme (Green / Gold) */
+        #weekly-honor-board-card.theme-males {
+          border-color: var(--gold) !important;
+          background-color: #fffdf9 !important;
+        }
+        #weekly-honor-board-card.theme-males h2 {
+          color: var(--green-dark) !important;
+        }
+        #weekly-honor-board-card.theme-males h2 i {
+          color: var(--gold) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-memo {
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.06), rgba(212, 175, 55, 0.12)) !important;
+          border-color: rgba(212, 175, 55, 0.3) !important;
+          box-shadow: 0 4px 10px rgba(212,175,55,0.08) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-memo .icon-circle {
+          background: var(--gold) !important;
+          color: var(--green-dark) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-memo h4 {
+          color: var(--green-dark) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-memo p {
+          color: #c5a028 !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-memo strong {
+          color: var(--green-dark) !important;
+          border-bottom-color: rgba(212, 175, 55, 0.4) !important;
+        }
+        
+        #weekly-honor-board-card.theme-males .hcard-behavior {
+          background: linear-gradient(135deg, rgba(13, 92, 70, 0.04), rgba(13, 92, 70, 0.08)) !important;
+          border-color: rgba(13, 92, 70, 0.2) !important;
+          box-shadow: 0 4px 10px rgba(13,92,70,0.05) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-behavior .icon-circle {
+          background: var(--green) !important;
+          color: var(--white) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-behavior h4 {
+          color: var(--green-dark) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-behavior p {
+          color: var(--green) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-behavior strong {
+          color: var(--green-dark) !important;
+          border-bottom-color: rgba(13, 92, 70, 0.3) !important;
+        }
+
+        #weekly-honor-board-card.theme-males .hcard-part {
+          background: linear-gradient(135deg, rgba(0, 168, 204, 0.04), rgba(0, 168, 204, 0.08)) !important;
+          border-color: rgba(0, 168, 204, 0.2) !important;
+          box-shadow: 0 4px 10px rgba(0,168,204,0.05) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-part .icon-circle {
+          background: #00a8cc !important;
+          color: var(--white) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-part h4 {
+          color: var(--green-dark) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-part p {
+          color: #00a8cc !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-part strong {
+          color: var(--green-dark) !important;
+          border-bottom-color: rgba(0, 168, 204, 0.3) !important;
+        }
+
+        #weekly-honor-board-card.theme-males .hcard-team {
+          background: linear-gradient(135deg, rgba(156, 39, 176, 0.04), rgba(156, 39, 176, 0.08)) !important;
+          border-color: rgba(156, 39, 176, 0.2) !important;
+          box-shadow: 0 4px 10px rgba(156,39,176,0.05) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-team .icon-circle {
+          background: #9c27b0 !important;
+          color: var(--white) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-team h4 {
+          color: var(--green-dark) !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-team p {
+          color: #9c27b0 !important;
+        }
+        #weekly-honor-board-card.theme-males .hcard-team strong {
+          color: var(--green-dark) !important;
+          border-bottom-color: rgba(156, 39, 176, 0.3) !important;
+        }
+
+        /* Weekly Honor Board Card - Females Theme (Pink / Crimson-Rose / Gold) */
+        #weekly-honor-board-card.theme-females {
+          border-color: #cf6376 !important;
+          background-color: #fff9fa !important;
+        }
+        #weekly-honor-board-card.theme-females h2 {
+          color: #cf6376 !important;
+        }
+        #weekly-honor-board-card.theme-females h2 i {
+          color: #d4af37 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-memo {
+          background: linear-gradient(135deg, rgba(207, 99, 118, 0.06), rgba(207, 99, 118, 0.12)) !important;
+          border-color: rgba(207, 99, 118, 0.3) !important;
+          box-shadow: 0 4px 10px rgba(207,99,118,0.08) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-memo .icon-circle {
+          background: #d4af37 !important;
+          color: #ffffff !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-memo h4 {
+          color: #cf6376 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-memo p {
+          color: #b84e60 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-memo strong {
+          color: #b84e60 !important;
+          border-bottom-color: rgba(207, 99, 118, 0.4) !important;
+        }
+        
+        #weekly-honor-board-card.theme-females .hcard-behavior {
+          background: linear-gradient(135deg, rgba(207, 99, 118, 0.04), rgba(207, 99, 118, 0.08)) !important;
+          border-color: rgba(207, 99, 118, 0.2) !important;
+          box-shadow: 0 4px 10px rgba(207,99,118,0.05) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-behavior .icon-circle {
+          background: #cf6376 !important;
+          color: var(--white) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-behavior h4 {
+          color: #cf6376 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-behavior p {
+          color: #cf6376 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-behavior strong {
+          color: #b84e60 !important;
+          border-bottom-color: rgba(207, 99, 118, 0.3) !important;
+        }
+
+        #weekly-honor-board-card.theme-females .hcard-part {
+          background: linear-gradient(135deg, rgba(0, 168, 204, 0.04), rgba(0, 168, 204, 0.08)) !important;
+          border-color: rgba(0, 168, 204, 0.2) !important;
+          box-shadow: 0 4px 10px rgba(0,168,204,0.05) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-part .icon-circle {
+          background: #00a8cc !important;
+          color: var(--white) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-part h4 {
+          color: #cf6376 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-part p {
+          color: #00a8cc !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-part strong {
+          color: #b84e60 !important;
+          border-bottom-color: rgba(0, 168, 204, 0.3) !important;
+        }
+
+        #weekly-honor-board-card.theme-females .hcard-team {
+          background: linear-gradient(135deg, rgba(156, 39, 176, 0.04), rgba(156, 39, 176, 0.08)) !important;
+          border-color: rgba(156, 39, 176, 0.2) !important;
+          box-shadow: 0 4px 10px rgba(156,39,176,0.05) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-team .icon-circle {
+          background: #9c27b0 !important;
+          color: var(--white) !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-team h4 {
+          color: #cf6376 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-team p {
+          color: #9c27b0 !important;
+        }
+        #weekly-honor-board-card.theme-females .hcard-team strong {
+          color: #b84e60 !important;
+          border-bottom-color: rgba(156, 39, 176, 0.3) !important;
+        }
+      }
+
+      /* Unified Shape Uniformity (12px Border-Radius Overrides) */
+      .login-card,
+      .about-card,
+      .target-card,
+      .history-card,
+      .history-item,
+      .quran-log-item,
+      .profile-card,
+      .student-badge-item,
+      .accordion-item,
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      input[type="text"],
+      input[type="tel"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      select,
+      textarea,
+      .btn,
+      button:not(.nav-toggle):not(.close-btn) {
+        border-radius: 12px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ══ NAVBAR ══ -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="#" class="navbar-brand" style="cursor: default;" onclick="event.preventDefault();">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="portal-container container">
+      <!-- PWA Install Button Container -->
+      <div id="pwa-install-container" style="display: none; margin-bottom: 1.5rem; text-align: center;">
+        <button id="pwa-install-btn-portal" class="btn" style="background: var(--gold); color: var(--green-dark); border: 1.5px solid var(--gold); font-weight: 900; padding: 0.6rem 1.5rem; border-radius: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; box-shadow: var(--shadow); width: max-content; margin: 0 auto;">
+          <i class="ph-bold ph-device-mobile" style="font-size: 1.25rem;"></i>
+          <span>تثبيت التطبيق</span>
+        </button>
+      </div>
+
+      <!-- 1. LOGIN GATE VIEW -->
+      <section id="portal-login-view" class="about-card login-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <i class="ph-bold ph-shield-check" style="font-size: 3.5rem; color: var(--gold); display: block; margin-bottom: 1rem;"></i>
+          <h2 style="color: var(--green-dark); font-weight: 900; margin-bottom: 0.5rem;">بوابة أولياء الأمور</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">الرجاء إدخال البيانات المكتوبة في وصل التسجيل الأولي لمتابعة ابنكم.</p>
+        </div>
+
+        <form id="parent-login-form" class="form-grid">
+          <div class="form-group full-width">
+            <label for="parent-student-id"><i class="ph-bold ph-hash" style="vertical-align: middle; margin-left: 0.25rem;"></i> معرف الطالب الفريد (ID):</label>
+            <input type="text" id="parent-student-id" placeholder="ST48902" required style="width: 100%;" />
+          </div>
+          <div class="form-group full-width">
+            <label for="parent-phone"><i class="ph-bold ph-phone" style="vertical-align: middle; margin-left: 0.25rem;"></i> رقم هاتف ولي الأمر المسجل:</label>
+            <input type="tel" id="parent-phone" placeholder="0555123456" required style="width: 100%;" />
+          </div>
+          
+          <button type="submit" id="btn-login-submit" class="btn" style="width: 100%; margin-top: 1.5rem; padding: 0.8rem;">
+            <i class="ph-bold ph-sign-in" style="vertical-align: middle; margin-left: 0.5rem;"></i> الدخول للمتابعة
+          </button>
+        </form>
+        
+        <!-- Forgot ID Recovery Link -->
+        <div style="text-align: center; margin-top: 1.25rem;">
+          <a href="#" id="forgot-id-link" style="color: var(--green-light); font-weight: 700; text-decoration: none; font-size: 0.88rem; transition: color 0.2s ease;">
+            <i class="ph ph-question" style="vertical-align: middle; margin-left: 0.25rem;"></i> نسيت معرف التلميذ (ID)؟
+          </a>
+        </div>
+      </section>
+
+      <!-- Forgot ID Modal -->
+      <div id="forgot-id-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+        <div class="profile-card animate-modal" style="max-width: 450px; width: 100%; background: #fff; padding: 2rem; border-radius: var(--radius); border-top: 4px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg);">
+          <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(13, 92, 70, 0.1); padding-bottom: 0.75rem;">
+            <h3 style="color: var(--green-dark); font-weight: 900; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-key" style="color: var(--gold);"></i> استعادة معرف الطالب (ID)
+            </h3>
+            <button id="close-forgot-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+          </div>
+          
+          <form id="forgot-id-form">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="recovery-phone" style="display: block; font-weight: 700; color: var(--green-dark); margin-bottom: 0.4rem;">رقم هاتف ولي الأمر:</label>
+              <input type="tel" id="recovery-phone" placeholder="0555123456" required style="width: 100%; padding: 0.75rem; border: 1px solid #e0dcd3; border-radius: var(--radius-sm);" />
+            </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="recovery-name" style="display: block; font-weight: 700; color: var(--green-dark); margin-bottom: 0.4rem;">اسم الطالب كامل (كما في الوصل):</label>
+              <input type="text" id="recovery-name" placeholder="اسم الطالب كاملاً..." required style="width: 100%; padding: 0.75rem; border: 1px solid #e0dcd3; border-radius: var(--radius-sm);" />
+            </div>
+            
+            <button type="submit" id="btn-recovery-submit" class="btn" style="width: 100%; padding: 0.8rem; font-weight: 800; background: var(--green); color: #fff;">
+              البحث عن المعرف
+            </button>
+          </form>
+
+          <div id="recovery-error" style="display: none; color: #ff4d4d; background: rgba(255, 68, 68, 0.08); border: 1px solid rgba(255, 68, 68, 0.2); padding: 0.75rem; border-radius: var(--radius-sm); margin-top: 1rem; text-align: center; font-weight: 700; font-size: 0.85rem;"></div>
+
+          <div id="recovery-results" style="display: none; margin-top: 1.5rem; border-top: 1.5px dashed rgba(13, 92, 70, 0.1); padding-top: 1rem;">
+            <h4 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.75rem;">المعرفات المكتشفة:</h4>
+            <div id="recovery-results-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. STUDENT PORTAL DASHBOARD VIEW -->
+      <section id="portal-dashboard-view" style="display: none;">
+        <div class="portal-header-info">
+          <div class="portal-user-welcome">
+            <h1 style="font-size: 1.6rem; color: var(--green-dark); font-weight: 900; margin: 0; line-height: 1.4;">
+              مرحباً بولي الأمر الكريم، ابنكم <span id="welcome-student-name" style="color: var(--gold); border-bottom: 2px dashed var(--gold);">تحميل اسم الطالب...</span>
+            </h1>
+            <div id="student-portal-team-badge" style="display: none; background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.82rem; font-weight: 800; width: fit-content; margin-top: 0.5rem; align-items: center; gap: 0.35rem;">
+              <i class="ph-bold ph-users-three" style="font-size: 1rem;"></i> 
+              <span>عضو في فريق: <strong id="student-portal-team-name">-</strong></span>
+            </div>
+          </div>
+          <button id="parent-logout-btn" class="btn" style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff4d4d; padding: 0.5rem 1.25rem;">
+            تسجيل الخروج <i class="ph ph-sign-out" style="vertical-align: middle; margin-right: 0.25rem;"></i>
+          </button>
+        </div>
+
+        <!-- Student Badges Row (6 items grid) -->
+        <div class="student-badge-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+          <div class="student-badge-item" style="background: var(--green-dark); border: 2.5px solid var(--gold); color: var(--white); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); outline: 1px solid rgba(212, 175, 55, 0.3); outline-offset: -3px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.5rem; padding: 1.2rem 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+              <div class="student-badge-icon" style="background: rgba(212, 175, 55, 0.15);"><i class="ph-bold ph-identification-card" style="color: var(--gold);"></i></div>
+              <div class="student-badge-details">
+                <span class="student-badge-lbl" style="color: rgba(255, 255, 255, 0.75);">معرف الطالب</span>
+                <span id="badge-student-id" class="student-badge-val" style="color: var(--gold); font-weight: 900; letter-spacing: 1px;">-</span>
+              </div>
+            </div>
+            <div id="badge-student-team-container" style="display: none; border-top: 1px dashed rgba(212, 175, 55, 0.3); width: 100%; padding-top: 0.4rem; font-size: 0.8rem; color: #fff; font-weight: 700; align-items: center; gap: 0.35rem; margin-inline-start: 0.25rem;">
+              <i class="ph-bold ph-users-three" style="color: var(--gold); font-size: 0.95rem;"></i>
+              <span>فريق: <strong id="badge-student-team-name" style="color: var(--gold); font-weight: 900;">-</strong></span>
+            </div>
+          </div>
+          <div class="student-badge-item" style="border-color: rgba(13, 92, 70, 0.3);">
+            <div class="student-badge-icon"><i class="ph-bold ph-sketch-logo" style="color: var(--green);"></i></div>
+            <div class="student-badge-details">
+              <span class="student-badge-lbl">النقاط الكلية</span>
+              <span id="badge-points-total" class="student-badge-val" style="color: var(--green);">0</span>
+            </div>
+          </div>
+          <div class="student-badge-item">
+            <div class="student-badge-icon"><i class="ph-bold ph-star-four"></i></div>
+            <div class="student-badge-details">
+              <span class="student-badge-lbl">النجوم التراكمية</span>
+              <span id="badge-stars-cum" class="student-badge-val">0 <i class="ph-fill ph-star" style="color: var(--gold); vertical-align: middle;"></i></span>
+            </div>
+          </div>
+          <div class="student-badge-item" style="border-color: rgba(212, 175, 55, 0.3);">
+            <div class="student-badge-icon"><i class="ph-bold ph-ranking" style="color: var(--gold);"></i></div>
+            <div class="student-badge-details">
+              <span class="student-badge-lbl">الترتيب العام</span>
+              <span id="badge-rank" class="student-badge-val" style="color: var(--green-dark); font-weight: 900;">-</span>
+            </div>
+          </div>
+          <div class="student-badge-item">
+            <div class="student-badge-icon"><i class="ph-bold ph-crown"></i></div>
+            <div class="student-badge-details">
+              <span class="student-badge-lbl">المستوى الحالي</span>
+              <span id="badge-level" class="student-badge-val">-</span>
+            </div>
+          </div>
+          <div class="student-badge-item" style="border-color: rgba(13, 92, 70, 0.3);">
+            <div class="student-badge-icon"><i class="ph-bold ph-calendar-check" style="color: var(--green);"></i></div>
+            <div class="student-badge-details">
+              <span class="student-badge-lbl">نسبة الحضور</span>
+              <span id="badge-attendance-rate" class="student-badge-val">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Badges Gallery (Show achieved badges) -->
+        <div class="about-card" style="margin-bottom: 2.5rem; display: none;" id="student-badges-gallery-card">
+          <h2 style="color: var(--green-dark); font-weight: 900; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem;">
+            <i class="ph-bold ph-award" style="color: var(--gold);"></i> شارات وأوسمة التميز المحققة
+          </h2>
+          <div id="badges-gallery-list" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-start;">
+            <!-- Badge icons rendered here -->
+          </div>
+        </div>
+
+        <!-- Weekly Honor Board (لوحة الشرف الأسبوعية) -->
+        <div class="about-card theme-males" style="margin-bottom: 2.5rem; display: none;" id="weekly-honor-board-card">
+          <h2 style="font-weight: 900; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.4rem;">
+            <i class="ph-fill ph-trophy honor-trophy-icon" style="font-size: 1.6rem;"></i> 
+            <span id="weekly-honor-board-title">لوحة الشرف للأسبوع الحالي</span>
+          </h2>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1rem; direction: rtl;">
+            <!-- 1st Place: Memorization Champion -->
+            <div class="hcard-memo" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="ph-fill ph-medal"></i>
+              </div>
+              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">المركز الأول (الأكثر حفظاً)</h4>
+              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">بطل الحفظ</p>
+              <strong style="font-size: 1.3rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-memo-champ-val">-</strong>
+            </div>
+
+            <!-- 2nd Place: Behavior Champion -->
+            <div class="hcard-behavior" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="ph-fill ph-shield-check"></i>
+              </div>
+              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">المركز الثاني (الأكثر سلوكاً)</h4>
+              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">بطل السلوك</p>
+              <strong style="font-size: 1.3rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-behavior-champ-val">-</strong>
+            </div>
+
+            <!-- 3rd Place: Participation Champion -->
+            <div class="hcard-part" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="ph-fill ph-star"></i>
+              </div>
+              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">المركز الثالث (الأكثر مشاركة)</h4>
+              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">بطل المشاركة</p>
+              <strong style="font-size: 1.3rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-participation-champ-val">-</strong>
+            </div>
+
+            <!-- Group Award: Distinguished Team -->
+            <div class="hcard-team" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="ph-fill ph-users-three"></i>
+              </div>
+              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">أفضل فريق</h4>
+              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">أفضل أداء جماعي</p>
+              <strong style="font-size: 1.2rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-distinguished-team-val">-</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Reports & Quran Achievements Banner / Call to Action -->
+        <div class="about-card" style="margin-bottom: 1.5rem; border: 1px solid rgba(200, 161, 90, 0.25); background: rgba(13, 92, 70, 0.02); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem;">
+          <div style="flex: 1; min-width: 260px;">
+            <h3 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.25rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-calendar" style="color: var(--gold); font-size: 1.3rem;"></i> التقرير اليومي الشامل ودفتر الإنجازات
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">متابعة يومية مفصلة لسجل الحضور، والتقييمات السلوكية، وإنجازات الحفظ ومراجعة القرآن الكريم.</p>
+          </div>
+          <div>
+            <a href="parent-daily.html" class="btn" style="font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.5rem; text-decoration: none; background: var(--green); color: var(--white); border-radius: 6px;">
+              <span>دفتر الإنجازات اليومي</span>
+              <i class="ph-bold ph-arrow-left"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Weekly Reports Banner / Call to Action -->
+        <div class="about-card" style="margin-bottom: 2.5rem; border: 1px solid rgba(200, 161, 90, 0.25); background: rgba(13, 92, 70, 0.02); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem;">
+          <div style="flex: 1; min-width: 260px;">
+            <h3 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.25rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-chart-bar" style="color: var(--gold); font-size: 1.3rem;"></i> التقارير الأسبوعية والشهرية
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">الآن يمكنكم معاينة تفاصيل تقارير الأداء الأسبوعية والشهرية المجمعة.</p>
+          </div>
+          <div>
+            <a href="parent-reports.html" class="btn" style="font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.5rem; text-decoration: none; background: var(--green); color: var(--white); border-radius: 6px;">
+              <span>معاينة التقارير الأسبوعية</span>
+              <i class="ph-bold ph-arrow-left"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Premium Certificate Inline Area (Shown when course ended) -->
+        <div id="certificate-print-area" style="display: none; width: 100%; max-width: 800px; margin: 2rem auto 1.5rem auto; box-sizing: border-box; direction: rtl;">
+          <div style="border: 10px double #d4af37; padding: 3rem; border-radius: 15px; outline: 3px solid #083b2d; outline-offset: -15px; text-align: center; background: #fffdf6; position: relative; width: 100%; box-sizing: border-box; page-break-inside: avoid;">
+            <span style="font-family: 'Amiri', serif; font-size: 1.4rem; color: #083b2d; display: block; margin-bottom: 1rem;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+            <img src="images/masjidlogo.png" alt="مسجد الشهداء" style="width: 80px; height: 80px; margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto;" />
+            <h1 style="color: #083b2d; font-weight: 900; font-size: 2.5rem; margin: 0; font-family: 'Amiri', serif; letter-spacing: 1px;">شَـهَـادَةُ إِتْـمَـامٍ وَتَـفَـوُّقٍ</h1>
+            <p style="color: #d4af37; font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem;">الدورة القرآنية الصيفية لمسجد الشهداء</p>
+            
+            <div style="margin: 2.5rem 0; font-size: 1.35rem; line-height: 2.2; color: #222;">
+              تَشْهَدُ إِدَارَةُ مَسْجِدِ الشُّهَدَاءِ بِقَرْيَةِ إِيبَاشِيرَن (بَلَدِيَّةِ وَادِ غِير) بِأَنَّ الطَّالِبَ(ة):<br>
+              <strong style="font-size: 2rem; color: #083b2d; border-bottom: 2px dashed #d4af37; padding: 0 1.5rem; display: inline-block; margin: 0.5rem 0;" id="cert-student-name">...</strong><br>
+              قَدْ أَتَمَّ بِنَجَاحٍ مُشَارَكَتَهُ فِي الدَّوْرَةِ القُرْآنِيَّةِ الصَّيْفِيَّةِ لِعَامِ 2026م،<br>
+              وَقَدْ حَفِظَ خِلَالَهَا إِجْمَالِي: <strong style="color: #d4af37; font-size: 1.5rem;" id="cert-total-ayahs">0</strong> <span id="cert-ayahs-label">آيَةً كَرِيمَةً</span>،<br>
+              وَحَصَلَ عَلَى تَقْدِيرٍ خِتَامِيٍّ عَامٍّ: <strong style="color: #0d5c46; font-size: 1.4rem;" id="cert-overall-grade">...</strong><br>
+              وَرَصِيدِ نُجُومٍ تَشْجِيعِيٍّ بَلَغَ: <strong style="color: #d4af37; font-size: 1.4rem;" id="cert-final-stars">0</strong> نَجْمَةً، مِمَّا أَهَّلَهُ لِلْمُسْتَوَى: <strong id="cert-final-level">...</strong>.
+            </div>
+
+            <div style="border-top: 1px dashed rgba(212, 175, 55, 0.3); padding-top: 1.5rem; margin-top: 2.5rem; text-align: center; font-size: 0.95rem; color: #5a645e;">
+              <span>شهادة إلكترونية صادرة عن إدارة مسجد الشهداء بقرية إيباشيرن ولا تتطلب ختماً أو توقيعاً خطياً.</span><br>
+              <span style="font-size: 0.8rem; margin-top: 0.5rem; display: block; color: #d4af37;">تاريخ الإصدار: عام 2026م</span>
+            </div>
+          </div>
+        </div>
+
+
+      </section>
+    </div>
+
+
+
+    <!-- Print stylesheet for direct certificate A4 print -->
+    <style>
+      @media print {
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+        body.printing-cert {
+          background: #fffdf6 !important;
+          margin: 0;
+          padding: 0;
+          width: 210mm;
+          height: 297mm;
+        }
+        body.printing-cert #certificate-print-area {
+          display: block !important;
+          position: absolute;
+          inset: 0;
+          width: 210mm;
+          height: 297mm;
+          box-sizing: border-box;
+          padding: 12mm;
+          page-break-inside: avoid;
+          page-break-after: avoid;
+        }
+        body.printing-cert #certificate-print-area > div {
+          height: 100%;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 2.5rem !important;
+        }
+        body.printing-cert .navbar, 
+        body.printing-cert .site-footer, 
+        body.printing-cert .portal-container {
+          display: none !important;
+        }
+      }
+    </style>
+
+    <!-- iOS PWA Installation Guide Modal -->
+    <div id="ios-pwa-modal" class="profile-modal" style="display: none;">
+      <div class="profile-card animate-modal" style="max-width: 420px; border: 2px solid var(--gold);">
+        <div class="profile-header">
+          <h3>تثبيت التطبيق على أجهزة iPhone/iPad</h3>
+          <button id="close-ios-pwa-modal" class="close-btn"><i class="ph-light ph-x"></i></button>
+        </div>
+        <div class="profile-content" style="text-align: center; direction: rtl; padding: 1.5rem; background: #fffdf6;">
+          <i class="ph-bold ph-arrow-down-to-line" style="font-size: 3rem; color: var(--gold); display: block; margin-bottom: 1rem;"></i>
+          <p style="font-weight: 800; color: var(--green-dark); margin-bottom: 1.5rem; font-size: 1.1rem;">لتثبيت الموقع كتطبيق على شاشتك الرئيسية، يرجى اتباع الخطوات التالية:</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem; text-align: right; margin-bottom: 1.5rem; background: rgba(13, 92, 70, 0.02); padding: 1.25rem; border-radius: 8px; border: 1px dashed rgba(200, 161, 90, 0.25);">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="background: var(--green); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">١</span>
+              <span>اضغط على زر المشاركة <strong>(Share <i class="ph-bold ph-export" style="vertical-align: middle;"></i>)</strong> في متصفح Safari.</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="background: var(--green); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">٢</span>
+              <span>اختر <strong>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen <i class="ph-bold ph-plus-square" style="vertical-align: middle;"></i>)</strong> من قائمة الخيارات.</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="background: var(--green); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">٣</span>
+              <span>اضغط على <strong>"إضافة" (Add)</strong> في الزاوية العلوية لتأكيد التثبيت.</span>
+            </div>
+          </div>
+          
+          <button id="close-ios-pwa-modal-btn" class="btn" style="width: 100%; padding: 0.6rem;">فهمت</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+    <script type="module" src="admin/js/db.js?v=52"></script>
+    <script type="module" src="js/parent.js?v=52"></script>
+  </body>
+</html>

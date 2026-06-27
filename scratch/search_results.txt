@@ -1,0 +1,89 @@
+45: const agendaQuran = document.getElementById("agenda-quran");
+51: const agendaQuranComp = document.getElementById("agenda-quran-comp");
+113: submitBatchBtn.innerHTML = `<i class="ph-bold ph-floppy-disk"></i> حفظ تعديلات الحلقة وإرسال التقارير`;
+114: cancelSessionBtn.textContent = "الخروج من التعديل (دون حفظ)";
+126: agendaQuran.checked = !!agenda.quran;
+132: agendaQuranComp.checked = !!agenda.quranComp;
+139: quran: agendaQuran.checked,
+145: quranComp: agendaQuranComp.checked,
+189: if (agendaQuran.checked) selectedCourses.push("حفظ القرآن ومراجعته");
+192: if (agendaCatchup.checked) selectedCourses.push("استدراك الحفظ ومراجعة القرآن");
+200: selectedCourses.push("حفظ القرآن ومراجعته");
+222: quran: agendaQuran.checked,
+228: quranComp: agendaQuranComp.checked,
+263: if (confirm("هل تريد فعلاً الخروج من وضع تعديل الحلقة؟ لن يتم حفظ أي تعديلات أجريتها.")) {
+376: <span><strong>السن:</strong> ${s.age ? s.age + ' سنة' : '-'} | <strong>المستوى القرآني:</strong> ${s.quranLevel || '-'}</span>
+412: evalStudentId.textContent = `المعرف: ${student.id} | السن: ${student.age || '-'} سنة | مستوى: ${student.quranLevel || '-'}`;
+431: // Populate quran progress (if active)
+432: if (rep.quranProgress && agendaQuran.checked) {
+433: document.getElementById("eval-quran-surah").value = rep.quranProgress.surah || "";
+434: document.getElementById("eval-quran-from").value = rep.quranProgress.fromVerse || "";
+435: document.getElementById("eval-quran-to").value = rep.quranProgress.toVerse || "";
+436: document.getElementById("eval-quran-count").value = (parseInt(rep.quranProgress.toVerse) - parseInt(rep.quranProgress.fromVerse) + 1) || "";
+437: document.getElementById("eval-quran-type").value = rep.quranProgress.type || "حفظ جديد";
+438: document.getElementById("metric-notes-quran").value = rep.quranProgress.notes || "";
+516: // حفظ القرآن ومراجعته
+521: <i class="ph-bold ph-book-open" style="color:var(--gold);"></i> مقرر حفظ القرآن ومراجعته
+524: <h5 style="color: var(--gold); font-weight: 800; margin-bottom: 0.75rem; font-size: 0.95rem;">[ تقدم الحفظ والتلاوة ]</h5>
+528: <input type="text" id="eval-quran-surah" placeholder="اسم السورة..." style="width: 100%;" />
+533: <input type="number" id="eval-quran-from" min="1" style="width: 100%;" />
+537: <input type="number" id="eval-quran-to" min="1" style="width: 100%;" />
+541: <input type="number" id="eval-quran-count" min="0" readonly style="width: 100%; background: #f5f5f5;" />
+546: <select id="eval-quran-type" style="width: 100%;">
+547: <option value="حفظ جديد">حفظ جديد</option>
+548: <option value="مراجعة">مراجعة</option>
+549: <option value="استدراك">استدراك الحفظ ومراجعة القرآن</option>
+556: ${renderStarGroup("مقدار الحفظ", "quran-مقدار الحفظ")}
+557: ${renderStarGroup("إتقان التلاوة", "quran-إتقان التلاوة")}
+558: ${renderStarGroup("أحكام التجويد", "quran-أحكام التجويد")}
+559: ${renderStarGroup("المراجعة السابقة", "quran-المراجعة السابقة")}
+560: ${renderStarGroup("التركيز أثناء التسميع", "quran-التركيز أثناء التسميع")}
+563: <label>ملاحظات الحفظ:</label>
+564: <input type="text" id="metric-notes-quran" placeholder="ملاحظات حول جودة التسميع أو التجويد..." style="width:100%;" />
+570: // استدراك الحفظ ومراجعة القرآن
+572: html += renderCourseSection("استدراك الحفظ ومراجعة القرآن", "catchup", [
+573: "إكمال المطلوب", "تصحيح الأخطاء", "الالتزام بالمراجعة", "سرعة الاستجابة للتوجيهات"
+610: html += renderCourseSection("مسابقات قرآنية", "qurancomp", [
+611: "الحفظ", "التجويد", "سرعة الإجابة", "الثقة بالنفس"
+666: // تفعيل دالة الحساب التلقائي لعدد آيات القرآن
+668: const qFrom = document.getElementById("eval-quran-from");
+669: const qTo = document.getElementById("eval-quran-to");
+670: const qCount = document.getElementById("eval-quran-count");
+731: if (courseName === "حفظ القرآن ومراجعته") return "quran";
+734: if (courseName === "استدراك الحفظ ومراجعة القرآن") return "catchup";
+738: if (courseName === "مسابقات قرآنية") return "qurancomp";
+823: } else if (metricName === "quran-مقدار الحفظ") {
+825: } else if (metricName === "quran-أحكام التجويد" || metricName === "qurancomp-التجويد") {
+891: let quranProgress = null;
+914: const qSurah = document.getElementById("eval-quran-surah").value.trim();
+915: const qFrom = document.getElementById("eval-quran-from").value;
+916: const qTo = document.getElementById("eval-quran-to").value;
+917: const qType = document.getElementById("eval-quran-type").value;
+918: const qNotes = document.getElementById("metric-notes-quran").value.trim();
+920: const p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ").value) || 0;
+921: const p2 = parseInt(document.getElementById("metric-quran-إتقان التلاوة").value) || 0;
+922: const p3 = parseInt(document.getElementById("metric-quran-أحكام التجويد").value) || 0;
+923: const p4 = parseInt(document.getElementById("metric-quran-المراجعة السابقة").value) || 0;
+924: const p5 = parseInt(document.getElementById("metric-quran-التركيز أثناء التسميع").value) || 0;
+930: courseName: "حفظ القرآن ومراجعته",
+932: "مقدار الحفظ": p1,
+935: "المراجعة السابقة": p4,
+942: if (qSurah) {
+943: quranProgress = {
+944: surah: qSurah,
+954: { name: "استدراك الحفظ ومراجعة القرآن", prefix: "catchup", metrics: ["إكمال المطلوب", "تصحيح الأخطاء", "الالتزام بالمراجعة", "سرعة الاستجابة للتوجيهات"], active: agendaCatchup.checked },
+960: { name: "مسابقات قرآنية", prefix: "qurancomp", metrics: ["الحفظ", "التجويد", "سرعة الإجابة", "الثقة بالنفس"], active: agendaQuranComp.checked },
+1001: quranProgress: quranProgress,
+1054: ? `هل أنت متأكد من حفظ التعديلات على هذه الحلقة لـ (${count}) طلاب؟`
+1055: : `هل أنت متأكد من إنهاء الحلقة التعليمية الحالية وحفظ تقارير التقييم لـ (${count}) طلاب؟`;
+1064: submitBatchBtn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> جاري حفظ البيانات في قاعدة البيانات...`;
+1070: if (agendaQuran.checked) selectedCourses.push("حفظ القرآن ومراجعته");
+1073: if (agendaCatchup.checked) selectedCourses.push("استدراك الحفظ ومراجعة القرآن");
+1090: if (agendaQuran.checked) liveSelectedCourses.push("حفظ القرآن ومراجعته");
+1093: if (agendaCatchup.checked) liveSelectedCourses.push("استدراك الحفظ ومراجعة القرآن");
+1103: alert("⚠️ تعذر الاتصال بالإنترنت حالياً. تم حفظ الحلقة والتقييمات محلياً في المتصفح بنجاح! سيتم إرسالها تلقائياً عند عودة الاتصال.");
+1105: alert(isEditing ? "✅ تم حفظ تعديلات الحلقة بنجاح وتحديث النقاط في Sheets!" : "✅ تم تسجيل وإغلاق الحلقة بنجاح! تم حفظ كافة البيانات وتحديث النقاط في Sheets.");
+1125: alert("❌ حدث خطأ غير متوقع أثناء رصد أو حفظ بيانات الحلقة.");
+1238: quran: coursesStr.includes("حفظ القرآن"),
+1241: catchup: coursesStr.includes("استدراك الحفظ"),
+1245: quranComp: coursesStr.includes("مسابقات قرآنية"),

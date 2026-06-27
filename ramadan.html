@@ -1,0 +1,180 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>قفة رمضان | مسجد الشهداء</title>
+    <meta name="description" content="مبادرة قفة رمضان التكافلية السنوية في مسجد الشهداء — قرية ايباشيرن، بلدية واد غير، بجاية" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="icon" type="image/png" href="images/masjidlogo.png" />
+    <style>
+      .coming-soon-card {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(247,245,239,0.92)) !important;
+        border: 1.5px solid rgba(212, 175, 55, 0.28) !important;
+        box-shadow: var(--shadow-lg);
+        outline: 1px solid rgba(212, 175, 55, 0.22);
+        outline-offset: -8px;
+        border-radius: var(--radius);
+        margin: 2rem auto;
+        max-width: 38rem;
+      }
+      .coming-soon-icon {
+        font-size: 4rem;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        filter: drop-shadow(0 4px 10px rgba(212, 175, 55, 0.25));
+      }
+      .coming-soon-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--green-dark), var(--green));
+        color: var(--white);
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 0.5rem 1.5rem;
+        border-radius: 999px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(13, 92, 70, 0.18);
+      }
+      .coming-soon-card h2 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: var(--green-dark);
+        margin-bottom: 1rem;
+      }
+      .coming-soon-card p {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        line-height: 1.8;
+        max-width: 28rem;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body class="page-ramadan">
+    <div class="page-transition-overlay" aria-hidden="true"></div>
+
+    <!-- ══ NAVBAR ══ -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="index.html" class="navbar-brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html" class="active">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ══ HERO SECTION ══ -->
+    <header class="page-hero page-hero--ramadan" style="background: linear-gradient(160deg, var(--green-dark), #094738); padding: calc(var(--nav-h) + 3rem) 0 3.5rem; text-align: center; overflow: hidden; position: relative;">
+      <div class="page-hero__bg" aria-hidden="true" style="position: absolute; inset: 0; background-image: var(--pattern); opacity: 0.15;"></div>
+      <div class="container page-hero__content reveal" style="position: relative; z-index: 1;">
+        <span class="eyebrow eyebrow--light">المبادرات التكافلية والخيرية</span>
+        <h1 class="page-hero__title" style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: var(--white); margin-bottom: 0.75rem;">مشروع قفة رمضان</h1>
+        <p class="page-hero__quote" style="font-family: var(--font-quran); font-size: clamp(1.1rem, 2.5vw, 1.45rem); color: var(--gold-light); max-width: 32rem; margin: 0 auto; line-height: 1.9; font-style: normal;">
+          «مَنْ ذَا الَّذِي يُقْرِضُ اللَّهَ قَرْضًا حَسَنًا فَيُضَاعِفَهُ لَهُ أَضْعَافًا كَثِيرَةً»
+        </p>
+      </div>
+    </header>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <main class="page-main">
+      <section class="section">
+        <div class="container">
+          <div class="coming-soon-card reveal">
+            <span class="coming-soon-icon">
+              <i class="ph-bold ph-hand-heart"></i>
+            </span>
+            <br />
+            <span class="coming-soon-badge">العمل الخيري التكافلي</span>
+            <h2>انتظرونا قريباً</h2>
+            <p>
+              نعمل حالياً على الترتيبات اللازمة لإطلاق مبادرة قفة رمضان السنوية لتوزيع الطرود الغذائية على المحسوبين في قرية إيباشيرن.
+            </p>
+            <p style="margin-top: 1rem; color: var(--gold); font-weight: 700;">
+               ترقبوا إطلاق استقبال تبرعاتكم ومساهماتكم قريباً إن شاء الله.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+  </body>
+</html>

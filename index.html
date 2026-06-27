@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مسجد الشهداء | قرية ايباشيرن</title>
+    <meta name="description" content="مسجد الشهداء — منارة للعلم والعبادة في قرية ايباشيرن، بلدية واد غير، بجاية" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="icon" type="image/png" href="images/masjidlogo.png" />
+  </head>
+  <body class="page-home">
+    <div class="page-transition-overlay" aria-hidden="true"></div>
+
+    <!-- NAVBAR -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="index.html" class="navbar-brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html" class="active">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero" id="hero" aria-labelledby="hero-title">
+        <div class="hero__layers" aria-hidden="true">
+          <div class="background-texture"></div>
+          <div class="hero__building-bg"></div>
+          <div class="hero__gradient"></div>
+          <div class="hero__glow hero__glow--gold"></div>
+          <div class="hero__scrim"></div>
+        </div>
+
+        <div class="container hero__content">
+          <!-- Bismillah Calligraphy -->
+          <div class="hero-bismillah hero-animate-logo">
+            <span class="bismillah-text">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+            <div class="bismillah-ornament">۞</div>
+          </div>
+          <div class="hero-welcome-wrapper hero-animate-logo">
+            <span class="hero__welcome-text">مرحباً بكم في موقع</span>
+          </div>
+          <h1 class="hero__title hero-animate-title" id="hero-title">مسجد الشهداء</h1>
+          <p class="hero__subtitle hero-animate-subtitle">منارة للعلم والعبادة وخدمة المجتمع</p>
+        </div>
+
+        <a href="#intro" class="scroll-hint" aria-label="انتقل للمحتوى">
+          <span class="scroll-hint__chevron"></span>
+        </a>
+      </section>
+
+      <!-- Introduction -->
+      <section class="section section--intro" id="intro">
+        <div class="container">
+          <div class="intro-block reveal">
+            <span class="eyebrow">تعريف بالمسجد</span>
+            <h2 class="section-heading">مسجد الشهداء - إباشيرن</h2>
+            <div class="ornament" aria-hidden="true"><span>۞</span></div>
+            <p class="lead">
+              مسجد الشهداء - إباشيرن هو بيت لله لإقامة الصلوات تحت إشراف الإمام الخطيب عبد المالك بعوش والجمعية الدينية للمسجد.
+              يسعى ليكون منارةً إيمانية تربوية تجمع أبناء قرية إيباشيرن على الخير والعلم النافع.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Prayer Times -->
+      <section class="section section--prayers reveal" id="prayers">
+        <div class="container">
+          <header class="section-header">
+            <span class="eyebrow">مواقيت الصلاة اليومية</span>
+            <h2 class="section-heading">أوقات الصلاة في إيباشيرن</h2>
+            <div class="prayer-dates">
+              <span id="date-gregorian" class="date-badge">--/--/----</span>
+              <span class="date-sep">✦</span>
+              <span id="date-hijri" class="date-badge">--/--/----</span>
+            </div>
+          </header>
+
+          <div class="prayer-grid">
+            <div class="prayer-card" id="prayer-fajr">
+              <span class="prayer-name">الفجر</span>
+              <span class="prayer-time" id="time-fajr" dir="ltr" lang="en">--:--</span>
+            </div>
+            <div class="prayer-card" id="prayer-shuruq">
+              <span class="prayer-name">الشروق</span>
+              <span class="prayer-time" id="time-shuruq" dir="ltr" lang="en">--:--</span>
+            </div>
+            <div class="prayer-card" id="prayer-dhuhr">
+              <span class="prayer-name">الظهر</span>
+              <span class="prayer-time" id="time-dhuhr" dir="ltr" lang="en">--:--</span>
+            </div>
+            <div class="prayer-card" id="prayer-asr">
+              <span class="prayer-name">العصر</span>
+              <span class="prayer-time" id="time-asr" dir="ltr" lang="en">--:--</span>
+            </div>
+            <div class="prayer-card" id="prayer-maghrib">
+              <span class="prayer-name">المغرب</span>
+              <span class="prayer-time" id="time-maghrib" dir="ltr" lang="en">--:--</span>
+            </div>
+            <div class="prayer-card" id="prayer-isha">
+              <span class="prayer-name">العشاء</span>
+              <span class="prayer-time" id="time-isha" dir="ltr" lang="en">--:--</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick navigation -->
+      <section class="section section--cards" id="services">
+        <div class="container">
+          <header class="section-header reveal">
+            <span class="eyebrow">استكشف</span>
+            <h2 class="section-heading">خدمات الموقع</h2>
+          </header>
+
+          <div class="card-grid">
+            <a href="location.html" class="nav-card reveal">
+              <span class="nav-card__icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <h3>الموقع الجغرافي للمسجد</h3>
+              <p>العنوان، الخريطة، وأوقات الزيارة للوصول إلينا بسهولة عبر الطريق الوطني رقم 12.</p>
+              <span class="nav-card__link">عرض الموقع ←</span>
+            </a>
+
+            <a href="adult-portal.html" class="nav-card reveal">
+              <span class="nav-card__icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
+              </span>
+              <h3>تعليم الكبار</h3>
+              <p>حلقات تحفيظ القرآن الكريم وتفسيره وعلوم الفقه المخصصة للكبار (رجال ونساء).</p>
+              <span class="nav-card__link">متابعة التقدم والتسجيل ←</span>
+            </a>
+
+            <a href="quran-course.html" class="nav-card reveal">
+              <span class="nav-card__icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </span>
+              <h3>دورة الصغار</h3>
+              <p>الدورة الصيفية القرآنية للأطفال لتعلم حفظ القرآن والحديث والآداب والأنشطة الرياضية.</p>
+              <span class="nav-card__link">التفاصيل ومتابعة ابني ←</span>
+            </a>
+
+            <a href="lessons.html" class="nav-card reveal">
+              <span class="nav-card__icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg>
+              </span>
+              <h3>الدروس</h3>
+              <p>جدول الدروس الأسبوعية وخطب الجمعة والمحاضرات لتعزيز الفهم الشرعي.</p>
+              <span class="nav-card__link">جدول الدروس ←</span>
+            </a>
+
+            <a href="ramadan.html" class="nav-card reveal">
+              <span class="nav-card__icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </span>
+              <h3>قفة رمضان للتضامن</h3>
+              <p>المشاريع التكافلية والاجتماعية لتقديم المساعدات والقفة الغذائية للعائلات المعوزة بالقرية.</p>
+              <span class="nav-card__link">مشاريع التضامن ←</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community -->
+      <section class="section section--community">
+        <div class="container">
+          <div class="community-panel reveal">
+            <div class="community-panel__pattern" aria-hidden="true"></div>
+            <div class="community-panel__content">
+              <span class="eyebrow eyebrow--light">مجتمعنا</span>
+              <h2 class="section-heading section-heading--light">عبادة، تعليم، وتكافل</h2>
+              <p>
+                نؤمن أن المسجد قلب الحياة المجتمعية — مكان للصلاة الجماعية،
+                وحلقات القرآن، ومجالس العلم، والتواصل بين الجيران في روح
+                الأخوة والتعاون. نرحب بكل من يسعى للعلم والخير.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+  </body>
+</html>

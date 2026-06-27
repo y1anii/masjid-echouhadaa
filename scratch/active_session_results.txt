@@ -1,0 +1,15 @@
+Line 12: const activeSessionView = document.getElementById("active-session-view");
+Line 58: let activeSession = null;
+Line 70: activeSession = {
+Line 90: activeSessionView.style.display = "none";
+Line 94: activeSession = null;
+Line 105: activeSessionView.style.display = "block";
+Line 112: sessionCircleName.textContent = `تعديل حلقة مؤرشفة (بإشراف: ${activeSession.supervisorName || '-'})`;
+Line 116: sessionCircleName.textContent = `${activeSession.circleName} (بإشراف: ${activeSession.supervisorName || '-'})`;
+Line 120: sessionDateVal.textContent = activeSession.date;
+Line 234: activeSession = {
+Line 305: const activeCircle = activeSession.circleName || "";
+Line 1081: activeSession.sessionId,
+Line 1082: activeSession.date,
+Line 1083: activeSession.supervisorName,
+Line 1098: success = await window.DB.endSession(activeSession.sessionId, evaluationsArray, liveSelectedCourses);

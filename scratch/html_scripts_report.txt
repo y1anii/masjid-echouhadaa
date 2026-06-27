@@ -1,0 +1,314 @@
+============================================================
+File: index.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+============================================================
+File: lessons.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+  Script 3: src=inline (total lines: 73)
+<script>
+      const DAYS_ORDER = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+      const webAppUrl = "https://script.google.com/macros/s/AKfycby8zRhACRRe4u2--IEKREuaSnaPR9sXkQ0SVdQb_ZwI8KFRftrLzapJ3P8DvLwhasg/exec";
+
+      async function loadLessons() {
+        const container = document.getElementById('lessons-container');
+        try {
+          const response = await fetch(`${webAppUrl}?action=readLessons&ts=${Date.now()}`);
+          if (!response.ok) throw new Error("Network response not ok");
+          const data = await response.json();
+          
+          const rawLessons = (data && Array.isArray(data.lessons)) ? data.lessons : [];
+          const lessonsList = rawLessons.filter(l => l && l.id && String(l.id).startsWith('LS') && l.title && String(l.title).trim() !== '');
+          
+          if (lessonsList.length === 0) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 3rem 1rem; width: 100%;">
+                <p style="color: var(--text-muted); font-size: 1.1rem;">لا توجد دروس في هذه الفترة</p>
+              </div>
+            `;
+    ...
+
+============================================================
+File: location.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+============================================================
+File: news.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+  Script 3: src=inline (total lines: 134)
+<script>
+      const webAppUrl = "https://script.google.com/macros/s/AKfycby8zRhACRRe4u2--IEKREuaSnaPR9sXkQ0SVdQb_ZwI8KFRftrLzapJ3P8DvLwhasg/exec";
+
+      async function loadNews() {
+        const container = document.getElementById('news-container');
+        try {
+          const response = await fetch(`${webAppUrl}?action=readNews&ts=${Date.now()}`);
+          if (!response.ok) throw new Error("Network response not ok");
+          const data = await response.json();
+          
+          const rawNews = (data && Array.isArray(data.news)) ? data.news : [];
+          // Filter out header rows and invalid entries
+          const newsList = rawNews.filter(n => n && n.id && String(n.id).startsWith('NW') && n.title && String(n.title).trim() !== '');
+
+          if (newsList.length === 0) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 4rem 1rem; width: 100%; grid-column: 1 / -1;">
+                <p style="color: var(--text-muted); font-size: 1.15rem;">لا توجد أخبار منشورة حالياً</p>
+              </div>
+            `;
+    ...
+
+============================================================
+File: parent-daily.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 8)
+<script>
+      // Synchronous session check to prevent loading flicker
+      if (sessionStorage.getItem('masjid_parent_logged') !== 'true') {
+        window.location.replace('parent-portal.html');
+      } else {
+        document.write('<style>body { display: none; }</style>');
+      }
+    </script>
+
+  Script 3: src=js/main.js (total lines: 1)
+  Script 4: src=admin/js/db.js?v=5 (total lines: 1)
+  Script 5: src=js/daily.js?v=5 (total lines: 1)
+============================================================
+File: parent-portal.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js (total lines: 1)
+  Script 3: src=inline (total lines: 5)
+<script>
+      if (sessionStorage.getItem('masjid_parent_logged') === 'true') {
+        document.write('<style id="session-override">#portal-login-view { display: none !important; } #portal-dashboard-view { display: block !important; }</style>');
+      }
+    </script>
+
+  Script 4: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 5: src=js/main.js (total lines: 1)
+  Script 6: src=admin/js/db.js?v=5 (total lines: 1)
+  Script 7: src=js/parent.js?v=5 (total lines: 1)
+============================================================
+File: parent-reports.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 8)
+<script>
+      // Synchronous session check to prevent loading flicker
+      if (sessionStorage.getItem('masjid_parent_logged') !== 'true') {
+        window.location.replace('parent-portal.html');
+      } else {
+        document.write('<style>body { display: none; }</style>');
+      }
+    </script>
+
+  Script 3: src=js/main.js (total lines: 1)
+  Script 4: src=admin/js/db.js?v=5 (total lines: 1)
+  Script 5: src=js/reports.js?v=5 (total lines: 1)
+============================================================
+File: quran-course.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+============================================================
+File: ramadan.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+============================================================
+File: register.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=js/main.js (total lines: 1)
+  Script 3: src=inline (total lines: 124)
+<script>
+      // Configuration: Replace with your deployed Google Sheet Apps Script URL
+      const googleWebAppUrl = "https://script.google.com/macros/s/AKfycby8zRhACRRe4u2--IEKREuaSnaPR9sXkQ0SVdQb_ZwI8KFRftrLzapJ3P8DvLwhasg/exec";
+
+      document.getElementById('student-register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-btn');
+        const formContainer = document.getElementById('register-container');
+        const successContainer = document.getElementById('success-container');
+
+        // Capture values
+        const photoPerm = document.querySelector('input[name="photo_permission"]:checked')?.value || 'غير محدد';
+        const studentData = {
+          name: document.getElementById('studentName').value.trim(),
+          gender: document.getElementById('studentGender').value,
+          ageGroup: document.getElementById('ageGroup').value,
+          age: parseInt(document.getElementById('age').value),
+          quranLevel: document.getElementById('quranLevel').value,
+          studyLevel: document.getElementById('studyLevel').value.trim(),
+    ...
+
+============================================================
+File: admin\index.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 5)
+<script>
+      if (sessionStorage.getItem('masjid_auth') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    </script>
+
+  Script 3: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 4: src=js/db.js?v=4 (total lines: 1)
+  Script 5: src=js/auth.js?v=4 (total lines: 1)
+  Script 6: src=js/dashboard.js?v=4 (total lines: 1)
+============================================================
+File: admin\lessons.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 5)
+<script>
+      if (sessionStorage.getItem('masjid_auth') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    </script>
+
+  Script 3: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 4: src=js/db.js?v=4 (total lines: 1)
+  Script 5: src=js/auth.js?v=4 (total lines: 1)
+  Script 6: src=js/lessons.js?v=4 (total lines: 1)
+============================================================
+File: admin\login.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 3: src=js/db.js (total lines: 1)
+  Script 4: src=inline (total lines: 37)
+<script>
+      // Password visibility toggle
+      const togglePasswordBtn = document.getElementById('toggle-password');
+      const passwordInput = document.getElementById('password');
+      const passwordEyeIcon = document.getElementById('password-eye-icon');
+
+      togglePasswordBtn.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        passwordEyeIcon.classList.toggle('ph-eye');
+        passwordEyeIcon.classList.toggle('ph-eye-slash');
+      });
+
+      document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const errorEl = document.getElementById('login-error');
+        const submitBtn = document.getElementById('login-submit');
+    ...
+
+============================================================
+File: admin\news.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 5)
+<script>
+      if (sessionStorage.getItem('masjid_auth') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    </script>
+
+  Script 3: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 4: src=js/db.js?v=4 (total lines: 1)
+  Script 5: src=js/auth.js?v=4 (total lines: 1)
+  Script 6: src=js/news.js?v=4 (total lines: 1)
+============================================================
+File: admin\students.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 5)
+<script>
+      if (sessionStorage.getItem('masjid_auth') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    </script>
+
+  Script 3: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 4: src=js/db.js?v=4 (total lines: 1)
+  Script 5: src=js/auth.js?v=4 (total lines: 1)
+  Script 6: src=js/students.js?v=4 (total lines: 1)
+============================================================
+File: admin\teacher.html
+============================================================
+  Script 1: src=https://unpkg.com/@phosphor-icons/web (total lines: 1)
+  Script 2: src=inline (total lines: 5)
+<script>
+      if (sessionStorage.getItem('masjid_auth') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    </script>
+
+  Script 3: src=inline (total lines: 7)
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+  Script 4: src=js/db.js (total lines: 1)
+  Script 5: src=js/auth.js (total lines: 1)
+  Script 6: src=js/teacher.js (total lines: 1)

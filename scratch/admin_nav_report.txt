@@ -1,0 +1,58 @@
+admin\index.html (Line 1): <!doctype html>
+admin\index.html (Line 2): <html lang="ar" dir="rtl">
+admin\index.html (Line 12): window.location.href = 'login.html';
+admin\index.html (Line 29): <a href="../index.html" class="navbar-brand">
+admin\index.html (Line 41): <li><a href="index.html" class="active">لوحة الإحصائيات</a></li>
+admin\index.html (Line 42): <li><a href="students.html">إدارة الطلاب</a></li>
+admin\index.html (Line 43): <li><a href="teacher.html">رصد الحلقة</a></li>
+admin\index.html (Line 44): <li><a href="lessons.html">إدارة الدروس</a></li>
+admin\index.html (Line 45): <li><a href="news.html">إدارة الأخبار</a></li>
+admin\index.html (Line 94): <i class="ph-bold ph-award" style="color: var(--gold);"></i> شهادات شكر وتقدير للطلاب (خاص بالمشرف)
+admin\index.html (Line 243): </html>
+admin\lessons.html (Line 1): <!doctype html>
+admin\lessons.html (Line 2): <html lang="ar" dir="rtl">
+admin\lessons.html (Line 12): window.location.href = 'login.html';
+admin\lessons.html (Line 173): <a href="../index.html" class="navbar-brand">
+admin\lessons.html (Line 185): <li><a href="index.html">لوحة الإحصائيات</a></li>
+admin\lessons.html (Line 186): <li><a href="students.html">إدارة الطلاب</a></li>
+admin\lessons.html (Line 187): <li><a href="teacher.html">رصد الحلقة</a></li>
+admin\lessons.html (Line 188): <li><a href="lessons.html" class="active">إدارة الدروس</a></li>
+admin\lessons.html (Line 189): <li><a href="news.html">إدارة الأخبار</a></li>
+admin\lessons.html (Line 275): </html>
+admin\login.html (Line 1): <!doctype html>
+admin\login.html (Line 2): <html lang="ar" dir="rtl">
+admin\login.html (Line 213): <a href="../index.html" class="back-to-site-link">
+admin\login.html (Line 250): window.location.href = 'index.html';
+admin\login.html (Line 259): </html>
+admin\news.html (Line 1): <!doctype html>
+admin\news.html (Line 2): <html lang="ar" dir="rtl">
+admin\news.html (Line 12): window.location.href = 'login.html';
+admin\news.html (Line 200): <a href="../index.html" class="navbar-brand">
+admin\news.html (Line 212): <li><a href="index.html">لوحة الإحصائيات</a></li>
+admin\news.html (Line 213): <li><a href="students.html">إدارة الطلاب</a></li>
+admin\news.html (Line 214): <li><a href="teacher.html">رصد الحلقة</a></li>
+admin\news.html (Line 215): <li><a href="lessons.html">إدارة الدروس</a></li>
+admin\news.html (Line 216): <li><a href="news.html" class="active">إدارة الأخبار</a></li>
+admin\news.html (Line 284): </html>
+admin\students.html (Line 1): <!doctype html>
+admin\students.html (Line 2): <html lang="ar" dir="rtl">
+admin\students.html (Line 12): window.location.href = 'login.html';
+admin\students.html (Line 29): <a href="../index.html" class="navbar-brand">
+admin\students.html (Line 41): <li><a href="index.html">لوحة الإحصائيات</a></li>
+admin\students.html (Line 42): <li><a href="students.html" class="active">إدارة الطلاب</a></li>
+admin\students.html (Line 43): <li><a href="teacher.html">رصد الحلقة</a></li>
+admin\students.html (Line 44): <li><a href="lessons.html">إدارة الدروس</a></li>
+admin\students.html (Line 45): <li><a href="news.html">إدارة الأخبار</a></li>
+admin\students.html (Line 272): </html>
+admin\teacher.html (Line 1): <!doctype html>
+admin\teacher.html (Line 2): <html lang="ar" dir="rtl">
+admin\teacher.html (Line 12): window.location.href = 'login.html';
+admin\teacher.html (Line 287): <a href="../index.html" class="navbar-brand">
+admin\teacher.html (Line 299): <li><a href="index.html">لوحة الإحصائيات</a></li>
+admin\teacher.html (Line 300): <li><a href="students.html">إدارة الطلاب</a></li>
+admin\teacher.html (Line 301): <li><a href="teacher.html" class="active">رصد الحلقة</a></li>
+admin\teacher.html (Line 302): <li><a href="lessons.html">إدارة الدروس</a></li>
+admin\teacher.html (Line 303): <li><a href="news.html">إدارة الأخبار</a></li>
+admin\teacher.html (Line 456): <label for="supervisor-name">اسم المشرف:</label>
+admin\teacher.html (Line 457): <input type="text" id="supervisor-name" required placeholder="اسم المشرف على الحلقة..." style="width: 100%;" />
+admin\teacher.html (Line 521): </html>

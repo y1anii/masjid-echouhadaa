@@ -1,0 +1,520 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>التقارير الأسبوعية والشهادات | بوابة الأولياء</title>
+    <meta name="description" content="عرض ملخصات الأداء الأسبوعية للطلاب وشهادات التخرج الشرفية" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      // Synchronous session check to prevent loading flicker
+      if (sessionStorage.getItem('masjid_parent_logged') !== 'true') {
+        window.location.replace('parent-portal.html');
+      } else {
+        document.write('<style>body { display: none; }
+      /* Unified Shape Uniformity (12px Border-Radius Overrides) */
+      .login-card,
+      .about-card,
+      .target-card,
+      .history-card,
+      .history-item,
+      .quran-log-item,
+      .profile-card,
+      .student-badge-item,
+      .accordion-item,
+      .daily-col-block,
+      .report-card,
+      .cert-preview-card,
+      .report-stat-box,
+      .calc-stat-box,
+      .stat-summary-card,
+      .stat-summary-icon,
+      .badge-gallery-item,
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      input[type="text"],
+      input[type="tel"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      select,
+      textarea,
+      .btn,
+      button:not(.nav-toggle):not(.close-btn) {
+        border-radius: 12px !important;
+      }
+    </style>');
+      }
+    </script>
+    <link rel="icon" type="image/png" href="images/parent-portal-icon.png" />
+    <link rel="apple-touch-icon" href="images/parent-portal-icon.png" />
+    <style>
+      .portal-container {
+        padding-top: calc(var(--nav-h) + 40px);
+        padding-bottom: 80px;
+        min-height: 80vh;
+      }
+      .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+      .report-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.12);
+        outline-offset: -5px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .report-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+      .report-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(200, 161, 90, 0.15);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .report-card-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .report-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+      .report-stat-box {
+        background: rgba(13, 92, 70, 0.03);
+        border: 1px solid rgba(200, 161, 90, 0.1);
+        border-radius: 6px;
+        padding: 0.6rem;
+        text-align: center;
+      }
+      .report-stat-val {
+        display: block;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--green);
+      }
+      .report-stat-lbl {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      
+      /* Certificate Preview Card */
+      .cert-preview-card {
+        background: #fffdf6;
+        border: 4px double var(--gold);
+        border-radius: var(--radius-sm);
+        padding: 2.5rem 1.5rem;
+        box-shadow: var(--shadow);
+        text-align: center;
+        position: relative;
+        max-width: 650px;
+        margin: 1.5rem auto;
+      }
+
+      /* Print Layout styles */
+      @media print {
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+        body {
+          background: #ffffff !important;
+          color: #000000 !important;
+        }
+        body.printing-cert {
+          background: #fffdf6 !important;
+          margin: 0;
+          padding: 0;
+          width: 210mm;
+          height: 297mm;
+        }
+        body.printing-cert #certificate-print-area {
+          display: block !important;
+          position: absolute;
+          inset: 0;
+          width: 210mm;
+          height: 297mm;
+          box-sizing: border-box;
+          padding: 12mm;
+          background: #fffdf6 !important;
+          page-break-inside: avoid;
+          page-break-after: avoid;
+        }
+        body.printing-cert #certificate-print-area > div {
+          height: 100%;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 2.5rem !important;
+        }
+        body.printing-report #print-area {
+          display: block !important;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          background: #ffffff !important;
+          padding: 2cm;
+          page-break-inside: avoid;
+        }
+        body.printing-cert .navbar, 
+        body.printing-cert .site-footer, 
+        body.printing-cert .portal-container,
+        body.printing-report .navbar, 
+        body.printing-report .site-footer, 
+        body.printing-report .portal-container {
+          display: none !important;
+        }
+      }
+      
+      /* Accordion custom styling (like daily reports) */
+      .report-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .accordion-item {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(200, 161, 90, 0.18);
+        border-radius: var(--radius-sm);
+        outline: 1px solid rgba(212, 175, 55, 0.12);
+        outline-offset: -5px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: all 0.35s ease;
+      }
+      .accordion-trigger {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 1.25rem 1.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        text-align: right;
+        font-family: inherit;
+        transition: background 0.3s ease;
+      }
+      .accordion-trigger:hover {
+        background: rgba(13, 92, 70, 0.03);
+      }
+      .accordion-title-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .accordion-title {
+        font-size: 1.15rem;
+        font-weight: 850;
+        color: var(--green-dark);
+      }
+      .accordion-arrow {
+        font-size: 1.2rem;
+        color: var(--gold);
+        transition: transform 0.3s ease;
+      }
+      .accordion-item.is-open .accordion-arrow {
+        transform: rotate(180deg);
+      }
+      .accordion-content {
+        display: none;
+        padding: 0 1.75rem 1.75rem;
+        border-top: 1px dashed rgba(200, 161, 90, 0.15);
+        background: var(--white);
+      }
+      .accordion-item.is-open .accordion-content {
+        display: block;
+      }
+
+      /* Structured report timeline layout classes */
+      .report-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-top: 1.25rem;
+        text-align: right;
+      }
+      .report-section-card {
+        background: rgba(13, 92, 70, 0.015);
+        border: 1px solid rgba(200, 161, 90, 0.15);
+        border-radius: 8px;
+        padding: 1.25rem;
+        text-align: right;
+      }
+      .report-section-card h4 {
+        font-size: 1rem;
+        font-weight: 850;
+        color: var(--green-dark);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        border-bottom: 1.5px solid rgba(200, 161, 90, 0.15);
+        padding-bottom: 0.4rem;
+        text-align: right;
+        margin-top: 0;
+      }
+      .report-section-card h4 i {
+        color: var(--gold);
+        font-size: 1.25rem;
+      }
+      .quran-log-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid rgba(200, 161, 90, 0.12);
+        padding: 0.6rem 0.85rem;
+        border-radius: 6px;
+        background: #fff;
+        margin-bottom: 0.5rem;
+        text-align: right;
+      }
+
+      /* Responsive styling */
+      @media (max-width: 768px) {
+        .portal-container {
+          padding-top: calc(var(--nav-h) + 20px);
+          padding-bottom: 40px;
+        }
+        .reports-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .cert-preview-card {
+          padding: 1.5rem 1rem !important;
+        }
+        .accordion-trigger {
+          padding: 1rem 1.25rem !important;
+          flex-direction: row !important;
+        }
+        .accordion-title-group {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+        }
+        .accordion-title {
+          font-size: 1rem !important;
+        }
+        .accordion-content {
+          padding: 0 1.25rem 1.5rem !important;
+        }
+        .report-details-grid {
+          grid-template-columns: 1fr !important;
+          gap: 1rem !important;
+        }
+        .quran-log-item {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 0.4rem !important;
+        }
+        .quran-log-item > div:last-child {
+          width: 100% !important;
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          border-top: 1px dashed #eee !important;
+          padding-top: 0.4rem !important;
+          margin-top: 0.2rem !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ══ NAVBAR ══ -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="#" class="navbar-brand" style="cursor: default;" onclick="event.preventDefault();">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="portal-container container">
+      <!-- Welcome & Navigation Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+        <div>
+          <span class="eyebrow" style="margin: 0;">التقارير التحليلية الأسبوعية</span>
+          <h1 style="font-size: 1.6rem; color: var(--green-dark); font-weight: 900; margin: 0; line-height: 1.4;">
+            ملخصات الأداء الأسبوعية للطالب: <span id="report-student-name-header" style="color: var(--gold);">...</span>
+          </h1>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="parent-portal.html" class="btn btn--secondary" style="font-size: 0.9rem; font-weight: 800; padding: 0.5rem 1.25rem; border: 1.5px solid var(--green); color: var(--green); background: transparent; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <i class="ph-bold ph-arrow-right"></i>
+            <span>العودة للبوابة الرئيسية</span>
+          </a>
+        </div>
+      </div>
+      <!-- TAB 1: WEEKLY & MONTHLY REPORTS TIMELINE -->
+      <section id="weekly-tab-content">
+        <h2 style="color: var(--green-dark); font-weight: 900; margin-top: 1rem; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem;">
+          <i class="ph-bold ph-newspaper-clipping" style="color: var(--gold);"></i> سجل التقارير الأسبوعية والشهرية
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+          سجل زمني متكامل يعرض التقارير الأسبوعية والشهرية التراكمية بالترتيب الزمني الصحيح.
+        </p>
+        <div id="reports-timeline-list" class="report-accordion">
+          <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <span class="spinner-circle" style="width:24px; height:24px; border-width:2px; display:inline-block; vertical-align:middle; margin-left: 0.5rem;"></span> جاري معالجة بيانات الأداء...
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <!-- 1. Weekly Report Print Layout -->
+    <div id="print-area" style="display: none;">
+      <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px double var(--gold); padding-bottom: 1.5rem; direction: rtl;">
+        <img src="images/masjidlogo.png" alt="مسجد الشهداء" style="width: 80px; height: 80px; margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto;" />
+        <h2 style="color: var(--green-dark); font-weight: 900; margin: 0;" id="print-title">التقرير الأسبوعي الشامل للدورة القرآنية الصيفية</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">مسجد الشهداء - قرية ايباشيرن، بلدية واد غير</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; background: rgba(0,0,0,0.02); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(200, 161, 90, 0.2); direction: rtl; text-align: right;">
+        <div><strong>اسم الطالب الكامل:</strong> <span id="print-student-name"></span></div>
+        <div><strong>معرف الطالب (ID):</strong> <span id="print-student-id"></span></div>
+        <div><strong>الفترة الدراسية:</strong> <span id="print-week"></span></div>
+        <div><strong>المستوى العام للأسبوع:</strong> <span id="print-overall-grade">ممتاز</span></div>
+        <div><strong>تصنيف التراكمي للنجوم:</strong> <span id="print-level">مستوى ذهبي</span></div>
+        <div><strong>الرصيد الكلي التراكمي:</strong> <span id="print-cum-stars">0</span> <i class="ph-fill ph-star" style="color: var(--gold); vertical-align: middle;"></i></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; border: 1.5px solid var(--gold); padding: 1.25rem; border-radius: 8px; direction: rtl; text-align: center;">
+        <div style="display: flex; flex-direction: column;">
+          <span id="print-stat-attendance" style="font-size: 1.4rem; font-weight: 900; color: var(--green);">0/5</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">الحضور الفعلي</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <span id="print-stat-stars" style="font-size: 1.4rem; font-weight: 900; color: var(--gold);">0</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">النجوم المحصلة</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <span id="print-stat-ayahs" style="font-size: 1.4rem; font-weight: 900; color: var(--green-light);">0</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">الآيات المحفوظة/المراجعة</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <span id="print-stat-points" style="font-size: 1.4rem; font-weight: 900; color: var(--green-dark);">0</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">النقاط الأسبوعية</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem; direction: rtl; text-align: right;">
+        <div style="border-right: 3px solid var(--gold); padding-right: 1rem;">
+          <h4 style="color: var(--green-dark); margin-bottom: 0.25rem; font-weight: 800;">توصيات تربوية وتقييم الحلقة:</h4>
+          <p style="line-height: 1.6; font-size: 0.95rem;">نوصي الأسرة الكريمة بمواصلة تعزيز حفظ ومراجعة الطالب في البيت والحرص التام على انضباطه في مواعيد الحضور للمسجد.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(0,0,0,0.15); padding-top: 2rem; direction: rtl;">
+        <div style="text-align: center;">
+          <span style="display: block; font-weight: 700; color: var(--green-dark);">ختم وتوقيع إدارة المسجد</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem; display: block;">مسجد الشهداء - إيباشيرن</span>
+        </div>
+        <div style="text-align: center;">
+          <span style="display: block; font-weight: 700; color: var(--green-dark);">إمضاء ولي الأمر (تأكيد الاطلاع)</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem; display: block;">____________________</span>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+    <script type="module" src="admin/js/db.js?v=52"></script>
+    <script type="module" src="js/reports.js?v=52"></script>
+  </body>
+</html>

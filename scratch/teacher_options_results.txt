@@ -1,0 +1,11 @@
+Line 440: <select id="circle-group-type" required style="width: 100%;">
+Line 441: <option value="حلقة ذكور" selected>حلقة ذكور</option>
+Line 442: <option value="حلقة إناث">حلقة إناث</option>
+Line 443: <option value="حلقة مشتركة">حلقة مشتركة</option>
+Line 448: <select id="circle-period" required style="width: 100%;">
+Line 449: <option value="حلقة صباحية" selected>حلقة صباحية</option>
+Line 450: <option value="حلقة مسائية">حلقة مسائية</option>
+Line 489: <select id="eval-attendance" required style="width: 100%;">
+Line 490: <option value="حاضر">حاضر</option>
+Line 491: <option value="متأخر">متأخر</option>
+Line 492: <option value="غائب">غائب</option>

@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوابة متابعة الكبار | مسجد الشهداء</title>
+    <meta name="description" content="بوابة متابعة تقدم طلاب حلقات التعليم القرآني والشرعي للكبار بمسجد الشهداء" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      if (sessionStorage.getItem('masjid_adult_logged') === 'true') {
+        document.write('<style id="session-override">#portal-login-view { display: none !important; } #portal-dashboard-view { display: block !important; }</style>');
+      }
+    </script>
+    <link rel="icon" type="image/png" href="images/masjidlogo.png" />
+    <link rel="apple-touch-icon" href="images/masjidlogo.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+    <!-- Confetti Library for Graduation Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+      .portal-container {
+        padding-top: calc(var(--nav-h) + 40px);
+        padding-bottom: 80px;
+        min-height: 80vh;
+      }
+      .login-card {
+        max-width: 480px;
+        margin: 3rem auto;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.22);
+        outline-offset: -5px;
+      }
+      .portal-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 2px solid rgba(13, 92, 70, 0.08);
+        padding-bottom: 1.5rem;
+      }
+      .portal-user-welcome h1 {
+        font-size: 1.8rem;
+        color: var(--green-dark);
+        font-weight: 900;
+        margin: 0;
+      }
+      .student-badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+      }
+      .student-badge-item {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.15);
+        outline-offset: -5px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .student-badge-icon {
+        font-size: 2.2rem;
+        color: var(--gold);
+        background: rgba(212, 175, 55, 0.08);
+        padding: 0.5rem;
+        border-radius: 8px;
+        display: flex;
+      }
+      .student-badge-details {
+        display: flex;
+        flex-direction: column;
+      }
+      .student-badge-lbl {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .student-badge-val {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: var(--green-dark);
+      }
+
+      /* Target Selector Card */
+      .target-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.15);
+        outline-offset: -5px;
+      }
+      .target-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .target-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        margin: 0;
+        border-right: 3px solid var(--gold);
+        padding-right: 0.5rem;
+      }
+      
+      /* Progress bar container */
+      .progress-container-bar {
+        background: #f0f0f0;
+        border-radius: 50px;
+        height: 24px;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        margin: 1rem 0;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .progress-bar-fill {
+        background: linear-gradient(90deg, var(--green) 0%, var(--green-dark) 100%);
+        height: 100%;
+        width: 0%;
+        border-radius: 50px;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .progress-text-percent {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 900;
+        color: var(--green-dark);
+        mix-blend-mode: multiply;
+      }
+
+      /* Premium form fields */
+      .form-group input, .form-group select {
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        border: 1px solid rgba(200, 161, 90, 0.25);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 1rem;
+        background: var(--white);
+        transition: all var(--transition);
+        text-align: right;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      }
+      .form-group input:focus, .form-group select:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12), inset 0 2px 4px rgba(0,0,0,0.01);
+      }
+      .form-group label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--green-dark);
+        margin-bottom: 0.5rem;
+        text-align: right;
+      }
+
+
+      .history-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(200, 161, 90, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        outline: 1px solid rgba(212, 175, 55, 0.15);
+        outline-offset: -5px;
+      }
+      .history-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        margin-bottom: 1.5rem;
+        border-right: 3px solid var(--gold);
+        padding-right: 0.5rem;
+      }
+
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .history-item {
+        background: #fff;
+        border: 1px solid rgba(200, 161, 90, 0.15);
+        padding: 1.25rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+      }
+      .history-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+        border-color: var(--gold);
+      }
+      .history-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px dashed rgba(200,161,90,0.15);
+        padding-bottom: 0.5rem;
+      }
+      .history-date {
+        font-weight: 800;
+        color: var(--green-dark);
+        font-size: 1.05rem;
+      }
+      .history-type-badge {
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+      }
+      .type-quran {
+        background: rgba(13, 92, 70, 0.08);
+        color: var(--green);
+        border: 1px solid rgba(13, 92, 70, 0.15);
+      }
+      .type-fiqh {
+        background: rgba(156, 39, 176, 0.08);
+        color: #9c27b0;
+        border: 1px solid rgba(156, 39, 176, 0.15);
+      }
+      .type-tafsir {
+        background: rgba(230, 126, 34, 0.08);
+        color: #d35400;
+        border: 1px solid rgba(230, 126, 34, 0.15);
+      }
+      .history-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .history-col {
+        border-right: 3px solid var(--gold);
+        padding-right: 0.75rem;
+      }
+      .history-lbl {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+      }
+      .history-val {
+        font-size: 0.95rem;
+        color: var(--green-dark);
+        font-weight: 800;
+      }
+
+      @media (max-width: 600px) {
+        .portal-container {
+          padding-top: calc(var(--nav-h) + 20px);
+          padding-bottom: 40px;
+        }
+        .portal-header-info {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+        .student-badge-grid {
+          grid-template-columns: 1fr !important;
+          gap: 0.75rem !important;
+        }
+        .history-grid {
+          grid-template-columns: 1fr !important;
+          gap: 0.75rem !important;
+        }
+      }
+
+      /* Unified Shape Uniformity (12px Border-Radius Overrides) */
+      .login-card,
+      .about-card,
+      .target-card,
+      .history-card,
+      .history-item,
+      .quran-log-item,
+      .profile-card,
+      .student-badge-item,
+      .accordion-item,
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      input[type="text"],
+      input[type="tel"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      select,
+      textarea,
+      .btn,
+      button:not(.nav-toggle):not(.close-btn) {
+        border-radius: 12px !important;
+      }
+    </style>
+  </head>
+  <body class="page-quran">
+    <div class="page-transition-overlay" aria-hidden="true"></div>
+
+    <!-- NAVBAR -->
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="index.html" class="navbar-brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle active" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html" class="active">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-main portal-container">
+      <div class="container">
+        
+        <!-- ══ LOGIN VIEW ══ -->
+        <section id="portal-login-view" class="reveal">
+          <div class="login-card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+              <i class="ph-bold ph-user-circle-gear" style="font-size: 4rem; color: var(--gold); display: inline-block; margin-bottom: 1rem;"></i>
+              <h2 style="color: var(--green-dark); font-weight: 900; font-size: 1.7rem; margin: 0 0 0.5rem 0;">بوابة المتابعة للكبار</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">سجل الدخول باستخدام معرفك ورقم هاتفك لمتابعة تقدمك القرآني</p>
+            </div>
+            
+            <form id="adult-login-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div class="form-group">
+                <label for="adult-id">معرف الطالب للكبار (ID):</label>
+                <input type="text" id="adult-id" required placeholder="مثال: AD0005" style="font-weight: 700; letter-spacing: 1px; text-align: right !important;" />
+              </div>
+              <div class="form-group">
+                <label for="adult-phone">رقم الهاتف المسجل:</label>
+                <input type="tel" id="adult-phone" required placeholder="مثال: 0550123456" style="text-align: right !important;" />
+              </div>
+              
+              <button type="submit" id="btn-login-submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%; justify-content: center;">
+                <i class="ph-bold ph-sign-in"></i> تسجيل الدخول
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ══ DASHBOARD VIEW ══ -->
+        <section id="portal-dashboard-view" style="display: none;">
+          <!-- User Details / Welcome -->
+          <div class="portal-header-info">
+            <div class="portal-user-welcome">
+              <h1>بوابة الطالب: <span id="welcome-adult-name" style="color: var(--gold);">-</span></h1>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; font-weight: 700;">
+                <i class="ph-bold ph-shield-check" style="color: var(--green); vertical-align: middle;"></i> حساب نشط ومعتمد في الحلقات
+              </p>
+            </div>
+            <button id="adult-logout-btn" class="btn" style="background: rgba(255, 68, 68, 0.08); border: 1px solid rgba(255, 68, 68, 0.2); color: #ff4d4d; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 1.25rem;">
+              <i class="ph-bold ph-sign-out"></i> تسجيل الخروج
+            </button>
+          </div>
+
+          <!-- Simplified Two-Column Dashboard Layout -->
+          <div class="adult-dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
+            <!-- Left Column: Basic Info & Target -->
+            <div class="target-card" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+              <div>
+                <h3 class="target-title" style="margin-bottom: 1.25rem;">المعلومات الأساسية والهدف</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                  <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem; align-items: center;">
+                    <span style="color: var(--text-muted); font-weight: 700; font-size: 0.9rem;"><i class="ph-bold ph-identification-card" style="color: var(--gold); margin-left: 0.25rem;"></i> معرف الطالب:</span>
+                    <span id="badge-adult-id" style="font-weight: 800; color: var(--green-dark); font-family: monospace;">-</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem; align-items: center;">
+                    <span style="color: var(--text-muted); font-weight: 700; font-size: 0.9rem;"><i class="ph-bold ph-users-three" style="color: var(--gold); margin-left: 0.25rem;"></i> القسم الدراسي:</span>
+                    <span id="badge-adult-section" style="font-weight: 800; color: var(--green-dark);">-</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem; align-items: center;">
+                    <span style="color: var(--text-muted); font-weight: 700; font-size: 0.9rem;"><i class="ph-bold ph-phone" style="color: var(--gold); margin-left: 0.25rem;"></i> رقم الهاتف:</span>
+                    <span id="badge-adult-phone" style="font-weight: 800; color: var(--green-dark); font-family: monospace;">-</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem; align-items: center;">
+                    <span style="color: var(--text-muted); font-weight: 700; font-size: 0.9rem;"><i class="ph-bold ph-book-open" style="color: var(--gold); margin-left: 0.25rem;"></i> المستوى القرآني:</span>
+                    <span id="badge-adult-quranLevel" style="font-weight: 800; color: var(--green-dark);">-</span>
+                  </div>
+                  <div id="badge-adult-prior-block" style="display: none; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem; align-items: center;">
+                    <span style="color: var(--text-muted); font-weight: 700; font-size: 0.9rem;"><i class="ph-bold ph-book-bookmark" style="color: var(--gold); margin-left: 0.25rem;"></i> الحفظ الأولي:</span>
+                    <span id="badge-adult-prior" style="font-weight: 800; color: var(--green-dark);">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 1rem; background: rgba(13, 92, 70, 0.02); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(200, 161, 90, 0.25);">
+                <label for="adult-target-hizb" style="font-weight: 800; color: var(--green-dark); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">الهدف المحدد للحفظ (الورد المستهدف):</label>
+                <select id="adult-target-hizb" style="width: 100%; padding: 0.65rem 1rem; border-radius: 6px; border: 1px solid rgba(200,161,90,0.3); font-weight: 700; color: var(--green-dark); background: white;">
+                  <option value="1">حزب واحد (1)</option>
+                  <option value="2">حزبين (2)</option>
+                  <option value="5">5 أحزاب</option>
+                  <option value="10">10 أحزاب</option>
+                  <option value="15">15 حزباً</option>
+                  <option value="20">20 حزباً</option>
+                  <option value="30">30 حزباً (نصف القرآن)</option>
+                  <option value="40">40 حزباً</option>
+                  <option value="50">50 حزباً</option>
+                  <option value="60" selected>60 حزباً (القرآن كاملاً)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Right Column: SVG Progress Circle & Secondary Stats -->
+            <div class="target-card" style="margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+              <h3 class="target-title" style="margin-bottom: 0.5rem; align-self: flex-start; text-align: right;">نسبة إنجاز الهدف</h3>
+              
+              <!-- Premium Progress Circle -->
+              <div class="progress-circle-wrapper" style="position: relative; width: 160px; height: 160px; margin: 1rem auto; display: flex; align-items: center; justify-content: center;">
+                <svg width="160" height="160" viewBox="0 0 160 160" style="transform: rotate(-90deg);">
+                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="#f0f0f0" stroke-width="12" />
+                  <circle id="progress-circle-fill" cx="80" cy="80" r="70" fill="transparent" stroke="var(--green)" stroke-width="12" stroke-dasharray="439.82" stroke-dashoffset="439.82" stroke-linecap="round" style="transition: stroke-dashoffset 1.2s ease-in-out;" />
+                </svg>
+                <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                  <span id="progress-circle-percent" style="font-size: 2rem; font-weight: 900; color: var(--green-dark);">0%</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">نسبة الإنجاز</span>
+                </div>
+              </div>
+
+              <!-- Stats Sub-Grid -->
+              <div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                <div style="background: rgba(13, 92, 70, 0.02); padding: 0.6rem; border-radius: 6px; border: 1px solid rgba(0,0,0,0.03);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.15rem;">الآيات المحفوظة</span>
+                  <span id="stat-memorized-verses" style="font-size: 0.95rem; font-weight: 900; color: var(--green-dark);">0 آية</span>
+                </div>
+                <div style="background: rgba(13, 92, 70, 0.02); padding: 0.6rem; border-radius: 6px; border: 1px solid rgba(0,0,0,0.03);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.15rem;">الورد بالآيات</span>
+                  <span id="stat-target-verses" style="font-size: 0.95rem; font-weight: 900; color: var(--green-dark);">6236 آية</span>
+                </div>
+                <div style="background: rgba(13, 92, 70, 0.02); padding: 0.6rem; border-radius: 6px; border: 1px solid rgba(0,0,0,0.03);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.15rem;">الحضور اليومي</span>
+                  <span id="stat-attendance-count" style="font-size: 0.95rem; font-weight: 900; color: var(--gold);">0 حصة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <style>
+            @media (max-width: 768px) {
+              .adult-dashboard-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.25rem !important;
+              }
+            }
+          </style>
+
+          <!-- History / Daily Evaluations List -->
+          <div class="history-card">
+            <h3 class="history-title">سجل الحلقات والتقويم اليومي</h3>
+            
+            <div id="no-history-msg" style="display: none; text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+              <i class="ph-bold ph-calendar-blank" style="font-size: 3rem; display: block; margin-bottom: 1rem; color: var(--gold);"></i>
+              لا توجد حصص مسجلة في رصيدك حتى الآن.
+            </div>
+
+            <div class="history-list" id="adult-history-list">
+              <!-- Dynamically rendered items -->
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html" class="active">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+    <script type="module" src="admin/js/db.js?v=52"></script>
+    <script type="module" src="js/adult.js?v=52"></script>
+  </body>
+</html>

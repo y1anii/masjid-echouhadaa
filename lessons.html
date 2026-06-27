@@ -1,0 +1,235 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الدروس | مسجد الشهداء</title>
+    <meta name="description" content="دروس وخطب مسجد الشهداء — مجالس علم أسبوعية في قرية ايباشيرن، بجاية" />
+    <link rel="stylesheet" href="css/style.css?v=52" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="icon" type="image/png" href="images/masjidlogo.png" />
+  </head>
+  <body class="page-lessons">
+    <div class="page-transition-overlay" aria-hidden="true"></div>
+
+    <header class="navbar" aria-label="التنقل الرئيسي">
+      <div class="container navbar__inner">
+        <a href="index.html" class="navbar-brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="navbar-logo" />
+          <span class="navbar-brand__text">
+            <span class="navbar-brand__title">مسجد الشهداء</span>
+            <span class="navbar-brand__sub">قرية ايباشيرن<span class="navbar-brand__sub-details"> - بلدية واد غير</span></span>
+          </span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="navbar-nav" id="nav-links" aria-label="صفحات الموقع">
+          <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html" class="active">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <header class="page-hero page-hero--lessons">
+      <div class="page-hero__bg" aria-hidden="true"></div>
+      <div class="container page-hero__content reveal">
+        <span class="eyebrow eyebrow--light">مجالس العلم</span>
+        <h1 class="page-hero__title">الدروس والخطب</h1>
+        <p class="page-hero__lead">برنامج أسبوعي منتظم يعزز الفهم الشرعي ويربط المجتمع ببيت الله.</p>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <section class="section">
+        <div class="container">
+          <div id="lessons-container" class="timeline">
+            <!-- Loading state -->
+            <div class="spinner-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; width: 100%; text-align: center;">
+              <div class="spinner-circle" style="width: 40px; height: 40px; border: 3px solid rgba(212,175,55,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;"></div>
+              <p style="color: var(--text-muted); font-size: 0.95rem;">جاري تحميل البرنامج الأسبوعي للدروس...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style>
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .lesson-card--featured {
+          border-color: var(--gold);
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.03), rgba(255, 255, 255, 0.98));
+          box-shadow: 0 4px 20px rgba(212, 175, 55, 0.08);
+        }
+      </style>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div class="site-footer__brand">
+          <img src="images/masjidlogo.png" alt="مسجد الشهداء" class="footer-logo" />
+          <h3>مسجد الشهداء</h3>
+          <p class="site-footer__tagline">قرية ايباشيرن - بلدية واد غير</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="روابط سريعة">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">تعليم الكبار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register-adult.html">التسجيل للكبار</a></li>
+                <li><a href="adult-portal.html">متابعة التقدم</a></li>
+              </ul>
+            </li>
+            <li class="nav-dropdown">
+              <a href="#" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">دورة الصغار <i class="ph ph-caret-down" style="font-size: 0.8em; margin-inline-start: 2px; vertical-align: middle;"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="register.html">التسجيل للصغار</a></li>
+                <li><a href="parent-portal.html">متابعة ابني</a></li>
+              </ul>
+            </li>
+            <li><a href="lessons.html">الدروس</a></li>
+            <li><a href="ramadan.html">قفة رمضان</a></li>
+            <li><a href="location.html">الموقع</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__contact">
+          <h4>العنوان</h4>
+          <p>قرية ايباشيرن - بلدية واد غير، ولاية بجاية، الجزائر</p>
+          <h4 style="margin-top: 1rem;">تابعنا على فيسبوك</h4>
+          <a href="https://www.facebook.com/share/1E2GkHZn4K/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); margin-top: 0.35rem; font-weight: 700;">
+            <i class="ph-bold ph-facebook-logo" style="font-size: 1.25rem;"></i>
+            <span>الصفحة الرسمية على فيسبوك</span>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__bottom container">
+        <p>جميع الحقوق محفوظة © مسجد الشهداء 2026</p>
+      </div>
+    </footer>
+
+    <script src="js/main.js?v=52"></script>
+    <script type="module" src="admin/js/db.js?v=40"></script>
+    <script type="module">
+      const DAYS_ORDER = [
+        'يومياً',
+        'من السبت إلى الخميس',
+        'من الأحد إلى الخميس',
+        'السبت',
+        'الأحد',
+        'الإثنين',
+        'الثلاثاء',
+        'الأربعاء',
+        'الخميس',
+        'الجمعة'
+      ];
+
+      async function loadLessons() {
+        const container = document.getElementById('lessons-container');
+        try {
+          if (!window.DB) {
+            await new Promise(resolve => {
+              const check = setInterval(() => {
+                if (window.DB) {
+                  clearInterval(check);
+                  resolve();
+                }
+              }, 50);
+            });
+          }
+
+          const rawLessons = await window.DB.getAllLessons();
+          const lessonsList = (rawLessons && Array.isArray(rawLessons)) ? rawLessons : [];
+          
+          if (lessonsList.length === 0) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 3rem 1rem; width: 100%;">
+                <p style="color: var(--text-muted); font-size: 1.1rem;">لا توجد دروس في هذه الفترة</p>
+              </div>
+            `;
+            return;
+          }
+
+          // Sort lessons by day
+          const sortedLessons = lessonsList.sort((a, b) => {
+            let idxA = DAYS_ORDER.indexOf(a.day);
+            let idxB = DAYS_ORDER.indexOf(b.day);
+            if (idxA === -1) idxA = 999;
+            if (idxB === -1) idxB = 999;
+            return idxA - idxB;
+          });
+
+          container.innerHTML = sortedLessons.map(lesson => {
+            const isFeatured = lesson.featured === 'نعم';
+            return `
+              <article class="timeline__item reveal">
+                <div class="timeline__marker" aria-hidden="true"></div>
+                <div class="lesson-card ${isFeatured ? 'lesson-card--featured' : ''}">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <span class="lesson-card__day" style="margin-bottom: 0;">${lesson.day || ''}</span>
+                    ${isFeatured ? `
+                      <span class="lesson-featured-badge" style="background: rgba(212, 175, 55, 0.12); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        <i class="ph-fill ph-star" style="color: var(--gold);"></i> درس مميز
+                      </span>
+                    ` : ''}
+                  </div>
+                  <h2>${lesson.title || ''}</h2>
+                  <p class="lesson-card__meta">
+                    ${lesson.time || ''} 
+                    ${lesson.teacher || lesson.speaker ? ` — ${lesson.teacher || lesson.speaker}` : ''}
+                  </p>
+                  ${lesson.description ? `<p>${lesson.description}</p>` : ''}
+                </div>
+              </article>
+            `;
+          }).join('');
+
+          // Initialize scroll reveal animations for new elements
+          const items = container.querySelectorAll('.reveal');
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+          );
+          items.forEach(el => observer.observe(el));
+
+        } catch (error) {
+          console.error("Error loading lessons:", error);
+          container.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem; width: 100%;">
+              <p style="color: #ff4d4d; font-size: 1rem;">حدث خطأ أثناء تحميل جدول الدروس. يرجى المحاولة لاحقاً.</p>
+            </div>
+          `;
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', loadLessons);
+    </script>
+  </body>
+</html>

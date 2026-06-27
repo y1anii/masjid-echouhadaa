@@ -1,0 +1,12 @@
+--- STUDENTS ---
+ID: 3grtrXFHmcTtlwJ3HYHh | Name: N/A | Phone: 0792784850
+ID: ST19359 | Name: طالب تجريبي | Phone: 0792784850
+
+--- SESSIONS ---
+ID: SE1781191905395 | Date: 11-06-2026 | Name: حلقة صباحية | Status: منتهية
+ID: SE1781192751168 | Date: 11-06-2026 | Name: حلقة مسائية | Status: منتهية
+
+--- PRESENCE ---
+ID: PR_SE1781191905395_ST19359 | StudentID: ST19359 | SessionID: SE1781191905395 | Status: حاضر
+ID: PR_SE1781192751168_ST19359 | StudentID: ST19359 | SessionID: SE1781192751168 | Status: حاضر
+ID: wHFE4VZMe9D5nEwBWieI | StudentID: ST43392 | SessionID: SE100 | Status: حاظر

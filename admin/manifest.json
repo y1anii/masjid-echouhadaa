@@ -1,0 +1,22 @@
+{
+  "name": "لوحة تحكم مسجد الشهداء",
+  "short_name": "إدارة المسجد",
+  "description": "لوحة التحكم وإدارة الموقع لمسجد الشهداء بإيباشيرن",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#083b2d",
+  "theme_color": "#083b2d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "../images/masjidlogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../images/masjidlogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
