@@ -1435,3 +1435,26 @@ textarea:focus {
   font-weight: 800;
   font-size: 0.85rem;
 }
+
+/* Responsive Tabs Horizontal Scroll for Mobile */
+@media (max-width: 600px) {
+  .division-tabs, .gender-tabs {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 0.75rem !important;
+    width: 100% !important;
+    scrollbar-width: none !important; /* Firefox */
+  }
+  .division-tabs::-webkit-scrollbar, .gender-tabs::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+  }
+  .div-tab-btn, .gender-tab-btn {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+}

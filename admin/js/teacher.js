@@ -714,6 +714,20 @@ runWhenReady(() => {
             </div>
           </div>
         </div>
+        <div style="background: rgba(13, 92, 70, 0.08); border: 1px dashed var(--gold); padding: 1.25rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-weight: 900; color: var(--green-dark);">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">إجمالي النجوم اليوم:</span>
+            <span style="font-size: 1.4rem; color: var(--gold); display: inline-flex; align-items: center; gap: 0.25rem;">
+              <span id="stars-total-val">0</span> <i class="ph-fill ph-star"></i>
+            </span>
+          </div>
+          <div style="text-align: left;">
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">النقاط التلقائية المحسوبة (النجمة = 2 نقاط):</span>
+            <span style="font-size: 1.6rem; color: var(--green); display: inline-flex; align-items: center; gap: 0.25rem;">
+              <span id="points-total-val">0</span> نقطة
+            </span>
+          </div>
+        </div>
       `;
       evalDynamicFieldsContainer.innerHTML = html;
       
@@ -1072,6 +1086,9 @@ runWhenReady(() => {
    */
   function runAutoBadgeRules(metricName, val) {
     if (val < 5) return; // الشارة تمنح تلقائياً فقط عند الحصول على 5 نجوم (الحد الأقصى)
+    
+    const behaviorEl = document.getElementById("metric-behavior");
+    if (!behaviorEl) return; // Skip if children criteria don't exist (e.g. for adults)
     
     let badgeToGrant = "";
     if (metricName === "behavior") {
@@ -1790,20 +1807,6 @@ runWhenReady(() => {
     });
   }
 
-  function initSessionLogic() {
-    const startBtn = document.getElementById('start-session-submit-btn');
-    if (startBtn) {
-      startBtn.onclick = function(e) {
-        // Trigger start-session-form submission to run complete backend database registration
-        const form = document.getElementById('start-session-form');
-        if (form) {
-          form.requestSubmit();
-        }
-      };
-    }
-  }
-
   // Load initial archive on boot unconditionally
-  initSessionLogic();
   loadSessionsArchive();
 });
