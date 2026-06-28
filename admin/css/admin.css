@@ -1208,7 +1208,14 @@ body::after {
 @media (max-width: 991px) {
   .honor-split-layout {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center; /* Center children horizontally (Flexbox centering) */
+    width: 100%;
+  }
+  .honor-wizard-form-col,
+  .honor-preview-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -1736,8 +1743,8 @@ textarea:focus {
   top: 0 !important;
   left: 50% !important;
   margin-left: -290px !important;
-  transform: scale(var(--poster-scale, 1)) !important;
-  transform-origin: top center !important;
+  transform: scale(var(--poster-scale, 1));
+  transform-origin: top center;
   font-family: var(--font-sans), sans-serif !important;
   text-align: center !important;
   border-radius: 12px !important;
@@ -1901,6 +1908,7 @@ textarea:focus {
   width: 100% !important;
   max-width: 1200px !important;
   margin: 0 auto !important;
+  box-sizing: border-box !important;
 }
 
 /* Grid layout breakpoints for 1024px+ */

@@ -901,6 +901,9 @@ updateToggleUI();
       honorPosterWrapper.style.display = "block";
       if (typeof adjustPosterScale === "function") {
         adjustPosterScale();
+        // Delayed runs to ensure layout reflow has computed clientWidth correctly (Issue #3)
+        setTimeout(adjustPosterScale, 50);
+        setTimeout(adjustPosterScale, 150);
       }
       if (scroll) {
         honorPosterWrapper.scrollIntoView({ behavior: 'smooth' });
@@ -930,6 +933,12 @@ updateToggleUI();
     const clone = node.cloneNode(true);
     clone.id = 'weekly-honor-poster';
     clone.classList.add('for-export'); // Forces fixed width/height and px units
+    
+    // Explicitly clear inline transform/positioning styles cloned from DOM element (Issue #2 & #5)
+    clone.style.transform = 'none';
+    clone.style.left = '0';
+    clone.style.marginLeft = '0';
+    clone.style.position = 'relative';
     clone.style.direction = 'rtl'; // Explicit RTL enforcement
     
     exportContainer.appendChild(clone);
