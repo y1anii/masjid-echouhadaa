@@ -1718,33 +1718,49 @@ textarea:focus {
   border-top: 1px solid rgba(200, 161, 90, 0.12);
 }
 
-/* Fluid Scalable Poster (Problem #3) via Container Queries */
+/* Unified Scalable Poster Layout (Issue #3, #4, & #6) */
 .poster-container {
   container-type: inline-size;
   width: 100%;
   max-width: 580px;
+  aspect-ratio: 4 / 5;
   margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
 }
+
 #weekly-honor-poster {
-  width: 100% !important;
-  height: 125cqw !important;
+  width: 580px !important;
+  height: 725px !important;
   box-sizing: border-box !important;
-  position: relative !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  margin-left: -290px !important;
+  transform: scale(calc(100cqw / 580));
+  transform-origin: top center;
   font-family: var(--font-sans), sans-serif !important;
   text-align: center !important;
   border-radius: 12px !important;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15) !important;
   overflow: hidden !important;
   direction: rtl !important;
-  margin: 0 auto 1rem !important;
-  transform: none !important;
-  padding: 4cqw 5cqw 3cqw 5cqw !important;
+  padding: 24px 30px 18px 30px !important;
 }
 
+#weekly-honor-poster.for-export {
+  transform: none !important;
+  left: 0 !important;
+  margin-left: 0 !important;
+  position: relative !important;
+  border-radius: 12px !important;
+}
+
+/* Males Theme (Green / Gold) */
 #weekly-honor-poster.theme-males {
-  border: 1.2cqw solid #0d5c46 !important;
-  outline: 0.4cqw solid #d4af37 !important;
-  outline-offset: -1.6cqw !important;
+  border: 7px solid #0d5c46 !important;
+  outline: 2.3px solid #d4af37 !important;
+  outline-offset: -9px !important;
   background-color: #fbfaf6 !important;
   background-image: var(--pattern) !important;
 }
@@ -1752,7 +1768,7 @@ textarea:focus {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
-  border: 0.2cqw solid rgba(13, 92, 70, 0.12) !important;
+  border: 1.2px solid rgba(13, 92, 70, 0.12) !important;
   border-radius: 10px !important;
   pointer-events: none !important;
   z-index: 1 !important;
@@ -1760,16 +1776,16 @@ textarea:focus {
 #weekly-honor-poster.theme-males .poster-title-banner {
   background: linear-gradient(135deg, #0d5c46, #073a2c) !important;
   color: #d4af37 !important;
-  border: 0.4cqw solid #d4af37 !important;
+  border: 2.3px solid #d4af37 !important;
 }
 #weekly-honor-poster.theme-males .poster-subtitle {
   color: #0d5c46 !important;
 }
 #weekly-honor-poster.theme-males .poster-row-card {
   background: #ffffff !important;
-  border: 0.3cqw solid rgba(13, 92, 70, 0.1) !important;
-  border-right: 1.1cqw solid #0d5c46 !important;
-  box-shadow: 0 0.8cqw 2cqw rgba(13, 92, 70, 0.03) !important;
+  border: 1.7px solid rgba(13, 92, 70, 0.1) !important;
+  border-right: 6.4px solid #0d5c46 !important;
+  box-shadow: 0 4px 10px rgba(13, 92, 70, 0.03) !important;
 }
 #weekly-honor-poster.theme-males .poster-row-title-badge {
   background-color: rgba(13, 92, 70, 0.08) !important;
@@ -1784,7 +1800,7 @@ textarea:focus {
 #weekly-honor-poster.theme-males .poster-motto-banner {
   background-color: rgba(13, 92, 70, 0.06) !important;
   color: #0d5c46 !important;
-  border: 0.2cqw solid rgba(13, 92, 70, 0.1) !important;
+  border: 1px solid rgba(13, 92, 70, 0.1) !important;
 }
 #weekly-honor-poster.theme-males .lantern-svg {
   fill: rgba(13, 92, 70, 0.07) !important;
@@ -1796,10 +1812,11 @@ textarea:focus {
   color: rgba(13, 92, 70, 0.035) !important;
 }
 
+/* Females Theme (Pink / Gold) */
 #weekly-honor-poster.theme-females {
-  border: 1.2cqw solid #cf6376 !important;
-  outline: 0.4cqw solid #d4af37 !important;
-  outline-offset: -1.6cqw !important;
+  border: 7px solid #cf6376 !important;
+  outline: 2.3px solid #d4af37 !important;
+  outline-offset: -9px !important;
   background-color: #fff9fa !important;
   background-image: var(--pattern) !important;
 }
@@ -1807,7 +1824,7 @@ textarea:focus {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
-  border: 0.2cqw solid rgba(207, 99, 118, 0.12) !important;
+  border: 1.2px solid rgba(207, 99, 118, 0.12) !important;
   border-radius: 10px !important;
   pointer-events: none !important;
   z-index: 1 !important;
@@ -1815,16 +1832,16 @@ textarea:focus {
 #weekly-honor-poster.theme-females .poster-title-banner {
   background: linear-gradient(135deg, #cf6376, #a84355) !important;
   color: #fffdf9 !important;
-  border: 0.4cqw solid #d4af37 !important;
+  border: 2.3px solid #d4af37 !important;
 }
 #weekly-honor-poster.theme-females .poster-subtitle {
   color: #cf6376 !important;
 }
 #weekly-honor-poster.theme-females .poster-row-card {
   background: #ffffff !important;
-  border: 0.3cqw solid rgba(207, 99, 118, 0.1) !important;
-  border-right: 1.1cqw solid #cf6376 !important;
-  box-shadow: 0 0.8cqw 2cqw rgba(207, 99, 118, 0.03) !important;
+  border: 1.7px solid rgba(207, 99, 118, 0.1) !important;
+  border-right: 6.4px solid #cf6376 !important;
+  box-shadow: 0 4px 10px rgba(207, 99, 118, 0.03) !important;
 }
 #weekly-honor-poster.theme-females .poster-row-title-badge {
   background-color: rgba(207, 99, 118, 0.08) !important;
@@ -1839,7 +1856,7 @@ textarea:focus {
 #weekly-honor-poster.theme-females .poster-motto-banner {
   background-color: rgba(207, 99, 118, 0.06) !important;
   color: #cf6376 !important;
-  border: 0.2cqw solid rgba(207, 99, 118, 0.1) !important;
+  border: 1px solid rgba(207, 99, 118, 0.1) !important;
 }
 #weekly-honor-poster.theme-females .lantern-svg {
   fill: rgba(207, 99, 118, 0.07) !important;
@@ -1853,8 +1870,8 @@ textarea:focus {
 
 .poster-inner-border {
   position: absolute !important;
-  inset: 2cqw !important;
-  border: 0.4cqw dashed rgba(200, 161, 90, 0.3) !important;
+  inset: 12px !important;
+  border: 2.3px dashed rgba(200, 161, 90, 0.3) !important;
   border-radius: 8px !important;
   pointer-events: none !important;
   z-index: 2 !important;
@@ -1862,279 +1879,24 @@ textarea:focus {
 .poster-content-wrap {
   position: relative !important;
   z-index: 3 !important;
-  margin-top: 1cqw !important;
+  margin-top: 5px !important;
 }
 .poster-logo-container {
-  width: 12cqw !important;
-  height: 12cqw !important;
-  background: #ffffff !important;
-  border-radius: 50% !important;
-  border: 0.5cqw solid #d4af37 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 auto 1cqw !important;
-  box-shadow: 0 0.8cqw 2cqw rgba(0,0,0,0.15) !important;
-}
-.poster-logo-container img {
-  width: 9cqw !important;
-  height: 9cqw !important;
-  object-fit: contain !important;
-}
-.poster-title-banner {
-  width: fit-content !important;
-  margin: 0 auto 0.5cqw !important;
-  padding: 0.5cqw 4cqw !important;
-  border-radius: 6cqw !important;
-  font-weight: 900 !important;
-  font-size: 4.8cqw !important;
-  box-shadow: 0 0.8cqw 2.5cqw rgba(0,0,0,0.12) !important;
-  letter-spacing: normal !important;
-}
-.poster-subtitle {
-  font-weight: 800 !important;
-  font-size: 3.2cqw !important;
-  margin-bottom: 2cqw !important;
-}
-.poster-rows-container {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1.7cqw !important;
-  margin-bottom: 2cqw !important;
-}
-.poster-row-card {
-  border-radius: 1.6cqw !important;
-  padding: 1.2cqw 3cqw !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 3cqw !important;
-  text-align: right !important;
-  box-sizing: border-box !important;
-  min-height: 10cqw !important;
-}
-.poster-row-medal {
-  width: 6.2cqw !important;
-  height: 8cqw !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-}
-.poster-row-medal svg {
-  width: 100% !important;
-  height: 100% !important;
-}
-.poster-row-icon-circle {
-  width: 5.8cqw !important;
-  height: 5.8cqw !important;
-  border-radius: 50% !important;
-  border: 0.3cqw solid #d4af37 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-  background-color: rgba(212, 175, 55, 0.05) !important;
-}
-.poster-row-icon-circle i {
-  font-size: 3.5cqw !important;
-  color: #d4af37 !important;
-}
-.poster-row-details {
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  flex-grow: 1 !important;
-  gap: 0.3cqw !important;
-}
-.poster-row-title-badge {
-  font-size: 2.4cqw !important;
-  font-weight: 800 !important;
-  padding: 0.3cqw 1.8cqw !important;
-  border-radius: 2cqw !important;
-  width: fit-content !important;
-  letter-spacing: normal !important;
-}
-.poster-row-name {
-  font-size: 4cqw !important;
-  font-weight: 900 !important;
-  margin-top: 0.2cqw !important;
-}
-.poster-footer-text {
-  font-size: 2.6cqw !important;
-  font-weight: 800 !important;
-  line-height: 1.5 !important;
-  margin: 0 auto 1.5cqw !important;
-  max-width: 82cqw !important;
-}
-.poster-motto-banner {
-  padding: 1cqw 4cqw !important;
-  border-radius: 4cqw !important;
-  font-size: 2.7cqw !important;
-  font-weight: 900 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 1.2cqw !important;
-  margin: 0 auto !important;
-}
-.poster-motto-banner svg {
-  width: 3.2cqw !important;
-  height: 3.2cqw !important;
-}
-.poster-lantern-left {
-  position: absolute !important;
-  top: 3.5cqw !important;
-  left: 4.5cqw !important;
-  z-index: 2 !important;
-}
-.poster-lantern-right {
-  position: absolute !important;
-  top: 3.5cqw !important;
-  right: 4.5cqw !important;
-  z-index: 2 !important;
-}
-.poster-lantern-left svg,
-.poster-lantern-right svg {
-  width: 5cqw !important;
-  height: 7.5cqw !important;
-}
-.poster-decorations-bg {
-  position: absolute !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  padding: 0 2cqw !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
-}
-.poster-decorations-svg {
-  opacity: 0.3 !important;
-  width: 14cqw !important;
-  height: 10cqw !important;
-}
-
-/* ── Absolute pixel size overrides for High-Res JPEG Export ── */
-#weekly-honor-poster.for-export {
-  width: 580px !important;
-  height: 725px !important;
-  padding: 24px 30px 18px 30px !important;
-  border-width: 7px !important;
-  outline-width: 2.3px !important;
-  outline-offset: -9px !important;
-  direction: rtl !important;
-  unicode-bidi: isolate !important;
-  overflow: hidden !important;
-  position: relative !important;
-  box-sizing: border-box !important;
-  transform: none !important;
-}
-#weekly-honor-poster.for-export::before {
-  border-width: 1.2px !important;
-  border-radius: 10px !important;
-}
-#weekly-honor-poster.for-export .poster-inner-border {
-  inset: 12px !important;
-  border-width: 2.3px !important;
-}
-#weekly-honor-poster.for-export .poster-logo-container {
   width: 70px !important;
   height: 70px !important;
-  border-width: 3px !important;
-  margin-bottom: 6px !important;
+  background: #ffffff !important;
+  border-radius: 50% !important;
+  border: 3px solid #d4af37 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto 6px !important;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
 }
-#weekly-honor-poster.for-export .poster-logo-container img {
+.poster-logo-container img {
   width: 52px !important;
   height: 52px !important;
 }
-#weekly-honor-poster.for-export .poster-title-banner {
-  margin-bottom: 3px !important;
-  padding: 3px 23px !important;
-  border-radius: 35px !important;
-  font-size: 28px !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
-  letter-spacing: normal !important;
-  border-width: 2.3px !important;
-}
-#weekly-honor-poster.for-export .poster-subtitle {
-  font-size: 18px !important;
-  margin-bottom: 12px !important;
-}
-#weekly-honor-poster.for-export .poster-rows-container {
-  gap: 10px !important;
-  margin-bottom: 12px !important;
-}
-#weekly-honor-poster.for-export .poster-row-card {
-  border-radius: 9px !important;
-  padding: 7px 17px !important;
-  gap: 17px !important;
-  min-height: 58px !important;
-  border-width: 1.7px !important;
-  border-right-width: 6.4px !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
-}
-#weekly-honor-poster.for-export .poster-row-medal {
-  width: 36px !important;
-  height: 46px !important;
-}
-#weekly-honor-poster.for-export .poster-row-icon-circle {
-  width: 34px !important;
-  height: 34px !important;
-  border-width: 1.7px !important;
-}
-#weekly-honor-poster.for-export .poster-row-icon-circle i {
-  font-size: 20px !important;
-}
-#weekly-honor-poster.for-export .poster-row-details {
-  gap: 1.7px !important;
-}
-#weekly-honor-poster.for-export .poster-row-title-badge {
-  font-size: 14px !important;
-  padding: 1.7px 10px !important;
-  border-radius: 12px !important;
-}
-#weekly-honor-poster.for-export .poster-row-name {
-  font-size: 23px !important;
-  margin-top: 1px !important;
-}
-#weekly-honor-poster.for-export .poster-footer-text {
-  font-size: 15px !important;
-  margin-bottom: 9px !important;
-  max-width: 480px !important;
-}
-#weekly-honor-poster.for-export .poster-motto-banner {
-  padding: 6px 23px !important;
-  border-radius: 23px !important;
-  font-size: 16px !important;
-  gap: 7px !important;
-  border-width: 1px !important;
-}
-#weekly-honor-poster.for-export .poster-motto-banner svg {
-  width: 18px !important;
-  height: 18px !important;
-}
-#weekly-honor-poster.for-export .poster-lantern-left {
-  top: 20px !important;
-  left: 26px !important;
-}
-#weekly-honor-poster.for-export .poster-lantern-right {
-  top: 20px !important;
-  right: 26px !important;
-}
-#weekly-honor-poster.for-export .poster-lantern-left svg,
-#weekly-honor-poster.for-export .poster-lantern-right svg {
-  width: 29px !important;
-  height: 44px !important;
-}
-#weekly-honor-poster.for-export .poster-decorations-bg {
-  padding: 0 12px !important;
-}
-#weekly-honor-poster.for-export .poster-decorations-svg {
-  width: 81px !important;
-  height: 58px !important;
-}
-
 /* Centering and sizing preview container (Problem #6) */
 .honor-preview-col {
   width: 100% !important;
@@ -2146,9 +1908,9 @@ textarea:focus {
 @media (min-width: 1024px) {
   .honor-split-layout {
     display: grid !important;
-    grid-template-columns: 1.2fr 1fr !important;
+    grid-template-columns: 1fr 1fr !important; /* Balanced 1:1 columns (Issue #1) */
     gap: 2rem !important;
-    align-items: flex-start !important;
+    align-items: start !important;
   }
 }
 
