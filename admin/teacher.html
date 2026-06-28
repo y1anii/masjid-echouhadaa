@@ -1,13 +1,13 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>رصد تقييم الحلقة اليومي | مسجد الشهداء</title>
-    <link rel="stylesheet" href="../css/style.css?v=53" />
-    <link rel="stylesheet" href="css/admin.css?v=54" />
+    <link rel="stylesheet" href="../css/style.css?v=60" />
+    <link rel="stylesheet" href="css/admin.css?v=60" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script type="module" src="js/auth.js?v=53"></script>
+    <script type="module" src="js/auth.js?v=60"></script>
     <script>
       if (!sessionStorage.getItem("masjid_auth") && !localStorage.getItem("masjid_auth")) {
         window.location.href = "login.html";
@@ -362,6 +362,28 @@
             </button>
           </div>
 
+          <!-- Session Summary Card -->
+          <div id="session-summary-card" class="about-card" style="margin-bottom: 1.25rem; border: 1px solid rgba(200, 161, 90, 0.3); background: linear-gradient(135deg, rgba(13,92,70,0.04) 0%, rgba(212,175,55,0.04) 100%); padding: 1.25rem 1.5rem;">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; border-bottom: 1px dashed rgba(200,161,90,0.2); padding-bottom: 0.85rem; margin-bottom: 0.85rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 800; color: var(--green-dark);">
+                <i class="ph-bold ph-calendar-blank" style="color:var(--gold); font-size:1.15rem;"></i>
+                <span id="sum-day-date">—</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 800; color: var(--green-dark);">
+                <i class="ph-bold ph-users-three" style="color:var(--gold); font-size:1.15rem;"></i>
+                <span id="sum-circle-type">—</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 800; color: var(--green-dark);">
+                <i class="ph-bold ph-chalkboard-teacher" style="color:var(--gold); font-size:1.15rem;"></i>
+                <span>المشرف: </span><span id="sum-supervisor">—</span>
+              </div>
+            </div>
+            <div id="sum-courses-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+              <span style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">المقررات:</span>
+              <!-- Tags injected by teacher.js -->
+            </div>
+          </div>
+
           <!-- Daily Agenda Configuration Card -->
           <div class="about-card" style="margin-bottom: 2rem; border: 1px solid rgba(200, 161, 90, 0.25);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1.5px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; margin-bottom: 1.25rem;">
@@ -550,7 +572,7 @@
       </button>
     </div>
 
-    <script type="module" src="js/db.js?v=53"></script>
-    <script type="module" src="js/teacher.js?v=54"></script>
+    <script type="module" src="js/db.js?v=60"></script>
+    <script type="module" src="js/teacher.js?v=60"></script>
   </body>
 </html>

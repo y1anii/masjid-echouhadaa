@@ -1,10 +1,10 @@
-/**
+﻿/**
  * مسجد الشهداء — لوحة تحكم ولي الأمر (بوابة المتابعة الشاملة)
  */
 
 import { collection, query, where, getDocs, onSnapshot, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, auth } from "../admin/js/db.js?v=52";
+import { db, auth } from "../admin/js/db.js?v=60";
 
 function normalizeArabic(text) {
   if (!text) return "";
@@ -292,6 +292,62 @@ function normalizeArabic(text) {
     }
 
     initWeeklyStars();
+    checkStudentWeeklyStarBanner();
+  }
+
+  async function checkStudentWeeklyStarBanner() {
+    const student = portalDataCache?.student;
+    if (!student || !student.name) return;
+
+    const bannerEl = document.getElementById('weekly-star-banner');
+    if (!bannerEl) return;
+
+    try {
+      const studentName = student.name.trim();
+      const genders = ['males', 'females'];
+      let foundWeek = null;
+
+      for (const gender of genders) {
+        const data = await window.DB.getWeeklyHonorBoard(gender);
+        if (!data) continue;
+        const names = [data.rank1, data.rank2, data.rank3].filter(Boolean).map(n => n.trim());
+        if (names.includes(studentName)) {
+          foundWeek = data;
+          break;
+        }
+      }
+
+      if (foundWeek) {
+        // Parse weekName (format: "YYYY-MM-DD → YYYY-MM-DD")
+        const weekName = foundWeek.weekName || '';
+        let weekDisplay = weekName;
+        if (weekName.includes('→')) {
+          const parts = weekName.split('→').map(s => s.trim());
+          weekDisplay = `من ${parts[0]} إلى ${parts[1]}`;
+        }
+
+        bannerEl.innerHTML = `
+          <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+            <span style="font-size:2rem; line-height:1;">⭐</span>
+            <div>
+              <div style="font-weight:900; font-size:1.05rem; color:#7a5900;">
+                مبارك! الطالب <strong>${studentName}</strong> نجم الأسبوع
+              </div>
+              <div style="font-size:0.88rem; color:#a07020; margin-top:0.15rem; font-weight:700;">
+                ${weekDisplay}
+              </div>
+            </div>
+            <span style="font-size:1.5rem; line-height:1; margin-right:auto;">🌟</span>
+          </div>
+        `;
+        bannerEl.style.display = 'block';
+      } else {
+        bannerEl.style.display = 'none';
+      }
+    } catch (err) {
+      console.warn('[Parent Portal] Could not check weekly star status:', err);
+      if (bannerEl) bannerEl.style.display = 'none';
+    }
   }
 
   async function initWeeklyStars() {

@@ -1,11 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>بوابة أولياء الأمور | مسجد الشهداء</title>
     <meta name="description" content="بوابة متابعة أولياء الأمور لطلاب الدورة الصيفية القرآنية بمسجد الشهداء" />
-    <link rel="stylesheet" href="css/style.css?v=53" />
+    <link rel="stylesheet" href="css/style.css?v=60" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
       if (sessionStorage.getItem('masjid_parent_logged') === 'true') {
@@ -612,6 +612,9 @@
           </div>
         </div>
 
+        <!-- ⭐ Weekly Star Banner — shown dynamically by parent.js -->
+        <div id="weekly-star-banner" style="display:none; margin-bottom:1.25rem; background: linear-gradient(135deg, #fffbe6 0%, #fff3cc 100%); border: 2px solid var(--gold); border-radius: 12px; padding: 1rem 1.5rem; box-shadow: 0 4px 18px rgba(212,175,55,0.18);"></div>
+
         <!-- Student Badges Row (6 items grid) -->
         <div class="student-badge-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
           <div class="student-badge-item" style="background: var(--green-dark); border: 2.5px solid var(--gold); color: var(--white); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); outline: 1px solid rgba(212, 175, 55, 0.3); outline-offset: -3px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.5rem; padding: 1.2rem 1.5rem;">
@@ -854,9 +857,9 @@
       </div>
     </footer>
 
-    <script src="js/main.js?v=53"></script>
-    <script type="module" src="admin/js/db.js?v=53"></script>
-    <script type="module" src="js/parent.js?v=53"></script>
+    <script src="js/main.js?v=60"></script>
+    <script type="module" src="admin/js/db.js?v=60"></script>
+    <script type="module" src="js/parent.js?v=60"></script>
   <!-- Weekly Stars Modal -->
   <div id="weekly-stars-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
     <div class="profile-card animate-modal" style="max-width: 800px; width: 100%; background: #fff; border-radius: var(--radius); border-top: 5px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;">

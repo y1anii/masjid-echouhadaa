@@ -599,30 +599,9 @@ updateToggleUI();
   const wizardContainer = document.getElementById("honor-wizard-container");
   const wizardTitle = document.getElementById("wizard-title");
 
-  // Update status text on toggle cards
+  // Update status text on toggle cards (kept for backward compat - no-ops now)
   function updateWeeklyTogglesUI() {
-    const malesStatus = document.getElementById("toggle-males-status");
-    const femalesStatus = document.getElementById("toggle-females-status");
-    
-    if (toggleMalesBoard && malesStatus) {
-      if (toggleMalesBoard.checked) {
-        malesStatus.textContent = "مفعل";
-        malesStatus.classList.add("active");
-      } else {
-        malesStatus.textContent = "غير مفعل";
-        malesStatus.classList.remove("active");
-      }
-    }
-    
-    if (toggleFemalesBoard && femalesStatus) {
-      if (toggleFemalesBoard.checked) {
-        femalesStatus.textContent = "مفعل";
-        femalesStatus.classList.add("active");
-      } else {
-        femalesStatus.textContent = "غير مفعل";
-        femalesStatus.classList.remove("active");
-      }
-    }
+    // Toggles removed — no-op
   }
 
   const wizardDistinguishedTeam = document.getElementById("wizard-distinguished-team");
@@ -677,7 +656,7 @@ updateToggleUI();
       }
     }
     if (wizardTitle) {
-      wizardTitle.textContent = gender === "females" ? "تحديد نجوم الأسبوع (البنات)" : "تحديد نجوم الأسبوع (البنين)";
+      wizardTitle.textContent = gender === "females" ? "تحديد نجوم الأسبوع — البنات" : "تحديد نجوم الأسبوع — البنين والبنات";
     }
 
     const skeleton = document.getElementById("honor-skeleton-loader");
@@ -718,35 +697,9 @@ updateToggleUI();
     }
   };
 
-  if (toggleMalesBoard) {
-    toggleMalesBoard.addEventListener("change", async () => {
-      const isActive = toggleMalesBoard.checked;
-      await window.DB.setSetting("weekly_honor_board_males_active", isActive ? "true" : "false");
-      updateWeeklyTogglesUI();
-      
-      const femalesActive = toggleFemalesBoard ? toggleFemalesBoard.checked : false;
-      if (isActive || femalesActive) {
-        initWizard(activeHonorGender, true);
-      } else {
-        wizardContainer.style.display = "none";
-      }
-    });
-  }
+  // Toggle change listeners removed (toggles no longer shown in UI)
+  // Honor board is always active and shown directly
 
-  if (toggleFemalesBoard) {
-    toggleFemalesBoard.addEventListener("change", async () => {
-      const isActive = toggleFemalesBoard.checked;
-      await window.DB.setSetting("weekly_honor_board_females_active", isActive ? "true" : "false");
-      updateWeeklyTogglesUI();
-      
-      const malesActive = toggleMalesBoard ? toggleMalesBoard.checked : false;
-      if (isActive || malesActive) {
-        initWizard(activeHonorGender, true);
-      } else {
-        wizardContainer.style.display = "none";
-      }
-    });
-  }
 
   // ── Auto Calculate Button ──
   if (btnCalculateHonors) {
@@ -869,18 +822,11 @@ updateToggleUI();
 
   async function loadWeeklyHonorBoardData() {
     try {
-      const malesActive = await window.DB.getSetting("weekly_honor_board_males_active") === "true";
-      const femalesActive = await window.DB.getSetting("weekly_honor_board_females_active") === "true";
-
-      if (toggleMalesBoard) toggleMalesBoard.checked = malesActive;
-      if (toggleFemalesBoard) toggleFemalesBoard.checked = femalesActive;
-      
-      updateWeeklyTogglesUI();
-
-      if (malesActive || femalesActive) {
-        const defaultGender = malesActive ? "males" : "females";
-        await initWizard(defaultGender, false);
-      }
+      // Always initialize the wizard directly (no toggle gating)
+      await initWizard("males", false);
+      // Keep both genders active so the button appears in parent portal
+      await window.DB.setSetting("weekly_honor_board_males_active", "true");
+      await window.DB.setSetting("weekly_honor_board_females_active", "true");
     } catch (err) {
       console.warn("[Dashboard] Could not load weekly honor board settings:", err);
     }

@@ -95,12 +95,19 @@ runWhenReady(() => {
   function initSession() {
     const isActive = localStorage.getItem("masjid_session_active") === "true";
     if (isActive) {
+      let restoredCourses = [];
+      try {
+        const savedCourses = localStorage.getItem("masjid_session_courses");
+        if (savedCourses) restoredCourses = JSON.parse(savedCourses);
+      } catch(e) {}
+
       activeSession = {
         sessionId: localStorage.getItem("masjid_session_id"),
         circleName: localStorage.getItem("masjid_session_circle"),
         date: localStorage.getItem("masjid_session_date"),
         time: localStorage.getItem("masjid_session_time"),
-        supervisorName: localStorage.getItem("masjid_session_supervisor")
+        supervisorName: localStorage.getItem("masjid_session_supervisor"),
+        selectedCourses: restoredCourses
       };
       
       const savedReports = localStorage.getItem("masjid_session_reports");
@@ -161,6 +168,84 @@ runWhenReady(() => {
       cancelSessionBtn.textContent = "إلغاء الحلقة الحالية";
     }
     sessionDateVal.textContent = activeSession.date;
+
+    // ── بطاقة ملخص الحلقة ──
+    const summaryCard = document.getElementById('session-summary-card');
+    const sumDayDate = document.getElementById('sum-day-date');
+    const sumCircleType = document.getElementById('sum-circle-type');
+    const sumSupervisor = document.getElementById('sum-supervisor');
+    const sumCoursesTags = document.getElementById('sum-courses-tags');
+
+    if (summaryCard) {
+      // تكوين التاريخ واليوم بالعربي
+      const arabicDays = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+      let dayLabel = '';
+      let dateLabel = activeSession.date || '';
+      try {
+        const d = new Date(activeSession.date);
+        if (!isNaN(d)) {
+          dayLabel = arabicDays[d.getDay()];
+          const dd = String(d.getDate()).padStart(2,'0');
+          const mm = String(d.getMonth()+1).padStart(2,'0');
+          const yyyy = d.getFullYear();
+          dateLabel = `${dd}/${mm}/${yyyy}`;
+        }
+      } catch(e) {}
+      if (sumDayDate) sumDayDate.textContent = dayLabel ? `${dayLabel} — ${dateLabel}` : dateLabel;
+
+      // نوع الحلقة والفئة
+      const circleLabel = activeSession.circleName || '—';
+      const categoryLabel = sessionCategoryVal === 'الكبار' ? 'حلقة الكبار' : 'حلقة الصغار';
+      if (sumCircleType) sumCircleType.textContent = `${categoryLabel} — ${circleLabel}`;
+
+      // المشرف
+      if (sumSupervisor) sumSupervisor.textContent = activeSession.supervisorName || '—';
+
+      // المقررات كشارات
+      if (sumCoursesTags) {
+        const tagColors = [
+          { bg: 'rgba(13,92,70,0.08)', color: 'var(--green-dark)', border: 'rgba(13,92,70,0.25)' },
+          { bg: 'rgba(212,175,55,0.1)', color: '#7a5900', border: 'rgba(212,175,55,0.4)' },
+          { bg: 'rgba(100,149,237,0.08)', color: '#2b4a8a', border: 'rgba(100,149,237,0.3)' },
+        ];
+        const agendaSavedStr = localStorage.getItem('masjid_session_agenda');
+        let coursesList = [];
+        if (activeSession.selectedCourses) {
+          coursesList = Array.isArray(activeSession.selectedCourses)
+            ? activeSession.selectedCourses
+            : String(activeSession.selectedCourses).split('، ');
+        }
+        if (coursesList.length === 0 && agendaSavedStr) {
+          // fallback: rebuild from agenda flags
+          try {
+            const ag = JSON.parse(agendaSavedStr);
+            if (sessionCategoryVal === 'الكبار') {
+              if (ag.adultQuran) coursesList.push('تحفيظ القرآن');
+              if (ag.adultTajweed) coursesList.push('علوم التجويد');
+              if (ag.adultSharia) coursesList.push('الدروس الشرعية');
+            } else {
+              if (ag.quran) coursesList.push('حفظ القرآن ومراجعته');
+              if (ag.creed) coursesList.push('دروس في العقيدة والسلوك');
+              if (ag.prophets) coursesList.push('قصص الأنبياء عليهم السلام');
+              if (ag.catchup) coursesList.push('استدراك الحفظ ومراجعة القرآن');
+              if (ag.culture) coursesList.push('مسابقات ثقافية');
+              if (ag.health) coursesList.push('جلسات الصحة الجسمية');
+              if (ag.quranComp) coursesList.push('مسابقات قرآنية');
+              if (ag.sports) coursesList.push('نشاطات رياضية');
+            }
+          } catch(e) {}
+        }
+        const firstChild = sumCoursesTags.querySelector('span');
+        sumCoursesTags.innerHTML = '<span style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">المقررات:</span>';
+        coursesList.forEach((course, i) => {
+          const c = tagColors[i % tagColors.length];
+          const tag = document.createElement('span');
+          tag.style.cssText = `background:${c.bg}; color:${c.color}; border:1px solid ${c.border}; border-radius:20px; padding:0.2rem 0.75rem; font-size:0.82rem; font-weight:800;`;
+          tag.textContent = course.trim();
+          sumCoursesTags.appendChild(tag);
+        });
+      }
+    }
 
     // Load checkboxes state from sessionStorage
     const agendaSaved = localStorage.getItem("masjid_session_agenda");
@@ -354,13 +439,15 @@ runWhenReady(() => {
         
         localStorage.setItem("masjid_session_agenda", JSON.stringify(initialAgenda));
         localStorage.setItem("masjid_session_reports", JSON.stringify({}));
+        localStorage.setItem("masjid_session_courses", JSON.stringify(selectedCourses));
 
         activeSession = {
           sessionId: res.sessionId,
           circleName: circle,
           date: dateStr,
           time: "",
-          supervisorName: supervisor
+          supervisorName: supervisor,
+          selectedCourses: selectedCourses
         };
         reportsData = {};
 
@@ -393,6 +480,7 @@ runWhenReady(() => {
         localStorage.removeItem("masjid_session_supervisor");
         localStorage.removeItem("masjid_session_agenda");
         localStorage.removeItem("masjid_session_reports");
+        localStorage.removeItem("masjid_session_courses");
         localStorage.removeItem("masjid_session_is_editing");
         showNoSession();
       }
@@ -411,6 +499,7 @@ runWhenReady(() => {
         localStorage.removeItem("masjid_session_supervisor");
         localStorage.removeItem("masjid_session_agenda");
         localStorage.removeItem("masjid_session_reports");
+        localStorage.removeItem("masjid_session_courses");
         showNoSession();
       }
     }
@@ -663,6 +752,9 @@ runWhenReady(() => {
       const activeCourses = activeSession && activeSession.selectedCourses ? activeSession.selectedCourses : ["تحفيظ القرآن"];
       const activeCoursesArray = Array.isArray(activeCourses) ? activeCourses : String(activeCourses).split("، ");
       
+      const isSingleCourse = activeCoursesArray.length === 1;
+      const autoSelectedCourse = isSingleCourse ? activeCoursesArray[0].trim() : null;
+
       html += `
         <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
           <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
@@ -671,9 +763,15 @@ runWhenReady(() => {
           <div class="form-grid">
             <div class="form-group full-width">
               <label>المقرر / المادة:</label>
-              <select id="eval-adult-course" style="width: 100%;">
-                ${activeCoursesArray.map(c => `<option value="${c.trim()}">${c.trim()}</option>`).join("")}
-              </select>
+              ${ isSingleCourse
+                ? `<div style="font-weight:900; color:var(--green-dark); background:rgba(13,92,70,0.06); border:1px solid rgba(200,161,90,0.3); border-radius:8px; padding:0.65rem 1rem; font-size:1rem;">
+                     <i class="ph-bold ph-check-circle" style="color:var(--gold); vertical-align:middle; margin-left:0.35rem;"></i>${activeCoursesArray[0].trim()}
+                   </div>
+                   <input type="hidden" id="eval-adult-course" value="${activeCoursesArray[0].trim()}" />`
+                : `<select id="eval-adult-course" style="width: 100%;">
+                     ${activeCoursesArray.map(c => `<option value="${c.trim()}">${c.trim()}</option>`).join("")}
+                   </select>`
+              }
             </div>
             
             <!-- Quranic Memorization Evaluation Sub-Fields (visible only if course is تحفيظ القرآن) -->
@@ -1502,6 +1600,7 @@ runWhenReady(() => {
         localStorage.removeItem("masjid_session_supervisor");
         localStorage.removeItem("masjid_session_agenda");
         localStorage.removeItem("masjid_session_reports");
+        localStorage.removeItem("masjid_session_courses");
         localStorage.removeItem("masjid_session_is_editing");
         
         showNoSession();

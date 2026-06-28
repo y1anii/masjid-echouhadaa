@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 
 
 <html lang="ar" dir="rtl">
@@ -16,16 +16,16 @@
 <title>لوحة الإحصائيات العامة | مسجد الشهداء</title>
 
 
-<link rel="stylesheet" href="../css/style.css?v=58" />
+<link rel="stylesheet" href="../css/style.css?v=60" />
 
 
-<link rel="stylesheet" href="css/admin.css?v=59" />
+<link rel="stylesheet" href="css/admin.css?v=60" />
 
 
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
 
-<script type="module" src="js/auth.js?v=58"></script>
+<script type="module" src="js/auth.js?v=60"></script>
 
 
 <script>
@@ -372,41 +372,17 @@ navigator.serviceWorker.register('sw.js');
 حدد نجوم الأسبوع وتنشيط ظهورهم لأولياء الأمور في بوابة المتابعة.
 </p>
 
-<div class="settings-grid-container">
-  <!-- Males toggle -->
-  <label class="toggle-row-card males-theme" for="toggle-males-board">
-    <span class="toggle-row-label">تفعيل نجوم الأسبوع (البنين):</span>
-    <div class="toggle-switch-wrapper">
-      <span class="toggle-status-text" id="toggle-males-status">غير مفعل</span>
-      <div class="toggle-switch-inner">
-        <input type="checkbox" id="toggle-males-board" class="toggle-checkbox" style="opacity: 0; width: 0; height: 0; margin: 0;">
-        <span class="toggle-slider"></span>
-      </div>
-    </div>
-  </label>
 
-  <!-- Females toggle -->
-  <label class="toggle-row-card female-theme" for="toggle-females-board">
-    <span class="toggle-row-label">تفعيل نجوم الأسبوع (البنات):</span>
-    <div class="toggle-switch-wrapper">
-      <span class="toggle-status-text" id="toggle-females-status">غير مفعل</span>
-      <div class="toggle-switch-inner">
-        <input type="checkbox" id="toggle-females-board" class="toggle-checkbox" style="opacity: 0; width: 0; height: 0; margin: 0;">
-        <span class="toggle-slider"></span>
-      </div>
-    </div>
-  </label>
-</div>
 
 <!-- Active Board Selection / Calculation Container -->
-<div id="honor-wizard-container" style="display: none;">
-  <h4 id="wizard-title" style="color: var(--green-dark); font-weight: 900; margin-bottom: 1.25rem; font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">تحدد نجوم الأسبوع الحالي</h4>
+<div id="honor-wizard-container">
+  <h4 id="wizard-title" style="color: var(--green-dark); font-weight: 900; margin-bottom: 1.25rem; font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">تحديد نجوم الأسبوع</h4>
 
-  <!-- Gender Tabs for Editing -->
-          <div class="honor-tab-header">
-            <button type="button" id="tab-edit-males" class="honor-tab active">نجوم الأسبوع (البنين)</button>
-            <button type="button" id="tab-edit-females" class="honor-tab">نجوم الأسبوع (البنات)</button>
-          </div>
+  <!-- Hidden Gender Tabs (kept for JS compatibility) -->
+  <div style="display: none;">
+    <button type="button" id="tab-edit-males" class="honor-tab active">نجوم الأسبوع (البنين)</button>
+    <button type="button" id="tab-edit-females" class="honor-tab">نجوم الأسبوع (البنات)</button>
+  </div>
 
   <!-- Shimmer Skeleton Loader -->
   <div id="honor-skeleton-loader" style="display: none; max-width: 680px; margin: 0 auto;">
@@ -781,9 +757,9 @@ body.printing-appreciation .admin-container {
 
 <!-- Script loading -->
 
-<script type="module" src="js/db.js?v=58"></script>
+<script type="module" src="js/db.js?v=60"></script>
 
-<script type="module" src="js/dashboard.js?v=59"></script>
+<script type="module" src="js/dashboard.js?v=60"></script>
 
 </body>
 
