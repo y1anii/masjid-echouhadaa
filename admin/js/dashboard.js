@@ -854,7 +854,7 @@ runWhenReady(() => {
     
     // Clone the poster
     const clone = node.cloneNode(true);
-    clone.id = 'weekly-honor-poster-export';
+    clone.id = 'weekly-honor-poster';
     
     // Apply strict A4 export styling to the clone
     clone.style.width = '1240px';
@@ -1007,52 +1007,24 @@ runWhenReady(() => {
     const weekName = wizardWeekName.value || "الأسبوع";
     const fileName = `لوحة_الشرف_مسجد_الشهداء_${genderLabel}_${weekName}_${Date.now()}.jpg`;
 
-    const options = {
+    return html2canvas(clone, { 
+      useCORS: true, 
+      scale: 1, 
+      logging: false,
+      backgroundColor: activeHonorGender === "females" ? "#fff9fa" : "#fbfaf6",
       width: 1240,
-      height: 1754,
-      style: {
-        transform: 'none',
-        left: '0',
-        top: '0',
-        margin: '0',
-        position: 'relative'
-      },
-      useCORS: true,
-      quality: 0.98
-    };
-    
-    return domtoimage.toJpeg(clone, options)
-      .then(function (dataUrl) {
-        exportContainer.remove();
-        if (dataUrl.length < 2000) {
-          throw new Error("dom-to-image returned empty image");
-        }
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch(function (error) {
-        console.warn("dom-to-image failed on clone, trying html2canvas fallback:", error);
-        return html2canvas(clone, { 
-          useCORS: true, 
-          scale: 1, 
-          logging: false,
-          backgroundColor: activeHonorGender === "females" ? "#fff9fa" : "#fbfaf6",
-          width: 1240,
-          height: 1754
-        }).then(canvas => {
-          exportContainer.remove();
-          const link = document.createElement('a');
-          link.download = fileName;
-          link.href = canvas.toDataURL('image/jpeg', 0.98);
-          link.click();
-        }).catch(err => {
-          exportContainer.remove();
-          console.error("html2canvas fallback failed:", err);
-          alert("حدث خطأ أثناء محاولة توليد الصورة وتحميلها. يرجى المحاولة مرة أخرى.");
-        });
-      });
+      height: 1754
+    }).then(canvas => {
+      exportContainer.remove();
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = canvas.toDataURL('image/jpeg', 0.98);
+      link.click();
+    }).catch(err => {
+      exportContainer.remove();
+      console.error("html2canvas failed:", err);
+      alert("حدث خطأ أثناء محاولة توليد الصورة وتحميلها. يرجى المحاولة مرة أخرى.");
+    });
   };
 
   // Bind download button

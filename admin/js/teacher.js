@@ -625,6 +625,7 @@ runWhenReady(() => {
           });
         }
       }
+    }
     const attendanceRow = document.getElementById("eval-attendance-row");
     if (attendanceRow) attendanceRow.style.display = "block";
 
@@ -1806,6 +1807,10 @@ runWhenReady(() => {
       renderArchiveSessions(filtered);
     });
   }
+
+  // Expose archive callbacks globally for inline HTML onclick handlers
+  window.editArchivedSession = editArchivedSession;
+  window.deleteArchivedSession = deleteArchivedSession;
 
   // Load initial archive on boot unconditionally
   loadSessionsArchive();
