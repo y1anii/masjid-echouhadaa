@@ -113,6 +113,16 @@ runWhenReady(() => {
     });
   }
 
+  const logoutBtnMobile = document.getElementById("logout-btn-mobile");
+  if (logoutBtnMobile) {
+    logoutBtnMobile.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (confirm("هل تريد تسجيل الخروج فعلاً؟")) {
+        logoutAdmin();
+      }
+    });
+  }
+
   // Mobile navbar toggle for admin dashboard
   const navToggle = document.getElementById("nav-toggle");
   const navLinks = document.getElementById("nav-links");

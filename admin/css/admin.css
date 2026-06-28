@@ -1928,3 +1928,100 @@ textarea:focus {
     max-height: 95vh !important;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   شريط التنقل السفلي للهواتف المحمولة (Mobile Bottom Navigation)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  /* إخفاء القائمة العلوية للملاحة وزر البرجر على الهواتف */
+  .navbar-nav,
+  .nav-toggle {
+    display: none !important;
+  }
+  
+  .navbar__inner {
+    justify-content: center !important; /* توسيط الشعار في الهيدر */
+  }
+
+  .navbar-logo {
+    height: 38px !important;
+  }
+
+  .navbar-brand__title {
+    font-size: 1.05rem !important;
+  }
+
+  .navbar-brand__sub {
+    font-size: 0.65rem !important;
+  }
+
+  /* شريط التنقل السفلي المطور */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: linear-gradient(135deg, #083b2d 0%, #0d5c46 100%) !important;
+    border-top: 3px solid var(--gold);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.22);
+    z-index: 9999;
+    justify-content: space-around;
+    align-items: center;
+    direction: rtl;
+    padding: 0 0.25rem;
+  }
+
+  .mobile-bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6) !important;
+    text-decoration: none !important;
+    font-size: 0.7rem !important;
+    font-weight: 800;
+    gap: 3px;
+    transition: all 0.25s ease;
+    flex: 1;
+    height: 100%;
+    outline: none;
+  }
+
+  .mobile-bottom-nav-item i {
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: all 0.25s ease;
+  }
+
+  .mobile-bottom-nav-item:hover,
+  .mobile-bottom-nav-item.active {
+    color: var(--gold) !important;
+  }
+
+  .mobile-bottom-nav-item:hover i,
+  .mobile-bottom-nav-item.active i {
+    color: var(--gold) !important;
+    transform: translateY(-2px);
+  }
+
+  /* تعديل الهامش السفلي لحاوية الأدمن وحاوية المزامنة لمنع تداخلهما مع الشريط السفلي */
+  .admin-container {
+    padding-top: calc(var(--nav-h) + 15px) !important;
+    padding-bottom: 95px !important;
+  }
+
+  .floating-action-container {
+    bottom: 80px !important; /* رفع زر الإكمال العائم فوق شريط التنقل */
+  }
+
+  #masjid-sync-bar {
+    bottom: 80px !important; /* رفع شريط المزامنة العائم فوق شريط التنقل */
+  }
+}
+
+/* إخفاء شريط الموبايل على البيسي */
+.mobile-bottom-nav {
+  display: none !important;
+}

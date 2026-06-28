@@ -328,7 +328,7 @@ runWhenReady(() => {
         `;
         if (circlePeriod) {
           circlePeriod.innerHTML = `
-            <option value="يومية" selected>يومية</option>
+            <option value="حلقة الكبار" selected>حلقة الكبار</option>
           `;
         }
         if (circlePeriodWrapper) circlePeriodWrapper.style.display = "none";
@@ -670,7 +670,7 @@ runWhenReady(() => {
 
         if (rep.courseName === "تحفيظ القرآن" || (!rep.courseName && rep.activityType)) {
           setStarValue("adult-quran", rep.stars || 0);
-        } else if (rep.courseName === "علوم التجويد") {
+        } else if (rep.courseName === "علوم التجويد" || rep.courseName === "علم التجويد") {
           setStarValue("adult-tajweed", rep.stars || 0);
         }
       } else {
@@ -758,7 +758,7 @@ runWhenReady(() => {
       html += `
         <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
           <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
-            <i class="ph-bold ph-notebook" style="color:var(--gold);"></i> تفاصيل الحصة اليومية للكبار
+            <i class="ph-bold ph-notebook" style="color:var(--gold);"></i> تفاصيل الحصة للكبار
           </h4>
           <div class="form-grid">
             <div class="form-group full-width">
@@ -864,7 +864,7 @@ runWhenReady(() => {
           if (shariaFields) shariaFields.style.display = "none";
           if (surahEl) surahEl.required = true;
           if (shariaTitleEl) shariaTitleEl.required = false;
-        } else if (val === "علوم التجويد") {
+        } else if (val === "علوم التجويد" || val === "علم التجويد") {
           if (quranFields) quranFields.style.display = "none";
           if (tajweedFields) tajweedFields.style.display = "grid";
           if (shariaFields) shariaFields.style.display = "none";
@@ -1269,7 +1269,7 @@ runWhenReady(() => {
         const activeCourse = courseSelect ? courseSelect.value : "";
         if (activeCourse === "تحفيظ القرآن" && input.id === "metric-adult-quran") {
           totalStars += parseInt(input.value) || 0;
-        } else if (activeCourse === "علوم التجويد" && input.id === "metric-adult-tajweed") {
+        } else if ((activeCourse === "علوم التجويد" || activeCourse === "علم التجويد") && input.id === "metric-adult-tajweed") {
           totalStars += parseInt(input.value) || 0;
         }
       } else {
@@ -1315,7 +1315,7 @@ runWhenReady(() => {
       } else {
         const selectedCourse = document.getElementById("eval-adult-course").value;
         const isQuran = (selectedCourse === "تحفيظ القرآن");
-        const isTajweed = (selectedCourse === "علوم التجويد");
+        const isTajweed = (selectedCourse === "علوم التجويد" || selectedCourse === "علم التجويد");
         const isSharia = (selectedCourse === "الدروس الشرعية");
 
         let stars = 0;
@@ -1838,7 +1838,7 @@ runWhenReady(() => {
       if (sessionCategoryVal === "الكبار") {
         agenda = {
           adultQuran: coursesStr.includes("تحفيظ القرآن"),
-          adultTajweed: coursesStr.includes("علوم التجويد"),
+          adultTajweed: coursesStr.includes("علوم التجويد") || coursesStr.includes("علم التجويد"),
           adultSharia: coursesStr.includes("الدروس الشرعية")
         };
       } else {

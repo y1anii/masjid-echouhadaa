@@ -351,6 +351,18 @@ async function saveSessionData(sessionId, date, supervisorName, selectedCourses,
           points: Number(ev.points) || 0
         };
         await setDoc(doc(db, "adult_progress", progressDocId), progressDoc);
+        
+        // Update participant's last memorized surah and verse only if activityType is "حفظ" or "حفظ جديد"
+        if (ev.attendance !== "غائب" && (ev.activityType === "حفظ" || ev.activityType === "حفظ جديد") && ev.surah) {
+          try {
+            await setDoc(doc(db, "adult_participants", studentId), {
+              lastSurah: ev.surah,
+              lastVerse: Number(ev.toVerse) || 0
+            }, { merge: true });
+          } catch(err) {
+            console.error("[DB] Failed to update adult participant lastSurah:", err);
+          }
+        }
         continue;
       }
       

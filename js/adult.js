@@ -185,13 +185,34 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHistoryList(logs);
   }
 
+  function parseStartingHizbs(quranLevel) {
+    if (!quranLevel) return 0;
+    const clean = quranLevel.trim();
+    if (clean.includes("60") || clean.includes("كامل")) return 60;
+    if (clean.includes("45")) return 45;
+    if (clean.includes("30") || clean.includes("نصف")) return 30;
+    if (clean.includes("20")) return 20;
+    if (clean.includes("15")) return 15;
+    if (clean.includes("10")) return 10;
+    if (clean.includes("5")) return 5;
+    if (clean.includes("2") || clean.includes("حزبين")) return 2;
+    if (clean.includes("1") || clean.includes("حزب")) return 1;
+    const match = clean.match(/\d+/);
+    if (match) return parseInt(match[0]) || 0;
+    return 0;
+  }
+
   function updateProgressAndStats() {
+    const p = cachedProfileData.participant;
     const targetHizb = parseInt(adultTargetHizbSelect.value) || 60;
     const logs = cachedProfileData.progressLogs || [];
 
     // Total verses count mapping for targets
-    // 60 Hizb = 6236 verses. Linear mapping: Math.round(targetHizb * (6236 / 60))
     const targetVersesCount = Math.round(targetHizb * (6236 / 60));
+
+    // Calculate starting verses
+    const startingHizbs = parseStartingHizbs(p.quranLevel);
+    const startingVersesCount = Math.round(startingHizbs * (6236 / 60));
 
     // Calculate unique verses from "حفظ" logs
     const uniqueVerses = new Set();
@@ -214,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    const memorizedCount = uniqueVerses.size;
+    const memorizedCount = startingVersesCount + uniqueVerses.size;
     const percentage = targetVersesCount > 0 ? Math.min(100, Math.round((memorizedCount / targetVersesCount) * 100)) : 0;
 
     // Update UI Stats
@@ -311,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="history-grid">
             <div class="history-col">
-              <span class="history-lbl">موضوع الإنجاز اليومي</span>
+              <span class="history-lbl">موضوع الإنجاز</span>
               <div class="history-val">${contentHTML}</div>
             </div>
             <div class="history-col">
