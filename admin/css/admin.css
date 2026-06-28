@@ -1781,3 +1781,150 @@ textarea:focus {
   max-width: 680px;
   margin: 0 auto;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   📱 COMPREHENSIVE RESPONSIVE DESIGN — Admin All Screens
+   Ensures all admin pages scale correctly on mobile, tablet, PC
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tablet (768px – 991px) ── */
+@media (max-width: 991px) and (min-width: 768px) {
+  .about-card {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-group.full-width {
+    grid-column: span 1 !important;
+  }
+
+  .honor-centered-layout {
+    max-width: 100% !important;
+  }
+
+  #honor-wizard-container {
+    min-height: auto !important;
+    padding: 1rem !important;
+  }
+}
+
+/* ── Mobile (max 767px) — additional overrides ── */
+@media (max-width: 767px) {
+
+  /* Floating bar on mobile: full width, stacked */
+  .floating-action-container {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .floating-action-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    font-size: 0.9rem !important;
+    padding: 0.7rem 1rem !important;
+  }
+
+  /* Session student grid: 1 column on narrow mobile */
+  .teacher-student-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Honor wizard: full width, no min-height */
+  #honor-wizard-container {
+    min-height: auto !important;
+    padding: 0.75rem !important;
+  }
+
+  .honor-centered-layout {
+    max-width: 100% !important;
+  }
+
+  /* Auto results panel: stacked */
+  #honor-auto-results .form-grid,
+  #honor-auto-results div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Date range row */
+  .wizard-date-row {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Stats inner: 2 columns instead of 4 on tablet-ish mobile */
+  .stats-inner {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* Form grids in cards: always 1 column */
+  .about-card .form-grid,
+  .about-card div[style*="display: grid"],
+  .about-card div[style*="display:grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Table inside rankings: horizontal scroll */
+  .about-card table,
+  .table-responsive table {
+    min-width: 320px;
+  }
+
+  /* Eval card section: force 1 column on all inner grids */
+  #eval-dynamic-fields-container div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Sharia lesson title field: full width readable */
+  #eval-adult-sharia-fields {
+    padding: 0.75rem !important;
+  }
+
+  #eval-adult-sharia-title {
+    font-size: 0.95rem !important;
+  }
+
+  /* Settings grid on mobile */
+  .settings-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Very small phones (max 480px) ── */
+@media (max-width: 480px) {
+  .stats-inner {
+    grid-template-columns: 1fr !important;
+  }
+
+  .about-card {
+    padding: 1rem 0.75rem !important;
+  }
+
+  .section-title {
+    font-size: 1.3rem !important;
+  }
+
+  .btn {
+    font-size: 0.85rem !important;
+    padding: 0.6rem 0.8rem !important;
+  }
+
+  /* Tab buttons: shrink text */
+  .admin-tabs .tab-btn,
+  .honor-tab {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.5rem !important;
+  }
+
+  /* Profile card modal on tiny phone */
+  .profile-card {
+    max-height: 95vh !important;
+  }
+}

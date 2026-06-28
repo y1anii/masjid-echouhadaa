@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="../css/style.css?v=58" />
 
 
-<link rel="stylesheet" href="css/admin.css?v=58" />
+<link rel="stylesheet" href="css/admin.css?v=59" />
 
 
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -430,75 +430,78 @@ navigator.serviceWorker.register('sw.js');
   <div class="honor-centered-layout" style="max-width: 680px; margin: 0 auto; display: none;">
     <form id="honor-wizard-form" class="honor-wizard-grid-form" style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(200, 161, 90, 0.15); box-shadow: var(--shadow);">
       <div class="wizard-grid-fields">
-        <!-- Week Selection -->
+
+        <!-- Date Range -->
         <div class="wizard-field-group">
-          <span class="wizard-field-label">أسبوع نجوم الأسبوع:</span>
+          <span class="wizard-field-label">من تاريخ:</span>
           <div class="wizard-field-input-wrap">
-            <select id="wizard-week-name" required>
-              <option value="الأسبوع الأول" selected>الأسبوع الأول</option>
-              <option value="الأسبوع الثاني">الأسبوع الثاني</option>
-              <option value="الأسبوع الثالث">الأسبوع الثالث</option>
-              <option value="الأسبوع الرابع">الأسبوع الرابع</option>
-              <option value="الأسبوع الخامس">الأسبوع الخامس</option>
-              <option value="الأسبوع السادس">الأسبوع السادس</option>
-              <option value="الأسبوع السابع">الأسبوع السابع</option>
-              <option value="الأسبوع الثامن">الأسبوع الثامن</option>
-              <option value="الأسبوع التاسع">الأسبوع التاسع</option>
-              <option value="الأسبوع العاشر">الأسبوع العاشر</option>
-            </select>
+            <input type="date" id="wizard-date-start" required />
+          </div>
+        </div>
+        <div class="wizard-field-group">
+          <span class="wizard-field-label">إلى تاريخ:</span>
+          <div class="wizard-field-input-wrap">
+            <input type="date" id="wizard-date-end" required />
+          </div>
+        </div>
+
+        <!-- Calculate Button -->
+        <div class="wizard-field-group" style="grid-column: 1 / -1;">
+          <button type="button" id="btn-calculate-honors" class="btn" style="background: var(--green); color: #fff; font-weight: 800; padding: 0.7rem 1.8rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; font-family: inherit; font-size: 1rem; width: 100%;">
+            <i class="ph-bold ph-sparkle"></i> احتساب نجوم الأسبوع تلقائياً
+          </button>
+        </div>
+
+        <!-- Auto Results Area (hidden until calculated) -->
+        <div id="honor-auto-results" style="display:none; grid-column: 1 / -1; background: #f8fff8; border: 1.5px solid rgba(13,92,70,0.15); border-radius: 8px; padding: 1.25rem; margin-top: 0.5rem;">
+          <h5 style="color: var(--green-dark); font-weight: 900; margin: 0 0 1rem 0; font-size: 1rem; display:flex; align-items:center; gap:0.4rem;">
+            <i class="ph-bold ph-trophy" style="color:var(--gold);"></i> نتائج الاحتساب التلقائي
+          </h5>
+          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
+              <span style="font-size:1.4rem;">🥇</span>
+              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأكثر حفظاً للآيات:</span>
+              <span id="result-rank1" style="font-weight:900; color:var(--green-dark);">—</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
+              <span style="font-size:1.4rem;">🥈</span>
+              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأعلى سلوكاً:</span>
+              <span id="result-rank2" style="font-weight:900; color:var(--green-dark);">—</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
+              <span style="font-size:1.4rem;">🥉</span>
+              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأعلى مشاركةً:</span>
+              <span id="result-rank3" style="font-weight:900; color:var(--green-dark);">—</span>
+            </div>
+          </div>
+          <!-- Tie Warning -->
+          <div id="honor-tie-warning" style="display:none; margin-top:0.85rem; background:#fffbe6; border:1px solid #f0c040; border-radius:6px; padding:0.6rem 0.9rem; font-size:0.88rem; color:#7a5900; display:flex; align-items:center; gap:0.4rem;">
+            <i class="ph-bold ph-warning" style="font-size:1.1rem;"></i>
+            <span id="honor-tie-text">يوجد تعادل في أحد المراكز.</span>
           </div>
         </div>
 
         <!-- Best Team -->
-        <div class="wizard-field-group">
-          <span class="wizard-field-label" id="lbl-select-team">أفضل فريق:</span>
+        <div class="wizard-field-group" style="grid-column: 1 / -1;">
+          <span class="wizard-field-label">أفضل فريق (اختياري):</span>
           <div class="wizard-field-input-wrap">
             <input type="text" id="wizard-distinguished-team" placeholder="مثال: فريق الفرسان..." />
           </div>
         </div>
 
-        <!-- Rank 1: Memorization -->
-        <div class="wizard-field-group">
-          <span class="wizard-field-label" id="lbl-select-rank1">المركز الأول (الأكثر حفظاً):</span>
-          <div class="wizard-field-input-wrap">
-            <select id="select-rank1-winner" required>
-              <option value="">-- اختر طالباً --</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Rank 2: Behavior -->
-        <div class="wizard-field-group">
-          <span class="wizard-field-label" id="lbl-select-rank2">المركز الثاني (الأكثر سلوكاً):</span>
-          <div class="wizard-field-input-wrap">
-            <select id="select-rank2-winner" required>
-              <option value="">-- اختر طالباً --</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Rank 3: Participation -->
-        <div class="wizard-field-group">
-          <span class="wizard-field-label" id="lbl-select-rank3">المركز الثالث (الأكثر مشاركة):</span>
-          <div class="wizard-field-input-wrap">
-            <select id="select-rank3-winner" required>
-              <option value="">-- اختر طالباً --</option>
-            </select>
-          </div>
-        </div>
-
         <!-- General Note -->
-        <div class="wizard-field-group">
-          <span class="wizard-field-label" id="lbl-select-notes">ملاحظة:</span>
+        <div class="wizard-field-group" style="grid-column: 1 / -1;">
+          <span class="wizard-field-label">ملاحظة:</span>
           <div class="wizard-field-input-wrap">
             <input type="text" id="wizard-notes" placeholder="اكتب ملاحظة أو توجيه عام لأولياء الأمور..." />
           </div>
         </div>
+
       </div>
 
       <!-- Submit Actions -->
       <div class="wizard-submit-bar" style="margin-top: 1.5rem; text-align: center;">
-        <button type="submit" id="btn-save-wizard-honor" class="btn" style="background: var(--gold); color: var(--green-dark); font-weight: 900; padding: 0.75rem 2.5rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; width: 100%; max-width: 300px; font-family: inherit; font-size: 1rem;">
+        <button type="submit" id="btn-save-wizard-honor" class="btn" style="background: var(--gold); color: var(--green-dark); font-weight: 900; padding: 0.75rem 2.5rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; width: 100%; max-width: 300px; font-family: inherit; font-size: 1rem;" disabled>
           <i class="ph-bold ph-floppy-disk"></i> حفظ نجوم الأسبوع
         </button>
       </div>
@@ -524,7 +527,7 @@ navigator.serviceWorker.register('sw.js');
 </h3>
 
 
-<div style="overflow-y: auto; max-height: 350px; width: 100%;">
+<div style="overflow-x: auto; overflow-y: auto; max-height: 350px; width: 100%;">
 
 
 <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; text-align: center;">
@@ -780,7 +783,7 @@ body.printing-appreciation .admin-container {
 
 <script type="module" src="js/db.js?v=58"></script>
 
-<script type="module" src="js/dashboard.js?v=58"></script>
+<script type="module" src="js/dashboard.js?v=59"></script>
 
 </body>
 

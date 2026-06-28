@@ -625,32 +625,22 @@ updateToggleUI();
     }
   }
 
-  const wizardWeekName = document.getElementById("wizard-week-name");
-  const selectRank1Winner = document.getElementById("select-rank1-winner");
-  const selectRank2Winner = document.getElementById("select-rank2-winner");
-  const selectRank3Winner = document.getElementById("select-rank3-winner");
   const wizardDistinguishedTeam = document.getElementById("wizard-distinguished-team");
   const wizardNotes = document.getElementById("wizard-notes");
   const btnSaveWizardHonor = document.getElementById("btn-save-wizard-honor");
+  const btnCalculateHonors = document.getElementById("btn-calculate-honors");
+  const wizardDateStart = document.getElementById("wizard-date-start");
+  const wizardDateEnd = document.getElementById("wizard-date-end");
 
-  // Helper to populate student select options
-  function populateStudentDropdowns() {
-    [selectRank1Winner, selectRank2Winner, selectRank3Winner].forEach(selectEl => {
-      if (!selectEl) return;
-      const currentVal = selectEl.value;
-      
-      selectEl.innerHTML = `<option value="">-- اختر طالباً --</option>`;
-      
-      wizardAcceptedStudents.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s.name;
-        opt.textContent = s.name;
-        if (s.name === currentVal) {
-          opt.selected = true;
-        }
-        selectEl.appendChild(opt);
-      });
-    });
+  // Stores the last auto-calculated results
+  let autoCalculatedResults = null;
+
+  // Helper: format names list with tie indicator
+  function formatNames(list, maxCount = 3) {
+    if (!list || list.length === 0) return "لا توجد بيانات كافية";
+    const top = list.slice(0, maxCount).map(x => x.name).join("، ");
+    return list.length > 1 && list[0].score === list[1]?.score
+      ? `${top} ⚠️ (تعادل)` : top;
   }
 
   const tabEditMales = document.getElementById("tab-edit-males");
@@ -698,46 +688,28 @@ updateToggleUI();
     if (emptyState) emptyState.style.display = "none";
     if (centeredLayout) centeredLayout.style.display = "none";
 
-    // Fetch accepted students for dropdowns
-    try {
-      const studentsList = await window.DB.getAllStudents();
-      const targetGender = gender === "females" ? "أنثى" : "ذكر";
-      wizardAcceptedStudents = studentsList.filter(s => s.status === "مقبول" && s.gender === targetGender);
-    } catch (e) {
-      console.error("Error loading students for dropdown:", e);
-      wizardAcceptedStudents = [];
-    }
-
-    // Hide skeleton
+    // Hide skeleton — form is ready, no student loading needed
     if (skeleton) skeleton.style.display = "none";
 
-    // Handle empty state
-    if (wizardAcceptedStudents.length === 0) {
-      if (emptyState) emptyState.style.display = "block";
-      if (centeredLayout) centeredLayout.style.display = "none";
-      return;
-    }
+    // Reset auto-calculate state when switching tabs
+    autoCalculatedResults = null;
+    const autoResults = document.getElementById("honor-auto-results");
+    const tieWarning = document.getElementById("honor-tie-warning");
+    if (autoResults) autoResults.style.display = "none";
+    if (tieWarning) tieWarning.style.display = "none";
+    if (btnSaveWizardHonor) btnSaveWizardHonor.disabled = true;
 
-    // Show form layout
+    // Show form layout always (no empty state — date range works for any gender)
     if (emptyState) emptyState.style.display = "none";
     if (centeredLayout) centeredLayout.style.display = "block";
 
-    populateStudentDropdowns();
-
-    // Load any previously saved data for this gender
+    // Load previously saved data for display context
     try {
       const savedData = await window.DB.getWeeklyHonorBoard(gender);
       if (savedData) {
-        if (wizardWeekName) wizardWeekName.value = savedData.weekName || "الأسبوع الأول";
-        if (selectRank1Winner) selectRank1Winner.value = savedData.rank1 || savedData.memorizationChampion || "";
-        if (selectRank2Winner) selectRank2Winner.value = savedData.rank2 || savedData.behaviorChampion || "";
-        if (selectRank3Winner) selectRank3Winner.value = savedData.rank3 || savedData.participationChampion || "";
         if (wizardDistinguishedTeam) wizardDistinguishedTeam.value = savedData.distinguishedTeam || "";
         if (wizardNotes) wizardNotes.value = savedData.notes || "";
       } else {
-        if (selectRank1Winner) selectRank1Winner.value = "";
-        if (selectRank2Winner) selectRank2Winner.value = "";
-        if (selectRank3Winner) selectRank3Winner.value = "";
         if (wizardDistinguishedTeam) wizardDistinguishedTeam.value = "";
         if (wizardNotes) wizardNotes.value = "";
       }
@@ -776,24 +748,89 @@ updateToggleUI();
     });
   }
 
-  if (btnSaveWizardHonor) {
-    btnSaveWizardHonor.addEventListener("click", async (e) => {
-      e.preventDefault();
-      
-      if (isWeeklySaving) return; // Prevent double submit
-      
-      const weekName = wizardWeekName.value;
-      const rank1 = selectRank1Winner.value;
-      const rank2 = selectRank2Winner.value;
-      const rank3 = selectRank3Winner.value;
-      
-      if (!rank1 || !rank2 || !rank3) {
-        alert("يرجى اختيار الطلاب للمراكز الثلاثة أولاً.");
+  // ── Auto Calculate Button ──
+  if (btnCalculateHonors) {
+    btnCalculateHonors.addEventListener("click", async () => {
+      const startDate = wizardDateStart ? wizardDateStart.value : "";
+      const endDate = wizardDateEnd ? wizardDateEnd.value : "";
+
+      if (!startDate || !endDate) {
+        alert("يرجى تحديد نطاق التاريخ (من/إلى) أولاً.");
+        return;
+      }
+      if (startDate > endDate) {
+        alert("تاريخ البداية يجب أن يكون قبل تاريخ النهاية.");
         return;
       }
 
-      const distinguishedTeam = wizardDistinguishedTeam.value.trim() || "لا يوجد هذا الأسبوع";
-      const notes = wizardNotes.value.trim() || "";
+      const originalHtml = btnCalculateHonors.innerHTML;
+      btnCalculateHonors.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> جاري الاحتساب...`;
+      btnCalculateHonors.disabled = true;
+
+      try {
+        const results = await window.DB.calculateWeeklyHonors(startDate, endDate, activeHonorGender);
+        autoCalculatedResults = results;
+
+        const { candidates, ties } = results;
+        const r1El = document.getElementById("result-rank1");
+        const r2El = document.getElementById("result-rank2");
+        const r3El = document.getElementById("result-rank3");
+        const autoResults = document.getElementById("honor-auto-results");
+        const tieWarning = document.getElementById("honor-tie-warning");
+        const tieText = document.getElementById("honor-tie-text");
+
+        if (r1El) r1El.textContent = formatNames(candidates.memorization);
+        if (r2El) r2El.textContent = formatNames(candidates.behavior);
+        if (r3El) r3El.textContent = formatNames(candidates.participation);
+
+        if (autoResults) autoResults.style.display = "block";
+
+        // Show tie warning if needed
+        const tieMessages = [];
+        if (ties.memorization) tieMessages.push("الحفظ");
+        if (ties.behavior) tieMessages.push("السلوك");
+        if (ties.participation) tieMessages.push("المشاركة");
+
+        if (tieMessages.length > 0 && tieWarning) {
+          tieWarning.style.display = "flex";
+          if (tieText) tieText.textContent = `⚠️ يوجد تعادل في: ${tieMessages.join("، ")}. سيتم حفظ أول المتعادلين.`;
+        } else if (tieWarning) {
+          tieWarning.style.display = "none";
+        }
+
+        // Enable save button
+        if (btnSaveWizardHonor) btnSaveWizardHonor.disabled = false;
+
+      } catch (err) {
+        console.error("[Dashboard] calculateWeeklyHonors failed:", err);
+        alert("❌ حدث خطأ أثناء احتساب النجوم. تأكد من صحة البيانات.");
+      } finally {
+        btnCalculateHonors.innerHTML = originalHtml;
+        btnCalculateHonors.disabled = false;
+      }
+    });
+  }
+
+  // ── Save Button ──
+  if (btnSaveWizardHonor) {
+    btnSaveWizardHonor.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      if (isWeeklySaving) return;
+      if (!autoCalculatedResults) {
+        alert("يرجى احتساب نجوم الأسبوع أولاً قبل الحفظ.");
+        return;
+      }
+
+      const { candidates } = autoCalculatedResults;
+      const rank1 = candidates.memorization[0]?.name || "";
+      const rank2 = candidates.behavior[0]?.name || "";
+      const rank3 = candidates.participation[0]?.name || "";
+      const startDate = wizardDateStart ? wizardDateStart.value : "";
+      const endDate = wizardDateEnd ? wizardDateEnd.value : "";
+      const weekName = `${startDate} → ${endDate}`;
+      const distinguishedTeam = wizardDistinguishedTeam?.value.trim() || "لا يوجد هذا الأسبوع";
+      const notes = wizardNotes?.value.trim() || "";
 
       isWeeklySaving = true;
       btnSaveWizardHonor.disabled = true;
@@ -855,5 +892,5 @@ updateToggleUI();
   // Load Dashboard Data
   loadDashboard();
 
-  setTimeout(adjustPosterScale, 150);
+  // (poster scale no longer needed — auto calculation replaces graphic poster)
 });

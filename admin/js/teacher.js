@@ -138,7 +138,7 @@ runWhenReady(() => {
     activeSessionView.style.display = "block";
     sessionFloatingBar.style.display = "flex";
     const archiveCard = document.getElementById("sessions-archive-card");
-    if (archiveCard) archiveCard.style.display = "block";
+    if (archiveCard) archiveCard.style.display = "none";
 
     const sessionCategoryVal = localStorage.getItem("masjid_session_category") || "الصغار";
 
@@ -708,6 +708,23 @@ runWhenReady(() => {
                 ${renderStarGroup("تقييم التجويد والأداء", "adult-tajweed")}
               </div>
             </div>
+
+            <!-- Sharia Lesson Title Field (visible only if course is الدروس الشرعية) -->
+            <div id="eval-adult-sharia-fields" style="display: none; grid-column: span 2; padding: 1rem; background: rgba(13, 92, 70, 0.03); border: 1px dashed rgba(200, 161, 90, 0.35); border-radius: 8px;">
+              <div class="form-group" style="margin: 0;">
+                <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.5rem;">
+                  <i class="ph-bold ph-book-open" style="color: var(--gold);"></i>
+                  عنوان الدرس الشرعي:
+                </label>
+                <input type="text" id="eval-adult-sharia-title"
+                  placeholder="مثال: أحكام الطهارة، صفة الصلاة، فقه الصيام..."
+                  style="width: 100%; font-size: 1rem;"
+                />
+                <small style="color: var(--text-muted); font-weight: 600; margin-top: 0.4rem; display: block;">
+                  يُسجَّل عنوان الدرس في ملف المشارك لمتابعة المقررات الشرعية.
+                </small>
+              </div>
+            </div>
             
             <div class="form-group full-width" style="margin-top: 0.5rem;">
               <label>ملاحظات وتقييم الأداء:</label>
@@ -736,25 +753,32 @@ runWhenReady(() => {
       const courseSelect = document.getElementById("eval-adult-course");
       const quranFields = document.getElementById("eval-adult-quran-fields");
       const tajweedFields = document.getElementById("eval-adult-tajweed-fields");
-      
+      const shariaFields = document.getElementById("eval-adult-sharia-fields");
+
       const toggleFields = () => {
         const val = courseSelect ? courseSelect.value : "";
+        const surahEl = document.getElementById("eval-adult-surah");
+        const shariaTitleEl = document.getElementById("eval-adult-sharia-title");
+
         if (val === "تحفيظ القرآن") {
           if (quranFields) quranFields.style.display = "grid";
           if (tajweedFields) tajweedFields.style.display = "none";
-          const surahEl = document.getElementById("eval-adult-surah");
+          if (shariaFields) shariaFields.style.display = "none";
           if (surahEl) surahEl.required = true;
+          if (shariaTitleEl) shariaTitleEl.required = false;
         } else if (val === "علوم التجويد") {
           if (quranFields) quranFields.style.display = "none";
           if (tajweedFields) tajweedFields.style.display = "grid";
-          const surahEl = document.getElementById("eval-adult-surah");
+          if (shariaFields) shariaFields.style.display = "none";
           if (surahEl) surahEl.required = false;
+          if (shariaTitleEl) shariaTitleEl.required = false;
         } else {
-          // الدروس الشرعية
+          // الدروس الشرعية — يدخل الإمام عنوان الدرس
           if (quranFields) quranFields.style.display = "none";
           if (tajweedFields) tajweedFields.style.display = "none";
-          const surahEl = document.getElementById("eval-adult-surah");
+          if (shariaFields) shariaFields.style.display = "block";
           if (surahEl) surahEl.required = false;
+          if (shariaTitleEl) shariaTitleEl.required = true;
         }
         updatePointsSummary();
       };
@@ -1194,21 +1218,31 @@ runWhenReady(() => {
         const selectedCourse = document.getElementById("eval-adult-course").value;
         const isQuran = (selectedCourse === "تحفيظ القرآن");
         const isTajweed = (selectedCourse === "علوم التجويد");
-        
+        const isSharia = (selectedCourse === "الدروس الشرعية");
+
         let stars = 0;
         if (isQuran) {
           stars = Number(document.getElementById("metric-adult-quran").value) || 0;
         } else if (isTajweed) {
           stars = Number(document.getElementById("metric-adult-tajweed").value) || 0;
         }
+        // للدروس الشرعية لا توجد نجوم — فقط عنوان الدرس
         const points = stars * 2;
-        
+
+        // عنوان الدرس الشرعي يُحفظ في حقل surah لعرضه في بوابة المشارك
+        const shariaTitleEl = document.getElementById("eval-adult-sharia-title");
+        const shariaTitle = shariaTitleEl ? shariaTitleEl.value.trim() : "";
+
         reportObj = {
           studentId: currentEvalStudent.id,
           studentName: currentEvalStudent.name,
           attendance: "حاضر",
-          activityType: isQuran ? document.getElementById("eval-adult-type").value : "دراسة",
-          surah: isQuran ? document.getElementById("eval-adult-surah").value.trim() : "",
+          activityType: isQuran
+            ? document.getElementById("eval-adult-type").value
+            : (isSharia ? "درس شريعة" : "دراسة تجويد"),
+          surah: isQuran
+            ? document.getElementById("eval-adult-surah").value.trim()
+            : (isSharia ? shariaTitle : ""),
           fromVerse: isQuran ? (Number(document.getElementById("eval-adult-from").value) || 0) : 0,
           toVerse: isQuran ? (Number(document.getElementById("eval-adult-to").value) || 0) : 0,
           notes: document.getElementById("eval-adult-notes").value.trim(),
