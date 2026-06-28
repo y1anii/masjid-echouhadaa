@@ -727,7 +727,7 @@ updateToggleUI();
         if (wizardDistinguishedTeam) wizardDistinguishedTeam.value = savedData.distinguishedTeam || "";
         if (wizardNotes) wizardNotes.value = savedData.notes || "";
         
-        displayPoster(savedData);
+        displayPoster(savedData, smoothScroll);
       } else {
         if (selectRank1Winner) selectRank1Winner.value = "";
         if (selectRank2Winner) selectRank2Winner.value = "";
@@ -743,7 +743,7 @@ updateToggleUI();
           rank3: "",
           distinguishedTeam: "",
           notes: ""
-        }, false);
+        }, smoothScroll);
       }
     } catch (e) {
       console.warn("Error loading weekly honor board data:", e);

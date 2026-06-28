@@ -1928,6 +1928,121 @@ textarea:focus {
   box-sizing: border-box !important;
 }
 
+/* Base styles for Weekly Honor Board Poster elements */
+.poster-title-banner {
+  width: fit-content !important;
+  margin: 0 auto 0.5rem !important;
+  padding: 0.35rem 2.2rem !important;
+  border-radius: 30px !important;
+  font-weight: 900 !important;
+  font-size: 1.55rem !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+}
+.poster-subtitle {
+  font-weight: 800 !important;
+  font-size: 1.05rem !important;
+  margin-bottom: 1.25rem !important;
+}
+.poster-rows-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+  margin-bottom: 1.25rem !important;
+}
+.poster-row-card {
+  border-radius: 8px !important;
+  padding: 0.6rem 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.85rem !important;
+  text-align: right !important;
+  box-sizing: border-box !important;
+  min-height: 65px !important;
+}
+.poster-row-medal {
+  width: 36px !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+.poster-row-icon-circle {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  border: 2px solid #d4af37 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  background-color: rgba(212, 175, 55, 0.05) !important;
+}
+.poster-row-icon-circle svg {
+  color: #d4af37 !important;
+}
+.poster-row-details {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  flex-grow: 1 !important;
+  gap: 0.15rem !important;
+}
+.poster-row-title-badge {
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  padding: 0.1rem 0.55rem !important;
+  border-radius: 10px !important;
+  width: fit-content !important;
+}
+.poster-row-name {
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  margin-top: 0.1rem !important;
+}
+.poster-footer-text {
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  line-height: 1.5 !important;
+  margin: 0 auto 0.85rem !important;
+  max-width: 480px !important;
+}
+.poster-motto-banner {
+  padding: 0.35rem 1.5rem !important;
+  border-radius: 20px !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+  width: fit-content !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+.poster-lantern-left {
+  position: absolute !important;
+  top: -5px !important;
+  left: 20px !important;
+  z-index: 2 !important;
+}
+.poster-lantern-right {
+  position: absolute !important;
+  top: -5px !important;
+  right: 20px !important;
+  z-index: 2 !important;
+}
+.poster-decorations-bg {
+  position: absolute !important;
+  bottom: -10px !important;
+  width: 100% !important;
+  height: 100px !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  padding: 0 1rem !important;
+  box-sizing: border-box !important;
+}
+
 /* Grid layout breakpoints for 1024px+ */
 @media (min-width: 1024px) {
   .honor-split-layout {
