@@ -1723,7 +1723,6 @@ textarea:focus {
   container-type: inline-size;
   width: 100%;
   max-width: 580px;
-  aspect-ratio: 4 / 5;
   margin: 0 auto;
   position: relative;
   box-sizing: border-box;
@@ -1737,8 +1736,8 @@ textarea:focus {
   top: 0 !important;
   left: 50% !important;
   margin-left: -290px !important;
-  transform: scale(calc(100cqw / 580));
-  transform-origin: top center;
+  transform: scale(var(--poster-scale, 1)) !important;
+  transform-origin: top center !important;
   font-family: var(--font-sans), sans-serif !important;
   text-align: center !important;
   border-radius: 12px !important;

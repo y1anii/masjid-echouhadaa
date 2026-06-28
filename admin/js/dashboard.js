@@ -1012,11 +1012,12 @@ updateToggleUI();
 
   // Adjust poster scale to fit mobile screen without clipping
   function adjustPosterScale() {
-    const scaler = document.querySelector('.poster-container-scaler');
+    const scaler = document.querySelector('.poster-container');
     const poster = document.getElementById('weekly-honor-poster');
     if (!scaler || !poster) return;
     const scalerWidth = scaler.clientWidth;
     const scale = Math.min(1, scalerWidth / 580);
+    poster.style.transform = `scale(${scale})`;
     poster.style.setProperty('--poster-scale', scale);
     scaler.style.height = (725 * scale) + 'px';
   }
