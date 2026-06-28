@@ -291,43 +291,99 @@ function normalizeArabic(text) {
       }
     }
 
-    loadWeeklyHonorBoard();
+    initWeeklyStars();
   }
 
-  async function loadWeeklyHonorBoard() {
-    const cardEl = document.getElementById("weekly-honor-board-card");
-    if (!cardEl) return;
+  async function initWeeklyStars() {
+    const btnStars = document.getElementById("btn-show-weekly-stars");
+    if (!btnStars) return;
+
     try {
-      const studentGender = portalDataCache && portalDataCache.student && portalDataCache.student.gender === "أنثى" ? "females" : "males";
-      const activeSettingKey = studentGender === "females" ? "weekly_honor_board_females_active" : "weekly_honor_board_males_active";
-      const isActive = await window.DB.getSetting(activeSettingKey) === "true";
-      
-      if (isActive) {
-        const data = await window.DB.getWeeklyHonorBoard(studentGender);
-        if (data) {
-          const titleEl = document.getElementById("weekly-honor-board-title");
-          const memoEl = document.getElementById("honor-memo-champ-val");
-          const behaviorEl = document.getElementById("honor-behavior-champ-val");
-          const participationEl = document.getElementById("honor-participation-champ-val");
-          const teamEl = document.getElementById("honor-distinguished-team-val");
+      const malesActive = await window.DB.getSetting("weekly_honor_board_males_active") === "true";
+      const femalesActive = await window.DB.getSetting("weekly_honor_board_females_active") === "true";
 
-          if (titleEl) titleEl.textContent = `لوحة الشرف - ${data.weekName || "الأسبوع الحالي"}`;
-          if (memoEl) memoEl.textContent = data.memorizationChampion || "-";
-          if (behaviorEl) behaviorEl.textContent = data.behaviorChampion || "-";
-          if (participationEl) participationEl.textContent = data.participationChampion || "-";
-          if (teamEl) teamEl.textContent = data.distinguishedTeam || "لا يوجد هذا الأسبوع";
-
-          cardEl.className = `about-card theme-${studentGender}`;
-          cardEl.style.display = "block";
-        } else {
-          cardEl.style.display = "none";
-        }
+      if (malesActive || femalesActive) {
+        btnStars.style.display = "inline-flex";
       } else {
-        cardEl.style.display = "none";
+        btnStars.style.display = "none";
+        return;
       }
+
+      // Bind click event listener once
+      btnStars.onclick = async () => {
+        const modal = document.getElementById("weekly-stars-modal");
+        if (!modal) return;
+
+        const setField = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val || "-";
+        };
+
+        const colMales = document.getElementById("col-weekly-stars-males");
+        const colFemales = document.getElementById("col-weekly-stars-females");
+        const weekNameBanner = document.getElementById("weekly-stars-week-name");
+
+        let activeWeekName = "";
+
+        if (malesActive) {
+          if (colMales) colMales.style.display = "block";
+          const malesData = await window.DB.getWeeklyHonorBoard("males");
+          if (malesData) {
+            activeWeekName = malesData.weekName || activeWeekName;
+            setField("stars-males-rank1", malesData.rank1 || malesData.memorizationChampion);
+            setField("stars-males-rank2", malesData.rank2 || malesData.behaviorChampion);
+            setField("stars-males-rank3", malesData.rank3 || malesData.participationChampion);
+            setField("stars-males-team", malesData.distinguishedTeam);
+            setField("stars-males-notes", malesData.notes);
+          } else {
+            if (colMales) colMales.style.display = "none";
+          }
+        } else {
+          if (colMales) colMales.style.display = "none";
+        }
+
+        if (femalesActive) {
+          if (colFemales) colFemales.style.display = "block";
+          const femalesData = await window.DB.getWeeklyHonorBoard("females");
+          if (femalesData) {
+            activeWeekName = femalesData.weekName || activeWeekName;
+            setField("stars-females-rank1", femalesData.rank1 || femalesData.memorizationChampion);
+            setField("stars-females-rank2", femalesData.rank2 || femalesData.behaviorChampion);
+            setField("stars-females-rank3", femalesData.rank3 || femalesData.participationChampion);
+            setField("stars-females-team", femalesData.distinguishedTeam);
+            setField("stars-females-notes", femalesData.notes);
+          } else {
+            if (colFemales) colFemales.style.display = "none";
+          }
+        } else {
+          if (colFemales) colFemales.style.display = "none";
+        }
+
+        if (weekNameBanner) {
+          weekNameBanner.textContent = activeWeekName ? `نجوم الأسبوع الحالي - ${activeWeekName}` : "نجوم الأسبوع الحالي";
+        }
+
+        // Show modal
+        modal.style.display = "flex";
+      };
+
+      // Close modal events
+      const closeModalBtn = document.getElementById("close-weekly-stars-modal");
+      const modal = document.getElementById("weekly-stars-modal");
+      if (closeModalBtn && modal) {
+        closeModalBtn.onclick = () => {
+          modal.style.display = "none";
+        };
+        modal.onclick = (e) => {
+          if (e.target === modal) {
+            modal.style.display = "none";
+          }
+        };
+      }
+
     } catch (err) {
-      console.warn("[Parent Portal] Failed to load weekly honor board:", err);
-      cardEl.style.display = "none";
+      console.warn("[Parent Portal] Failed to init weekly stars:", err);
+      btnStars.style.display = "none";
     }
   }
 

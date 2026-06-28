@@ -451,190 +451,41 @@
           font-size: 1.4rem !important;
           padding: 0 0.5rem !important;
         }
-        /* Weekly Honor Board Card - Males Theme (Green / Gold) */
-        #weekly-honor-board-card.theme-males {
-          border-color: var(--gold) !important;
-          background-color: #fffdf9 !important;
+        /* New Weekly Stars Modal Styling */
+        #weekly-stars-modal {
+          backdrop-filter: blur(6px);
+          transition: all 0.3s ease;
         }
-        #weekly-honor-board-card.theme-males h2 {
-          color: var(--green-dark) !important;
+        #weekly-stars-modal .profile-card {
+          border-top: 5px solid var(--gold);
+          box-shadow: 0 10px 30px rgba(13, 92, 70, 0.15) !important;
         }
-        #weekly-honor-board-card.theme-males h2 i {
-          color: var(--gold) !important;
+        #col-weekly-stars-males .stars-cards-container > div,
+        #col-weekly-stars-females .stars-cards-container > div {
+          box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        #weekly-honor-board-card.theme-males .hcard-memo {
-          background: linear-gradient(135deg, rgba(212, 175, 55, 0.06), rgba(212, 175, 55, 0.12)) !important;
-          border-color: rgba(212, 175, 55, 0.3) !important;
-          box-shadow: 0 4px 10px rgba(212,175,55,0.08) !important;
+        #col-weekly-stars-males .stars-cards-container > div:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(13, 92, 70, 0.06);
+          border-color: var(--green) !important;
         }
-        #weekly-honor-board-card.theme-males .hcard-memo .icon-circle {
-          background: var(--gold) !important;
-          color: var(--green-dark) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-memo h4 {
-          color: var(--green-dark) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-memo p {
-          color: #c5a028 !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-memo strong {
-          color: var(--green-dark) !important;
-          border-bottom-color: rgba(212, 175, 55, 0.4) !important;
-        }
-        
-        #weekly-honor-board-card.theme-males .hcard-behavior {
-          background: linear-gradient(135deg, rgba(13, 92, 70, 0.04), rgba(13, 92, 70, 0.08)) !important;
-          border-color: rgba(13, 92, 70, 0.2) !important;
-          box-shadow: 0 4px 10px rgba(13,92,70,0.05) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-behavior .icon-circle {
-          background: var(--green) !important;
-          color: var(--white) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-behavior h4 {
-          color: var(--green-dark) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-behavior p {
-          color: var(--green) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-behavior strong {
-          color: var(--green-dark) !important;
-          border-bottom-color: rgba(13, 92, 70, 0.3) !important;
-        }
-
-        #weekly-honor-board-card.theme-males .hcard-part {
-          background: linear-gradient(135deg, rgba(0, 168, 204, 0.04), rgba(0, 168, 204, 0.08)) !important;
-          border-color: rgba(0, 168, 204, 0.2) !important;
-          box-shadow: 0 4px 10px rgba(0,168,204,0.05) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-part .icon-circle {
-          background: #00a8cc !important;
-          color: var(--white) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-part h4 {
-          color: var(--green-dark) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-part p {
-          color: #00a8cc !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-part strong {
-          color: var(--green-dark) !important;
-          border-bottom-color: rgba(0, 168, 204, 0.3) !important;
-        }
-
-        #weekly-honor-board-card.theme-males .hcard-team {
-          background: linear-gradient(135deg, rgba(156, 39, 176, 0.04), rgba(156, 39, 176, 0.08)) !important;
-          border-color: rgba(156, 39, 176, 0.2) !important;
-          box-shadow: 0 4px 10px rgba(156,39,176,0.05) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-team .icon-circle {
-          background: #9c27b0 !important;
-          color: var(--white) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-team h4 {
-          color: var(--green-dark) !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-team p {
-          color: #9c27b0 !important;
-        }
-        #weekly-honor-board-card.theme-males .hcard-team strong {
-          color: var(--green-dark) !important;
-          border-bottom-color: rgba(156, 39, 176, 0.3) !important;
-        }
-
-        /* Weekly Honor Board Card - Females Theme (Pink / Crimson-Rose / Gold) */
-        #weekly-honor-board-card.theme-females {
+        #col-weekly-stars-females .stars-cards-container > div:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(207, 99, 118, 0.08);
           border-color: #cf6376 !important;
-          background-color: #fff9fa !important;
         }
-        #weekly-honor-board-card.theme-females h2 {
-          color: #cf6376 !important;
+        #btn-show-weekly-stars {
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 10px rgba(13, 92, 70, 0.1);
         }
-        #weekly-honor-board-card.theme-females h2 i {
-          color: #d4af37 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-memo {
-          background: linear-gradient(135deg, rgba(207, 99, 118, 0.06), rgba(207, 99, 118, 0.12)) !important;
-          border-color: rgba(207, 99, 118, 0.3) !important;
-          box-shadow: 0 4px 10px rgba(207,99,118,0.08) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-memo .icon-circle {
-          background: #d4af37 !important;
-          color: #ffffff !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-memo h4 {
-          color: #cf6376 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-memo p {
-          color: #b84e60 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-memo strong {
-          color: #b84e60 !important;
-          border-bottom-color: rgba(207, 99, 118, 0.4) !important;
+        #btn-show-weekly-stars:hover {
+          transform: translateY(-1.5px);
+          box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25);
+          background-color: #16482a !important;
         }
         
-        #weekly-honor-board-card.theme-females .hcard-behavior {
-          background: linear-gradient(135deg, rgba(207, 99, 118, 0.04), rgba(207, 99, 118, 0.08)) !important;
-          border-color: rgba(207, 99, 118, 0.2) !important;
-          box-shadow: 0 4px 10px rgba(207,99,118,0.05) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-behavior .icon-circle {
-          background: #cf6376 !important;
-          color: var(--white) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-behavior h4 {
-          color: #cf6376 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-behavior p {
-          color: #cf6376 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-behavior strong {
-          color: #b84e60 !important;
-          border-bottom-color: rgba(207, 99, 118, 0.3) !important;
-        }
-
-        #weekly-honor-board-card.theme-females .hcard-part {
-          background: linear-gradient(135deg, rgba(0, 168, 204, 0.04), rgba(0, 168, 204, 0.08)) !important;
-          border-color: rgba(0, 168, 204, 0.2) !important;
-          box-shadow: 0 4px 10px rgba(0,168,204,0.05) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-part .icon-circle {
-          background: #00a8cc !important;
-          color: var(--white) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-part h4 {
-          color: #cf6376 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-part p {
-          color: #00a8cc !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-part strong {
-          color: #b84e60 !important;
-          border-bottom-color: rgba(0, 168, 204, 0.3) !important;
-        }
-
-        #weekly-honor-board-card.theme-females .hcard-team {
-          background: linear-gradient(135deg, rgba(156, 39, 176, 0.04), rgba(156, 39, 176, 0.08)) !important;
-          border-color: rgba(156, 39, 176, 0.2) !important;
-          box-shadow: 0 4px 10px rgba(156,39,176,0.05) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-team .icon-circle {
-          background: #9c27b0 !important;
-          color: var(--white) !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-team h4 {
-          color: #cf6376 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-team p {
-          color: #9c27b0 !important;
-        }
-        #weekly-honor-board-card.theme-females .hcard-team strong {
-          color: #b84e60 !important;
-          border-bottom-color: rgba(156, 39, 176, 0.3) !important;
-        }
-      }
-
-      /* Unified Shape Uniformity (12px Border-Radius Overrides) */
+        /* Unified Shape Uniformity (12px Border-Radius Overrides) */
       .login-card,
       .about-card,
       .target-card,
@@ -785,9 +636,14 @@
               <span>عضو في فريق: <strong id="student-portal-team-name">-</strong></span>
             </div>
           </div>
-          <button id="parent-logout-btn" class="btn" style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff4d4d; padding: 0.5rem 1.25rem;">
-            تسجيل الخروج <i class="ph ph-sign-out" style="vertical-align: middle; margin-right: 0.25rem;"></i>
-          </button>
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <button id="btn-show-weekly-stars" class="btn" style="display: none; background: var(--green); border: 1.5px solid var(--gold); color: #fff; padding: 0.5rem 1.25rem; font-weight: 800; align-items: center; gap: 0.35rem; font-family: inherit; border-radius: 6px; cursor: pointer;">
+              <i class="ph-bold ph-chalkboard" style="color: var(--gold); font-size: 1.1rem;"></i> نجوم الأسبوع
+            </button>
+            <button id="parent-logout-btn" class="btn" style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff4d4d; padding: 0.5rem 1.25rem; border-radius: 6px; cursor: pointer;">
+              تسجيل الخروج <i class="ph ph-sign-out" style="vertical-align: middle; margin-right: 0.25rem;"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Student Badges Row (6 items grid) -->
@@ -849,56 +705,6 @@
           </h2>
           <div id="badges-gallery-list" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-start;">
             <!-- Badge icons rendered here -->
-          </div>
-        </div>
-
-        <!-- Weekly Honor Board (لوحة الشرف الأسبوعية) -->
-        <div class="about-card theme-males" style="margin-bottom: 2.5rem; display: none;" id="weekly-honor-board-card">
-          <h2 style="font-weight: 900; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.4rem;">
-            <i class="ph-fill ph-trophy honor-trophy-icon" style="font-size: 1.6rem;"></i> 
-            <span id="weekly-honor-board-title">لوحة الشرف للأسبوع الحالي</span>
-          </h2>
-          
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1rem; direction: rtl;">
-            <!-- 1st Place: Memorization Champion -->
-            <div class="hcard-memo" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="ph-fill ph-medal"></i>
-              </div>
-              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">المركز الأول (الأكثر حفظاً)</h4>
-              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">بطل الحفظ</p>
-              <strong style="font-size: 1.3rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-memo-champ-val">-</strong>
-            </div>
-
-            <!-- 2nd Place: Behavior Champion -->
-            <div class="hcard-behavior" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="ph-fill ph-shield-check"></i>
-              </div>
-              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">المركز الثاني (الأكثر سلوكاً)</h4>
-              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">بطل السلوك</p>
-              <strong style="font-size: 1.3rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-behavior-champ-val">-</strong>
-            </div>
-
-            <!-- 3rd Place: Participation Champion -->
-            <div class="hcard-part" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="ph-fill ph-star"></i>
-              </div>
-              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">المركز الثالث (الأكثر مشاركة)</h4>
-              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">بطل المشاركة</p>
-              <strong style="font-size: 1.3rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-participation-champ-val">-</strong>
-            </div>
-
-            <!-- Group Award: Distinguished Team -->
-            <div class="hcard-team" style="border-radius: 12px; padding: 1.25rem; text-align: center; position: relative; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-              <div class="icon-circle" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; font-size: 1.4rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="ph-fill ph-users-three"></i>
-              </div>
-              <h4 style="margin: 0; font-weight: 800; font-size: 1.15rem;">أفضل فريق</h4>
-              <p style="font-size: 0.75rem; font-weight: 700; margin: 0.15rem 0 0.5rem 0;">أفضل أداء جماعي</p>
-              <strong style="font-size: 1.2rem; font-weight: 900; padding-bottom: 2px; display: inline-block; border-bottom: 2px dashed;" id="honor-distinguished-team-val">-</strong>
-            </div>
           </div>
         </div>
 
@@ -1085,5 +891,115 @@
     <script src="js/main.js?v=52"></script>
     <script type="module" src="admin/js/db.js?v=52"></script>
     <script type="module" src="js/parent.js?v=52"></script>
+  <!-- Weekly Stars Modal -->
+  <div id="weekly-stars-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="profile-card animate-modal" style="max-width: 800px; width: 100%; background: #fff; border-radius: var(--radius); border-top: 5px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;">
+      <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1.5px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; position: sticky; top: 0; background: #fff; z-index: 10;">
+        <h3 style="color: var(--green-dark); font-weight: 900; margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem;">
+          <i class="ph-bold ph-chalkboard" style="color: var(--gold);"></i> لوحة نجوم الأسبوع
+        </h3>
+        <button id="close-weekly-stars-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+      </div>
+      
+      <div class="weekly-stars-content" style="display: flex; flex-direction: column; gap: 1.5rem; padding: 0.5rem 0;">
+        <!-- Week Name Banner -->
+        <div id="weekly-stars-week-name" style="background: rgba(13, 92, 70, 0.03); border-right: 4px solid var(--gold); padding: 0.75rem 1rem; font-weight: 800; color: var(--green-dark); font-size: 1.1rem; border-radius: 4px; text-align: center;">
+          -
+        </div>
+
+        <!-- Two Columns: Males / Females -->
+        <div class="weekly-stars-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          <!-- Boys Column -->
+          <div id="col-weekly-stars-males" style="background: #fbfaf6; border: 1.5px solid rgba(200, 161, 90, 0.15); border-radius: 12px; padding: 1.25rem;">
+            <h4 style="color: var(--green-dark); font-weight: 900; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid var(--green); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-gender-male" style="color: #00a8cc;"></i> نجوم الأسبوع (البنين)
+            </h4>
+            <div class="stars-cards-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-medal" style="color: var(--gold); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الأول (الأكثر حفظاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank1">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-shield-check" style="color: #c0c0c0; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثاني (الأكثر سلوكاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank2">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-star" style="color: #cd7f32; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثالث (الأكثر مشاركة)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank3">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-users-three" style="color: var(--green); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">أفضل فريق</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-team">-</strong>
+                </div>
+              </div>
+              <div style="background: rgba(255,152,0,0.03); padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed rgba(255,152,0,0.25); display: flex; align-items: flex-start; gap: 0.75rem;">
+                <i class="ph-fill ph-info" style="color: #ff9800; font-size: 1.3rem; margin-top: 0.15rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ملاحظة وتوجيه</span>
+                  <p style="margin: 0.15rem 0 0 0; font-size: 0.88rem; color: var(--text-dark); font-weight: 700; line-height: 1.4;" id="stars-males-notes">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Girls Column -->
+          <div id="col-weekly-stars-females" style="background: #fff9fa; border: 1.5px solid rgba(207, 99, 118, 0.15); border-radius: 12px; padding: 1.25rem;">
+            <h4 style="color: #b84e60; font-weight: 900; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid #cf6376; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-gender-female" style="color: #cf6376;"></i> نجوم الأسبوع (البنات)
+            </h4>
+            <div class="stars-cards-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-medal" style="color: var(--gold); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الأول (الأكثر حفظاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank1">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-shield-check" style="color: #c0c0c0; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثاني (الأكثر سلوكاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank2">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-star" style="color: #cd7f32; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثالث (الأكثر مشاركة)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank3">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-users-three" style="color: var(--green); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">أفضل فريق</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-team">-</strong>
+                </div>
+              </div>
+              <div style="background: rgba(255,152,0,0.03); padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed rgba(255,152,0,0.25); display: flex; align-items: flex-start; gap: 0.75rem;">
+                <i class="ph-fill ph-info" style="color: #ff9800; font-size: 1.3rem; margin-top: 0.15rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ملاحظة وتوجيه</span>
+                  <p style="margin: 0.15rem 0 0 0; font-size: 0.88rem; color: var(--text-dark); font-weight: 700; line-height: 1.4;" id="stars-females-notes">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </body>
 </html>

@@ -599,7 +599,7 @@ updateToggleUI();
   const wizardContainer = document.getElementById("honor-wizard-container");
   const wizardTitle = document.getElementById("wizard-title");
 
-  // Update status text on toggle cards (Problem #5)
+  // Update status text on toggle cards
   function updateWeeklyTogglesUI() {
     const malesStatus = document.getElementById("toggle-males-status");
     const femalesStatus = document.getElementById("toggle-females-status");
@@ -632,7 +632,6 @@ updateToggleUI();
   const wizardDistinguishedTeam = document.getElementById("wizard-distinguished-team");
   const wizardNotes = document.getElementById("wizard-notes");
   const btnSaveWizardHonor = document.getElementById("btn-save-wizard-honor");
-  const honorPosterWrapper = document.getElementById("honor-poster-wrapper");
 
   // Helper to populate student select options
   function populateStudentDropdowns() {
@@ -654,10 +653,33 @@ updateToggleUI();
     });
   }
 
+  const tabEditMales = document.getElementById("tab-edit-males");
+  const tabEditFemales = document.getElementById("tab-edit-females");
+
+  if (tabEditMales) {
+    tabEditMales.addEventListener("click", () => {
+      initWizard("males", false);
+    });
+  }
+  if (tabEditFemales) {
+    tabEditFemales.addEventListener("click", () => {
+      initWizard("females", false);
+    });
+  }
+
   const initWizard = async (gender, smoothScroll = true) => {
     activeHonorGender = gender;
     
-    // 1. Show container
+    // Update tab active state classes
+    if (gender === "males") {
+      if (tabEditMales) tabEditMales.classList.add("active");
+      if (tabEditFemales) tabEditFemales.classList.remove("active");
+    } else {
+      if (tabEditFemales) tabEditFemales.classList.add("active");
+      if (tabEditMales) tabEditMales.classList.remove("active");
+    }
+    
+    // Show container
     if (wizardContainer) {
       wizardContainer.style.display = "block";
       if (smoothScroll) {
@@ -665,30 +687,16 @@ updateToggleUI();
       }
     }
     if (wizardTitle) {
-      wizardTitle.textContent = gender === "females" ? "توليد لوحة الشرف للإناث (البنات)" : "توليد لوحة الشرف للذكور (البنين)";
+      wizardTitle.textContent = gender === "females" ? "تحديد نجوم الأسبوع (البنات)" : "تحديد نجوم الأسبوع (البنين)";
     }
 
-    // 2. Hide split layout & empty state, show skeleton loader (Problem #1)
     const skeleton = document.getElementById("honor-skeleton-loader");
     const emptyState = document.getElementById("wizard-empty-state");
-    const splitLayout = document.querySelector(".honor-split-layout");
+    const centeredLayout = document.querySelector(".honor-centered-layout");
     
     if (skeleton) skeleton.style.display = "block";
     if (emptyState) emptyState.style.display = "none";
-    if (splitLayout) splitLayout.style.display = "none";
-    if (honorPosterWrapper) honorPosterWrapper.style.display = "none";
-
-    // Update labels in wizard form for boys/girls
-    const lblSelectRank1 = document.getElementById("lbl-select-rank1");
-    const lblSelectRank2 = document.getElementById("lbl-select-rank2");
-    const lblSelectRank3 = document.getElementById("lbl-select-rank3");
-    const lblSelectTeam = document.getElementById("lbl-select-team");
-    const lblSelectNotes = document.getElementById("lbl-select-notes");
-    if (lblSelectRank1) lblSelectRank1.textContent = "المركز الأول (الأكثر حفظاً):";
-    if (lblSelectRank2) lblSelectRank2.textContent = "المركز الثاني (الأكثر سلوكاً):";
-    if (lblSelectRank3) lblSelectRank3.textContent = "المركز الثالث (الأكثر مشاركة):";
-    if (lblSelectTeam) lblSelectTeam.textContent = "أفضل فريق:";
-    if (lblSelectNotes) lblSelectNotes.textContent = "ملاحظة:";
+    if (centeredLayout) centeredLayout.style.display = "none";
 
     // Fetch accepted students for dropdowns
     try {
@@ -700,19 +708,19 @@ updateToggleUI();
       wizardAcceptedStudents = [];
     }
 
-    // Hide skeleton (Problem #1)
+    // Hide skeleton
     if (skeleton) skeleton.style.display = "none";
 
-    // 3. Handle empty state (Problem #8)
+    // Handle empty state
     if (wizardAcceptedStudents.length === 0) {
       if (emptyState) emptyState.style.display = "block";
-      if (splitLayout) splitLayout.style.display = "none";
+      if (centeredLayout) centeredLayout.style.display = "none";
       return;
     }
 
-    // Show form/preview layout
+    // Show form layout
     if (emptyState) emptyState.style.display = "none";
-    if (splitLayout) splitLayout.style.display = "grid";
+    if (centeredLayout) centeredLayout.style.display = "block";
 
     populateStudentDropdowns();
 
@@ -726,24 +734,12 @@ updateToggleUI();
         if (selectRank3Winner) selectRank3Winner.value = savedData.rank3 || savedData.participationChampion || "";
         if (wizardDistinguishedTeam) wizardDistinguishedTeam.value = savedData.distinguishedTeam || "";
         if (wizardNotes) wizardNotes.value = savedData.notes || "";
-        
-        displayPoster(savedData, smoothScroll);
       } else {
         if (selectRank1Winner) selectRank1Winner.value = "";
         if (selectRank2Winner) selectRank2Winner.value = "";
         if (selectRank3Winner) selectRank3Winner.value = "";
         if (wizardDistinguishedTeam) wizardDistinguishedTeam.value = "";
         if (wizardNotes) wizardNotes.value = "";
-        
-        // Render a blank preview
-        displayPoster({
-          weekName: wizardWeekName.value || "الأسبوع الأول",
-          rank1: "",
-          rank2: "",
-          rank3: "",
-          distinguishedTeam: "",
-          notes: ""
-        }, smoothScroll);
       }
     } catch (e) {
       console.warn("Error loading weekly honor board data:", e);
@@ -754,20 +750,13 @@ updateToggleUI();
     toggleMalesBoard.addEventListener("change", async () => {
       const isActive = toggleMalesBoard.checked;
       await window.DB.setSetting("weekly_honor_board_males_active", isActive ? "true" : "false");
-      if (isActive) {
-        // Toggle the other switch off
-        if (toggleFemalesBoard && toggleFemalesBoard.checked) {
-          toggleFemalesBoard.checked = false;
-          await window.DB.setSetting("weekly_honor_board_females_active", "false");
-        }
-        updateWeeklyTogglesUI();
-        initWizard("males", true);
+      updateWeeklyTogglesUI();
+      
+      const femalesActive = toggleFemalesBoard ? toggleFemalesBoard.checked : false;
+      if (isActive || femalesActive) {
+        initWizard(activeHonorGender, true);
       } else {
-        updateWeeklyTogglesUI();
-        if (activeHonorGender === "males") {
-          wizardContainer.style.display = "none";
-          if (honorPosterWrapper) honorPosterWrapper.style.display = "none";
-        }
+        wizardContainer.style.display = "none";
       }
     });
   }
@@ -776,20 +765,13 @@ updateToggleUI();
     toggleFemalesBoard.addEventListener("change", async () => {
       const isActive = toggleFemalesBoard.checked;
       await window.DB.setSetting("weekly_honor_board_females_active", isActive ? "true" : "false");
-      if (isActive) {
-        // Toggle the other switch off
-        if (toggleMalesBoard && toggleMalesBoard.checked) {
-          toggleMalesBoard.checked = false;
-          await window.DB.setSetting("weekly_honor_board_males_active", "false");
-        }
-        updateWeeklyTogglesUI();
-        initWizard("females", true);
+      updateWeeklyTogglesUI();
+      
+      const malesActive = toggleMalesBoard ? toggleMalesBoard.checked : false;
+      if (isActive || malesActive) {
+        initWizard(activeHonorGender, true);
       } else {
-        updateWeeklyTogglesUI();
-        if (activeHonorGender === "females") {
-          wizardContainer.style.display = "none";
-          if (honorPosterWrapper) honorPosterWrapper.style.display = "none";
-        }
+        wizardContainer.style.display = "none";
       }
     });
   }
@@ -798,7 +780,7 @@ updateToggleUI();
     btnSaveWizardHonor.addEventListener("click", async (e) => {
       e.preventDefault();
       
-      if (isWeeklySaving) return; // Prevent double submit (Problem #9)
+      if (isWeeklySaving) return; // Prevent double submit
       
       const weekName = wizardWeekName.value;
       const rank1 = selectRank1Winner.value;
@@ -816,7 +798,7 @@ updateToggleUI();
       isWeeklySaving = true;
       btnSaveWizardHonor.disabled = true;
       const originalHtml = btnSaveWizardHonor.innerHTML;
-      btnSaveWizardHonor.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> جاري التوليد والحفظ...`;
+      btnSaveWizardHonor.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> جاري الحفظ...`;
 
       const boardData = {
         weekName,
@@ -833,10 +815,9 @@ updateToggleUI();
       try {
         const success = await window.DB.saveWeeklyHonorBoard(boardData, activeHonorGender);
         if (success) {
-          alert("✅ تم حفظ وتحديث لوحة الشرف الأسبوعية بنجاح!");
-          displayPoster(boardData);
+          alert("✅ تم حفظ وتحديث نجوم الأسبوع بنجاح!");
         } else {
-          alert("❌ فشل في حفظ لوحة الشرف الأسبوعية.");
+          alert("❌ فشل في حفظ نجوم الأسبوع.");
         }
       } catch (err) {
         console.error(err);
@@ -849,158 +830,6 @@ updateToggleUI();
     });
   }
 
-  function displayPoster(data, scroll = true) {
-    const elPoster = document.getElementById("weekly-honor-poster");
-    const elPosterWeek = document.getElementById("poster-week-lbl");
-    const elPosterMemo = document.getElementById("poster-memo-champ");
-    const elPosterBehavior = document.getElementById("poster-behavior-champ");
-    const elPosterPart = document.getElementById("poster-participation-champ");
-    const elPosterTeam = document.getElementById("poster-distinguished-team");
-    const elPosterNotes = document.getElementById("poster-notes");
-    
-    const labelMemo = document.getElementById("poster-memo-label");
-    const labelBehavior = document.getElementById("poster-behavior-label");
-    const labelParticipation = document.getElementById("poster-participation-label");
-    const footerDesc = document.getElementById("poster-footer-desc");
-
-    const isFemale = (activeHonorGender === "females");
-    const weekVal = data.weekName || "الأسبوع الأول";
-
-    if (elPoster) {
-      elPoster.className = isFemale ? "theme-females" : "theme-males";
-    }
-
-    if (elPosterWeek) {
-      elPosterWeek.textContent = isFemale 
-        ? `( فئة الإناث – ${weekVal} )`
-        : `( فئة الذكور – ${weekVal} )`;
-    }
-
-    if (labelMemo) {
-      labelMemo.textContent = "المركز الأول (الأكثر حفظاً)";
-    }
-    if (labelBehavior) {
-      labelBehavior.textContent = "المركز الثاني (الأكثر سلوكاً)";
-    }
-    if (labelParticipation) {
-      labelParticipation.textContent = "المركز الثالث (الأكثر مشاركة)";
-    }
-    if (footerDesc) {
-      footerDesc.textContent = isFemale 
-        ? "نسأل الله أن يبارك في جهودكن، ويزيدكن توفيقاً وثباتاً. ونشجع بقية الطالبات على بذل المزيد لنيل هذا الشرف في الأسابيع القادمة."
-        : "نسأل الله أن يبارك في جهودكم، ويزيدكم توفيقاً وثباتاً. ونشجع بقية الطلاب على بذل المزيد لنيل هذا الشرف في الأسابيع القادمة.";
-    }
-
-    if (elPosterMemo) elPosterMemo.textContent = data.rank1 || data.memorizationChampion || "لا يوجد";
-    if (elPosterBehavior) elPosterBehavior.textContent = data.rank2 || data.behaviorChampion || "لا يوجد";
-    if (elPosterPart) elPosterPart.textContent = data.rank3 || data.participationChampion || "لا يوجد";
-    if (elPosterTeam) elPosterTeam.textContent = data.distinguishedTeam || "لا يوجد";
-      if (elPosterNotes) elPosterNotes.textContent = data.notes || "لا توجد تنبيهات لهذا الأسبوع";
-
-    if (honorPosterWrapper) {
-      honorPosterWrapper.style.display = "block";
-      if (typeof adjustPosterScale === "function") {
-        adjustPosterScale();
-        // Delayed runs to ensure layout reflow has computed clientWidth correctly (Issue #3)
-        setTimeout(adjustPosterScale, 50);
-        setTimeout(adjustPosterScale, 150);
-      }
-      if (scroll) {
-        honorPosterWrapper.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  }
-
-  window.downloadHonorBoardAsJpg = async function() {
-    const node = document.getElementById('weekly-honor-poster');
-    if (!node) throw new Error("Poster element not found");
-    
-    // Ensure all custom fonts (Tajawal/Amiri) are fully loaded (Issue #2)
-    await document.fonts.ready;
-    
-    // Create an offscreen container for export rendering
-    const exportContainer = document.createElement('div');
-    exportContainer.style.position = 'fixed';
-    exportContainer.style.left = '-9999px';
-    exportContainer.style.top = '-9999px';
-    exportContainer.style.width = '580px';
-    exportContainer.style.height = '725px';
-    exportContainer.style.direction = 'rtl'; // Explicit RTL enforcement
-    exportContainer.style.textAlign = 'right';
-    document.body.appendChild(exportContainer);
-    
-    // Clone the poster
-    const clone = node.cloneNode(true);
-    clone.id = 'weekly-honor-poster';
-    clone.classList.add('for-export'); // Forces fixed width/height and px units
-    
-    // Explicitly clear inline transform/positioning styles cloned from DOM element (Issue #2 & #5)
-    clone.style.transform = 'none';
-    clone.style.left = '0';
-    clone.style.marginLeft = '0';
-    clone.style.position = 'relative';
-    clone.style.direction = 'rtl'; // Explicit RTL enforcement
-    
-    exportContainer.appendChild(clone);
-    
-    // Ensure all images are fully loaded inside the clone before capture
-    const images = Array.from(clone.getElementsByTagName('img'));
-    await Promise.all(images.map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.onload = resolve;
-        img.onerror = resolve;
-      });
-    }));
-    
-    // Wait for next animation frame and a layout settling timeout
-    await new Promise(resolve => requestAnimationFrame(resolve));
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
-    const genderLabel = activeHonorGender === "females" ? "إناث" : "ذكور";
-    const weekName = wizardWeekName.value || "الأسبوع";
-    const fileName = `لوحة_الشرف_مسجد_الشهداء_${genderLabel}_${weekName}_${Date.now()}.jpg`;
-
-    try {
-      const canvas = await html2canvas(clone, { 
-        useCORS: true, 
-        scale: 2.5, // High resolution (1450px x 1812px)
-        logging: false,
-        backgroundColor: activeHonorGender === "females" ? "#fff9fa" : "#fbfaf6",
-        width: 580,
-        height: 725
-      });
-      
-      exportContainer.remove();
-      const link = document.createElement('a');
-      link.download = fileName;
-      link.href = canvas.toDataURL('image/jpeg', 0.98);
-      link.click();
-    } catch (err) {
-      exportContainer.remove();
-      console.error("html2canvas failed:", err);
-      alert("حدث خطأ أثناء محاولة توليد الصورة وتحميلها. يرجى المحاولة مرة أخرى.");
-      throw err;
-    }
-  };
-
-  // Bind download button
-  const btnDownloadImg = document.getElementById("btn-download-honor-img");
-  if (btnDownloadImg) {
-    btnDownloadImg.onclick = () => {
-      btnDownloadImg.disabled = true;
-      const originalHtml = btnDownloadImg.innerHTML;
-      btnDownloadImg.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> جاري تحميل الصورة...`;
-      
-      setTimeout(() => {
-        window.downloadHonorBoardAsJpg().finally(() => {
-          btnDownloadImg.disabled = false;
-          btnDownloadImg.innerHTML = originalHtml;
-        });
-      }, 150);
-    };
-  }
-
   async function loadWeeklyHonorBoardData() {
     try {
       const malesActive = await window.DB.getSetting("weekly_honor_board_males_active") === "true";
@@ -1008,35 +837,23 @@ updateToggleUI();
 
       if (toggleMalesBoard) toggleMalesBoard.checked = malesActive;
       if (toggleFemalesBoard) toggleFemalesBoard.checked = femalesActive;
+      
+      updateWeeklyTogglesUI();
 
-      if (malesActive) {
-        await initWizard("males", false);
-      } else if (femalesActive) {
-        await initWizard("females", false);
+      if (malesActive || femalesActive) {
+        const defaultGender = malesActive ? "males" : "females";
+        await initWizard(defaultGender, false);
       }
     } catch (err) {
       console.warn("[Dashboard] Could not load weekly honor board settings:", err);
     }
   }
 
-  // Adjust poster scale to fit mobile screen without clipping
-  function adjustPosterScale() {
-    const scaler = document.querySelector('.poster-container');
-    const poster = document.getElementById('weekly-honor-poster');
-    if (!scaler || !poster) return;
-    const scalerWidth = scaler.clientWidth;
-    const scale = Math.min(1, scalerWidth / 580);
-    poster.style.transform = `scale(${scale})`;
-    poster.style.setProperty('--poster-scale', scale);
-    scaler.style.height = (725 * scale) + 'px';
-  }
-  window.adjustPosterScale = adjustPosterScale;
-  window.addEventListener('resize', adjustPosterScale);
-
   // تحديث حالة الزر فور التحميل
   updateToggleUI();
 
   // Load Dashboard Data
   loadDashboard();
+
   setTimeout(adjustPosterScale, 150);
 });
