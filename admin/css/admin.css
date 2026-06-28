@@ -124,9 +124,19 @@ body::after {
 /* ── Stats Grid ── */
 .stats-inner {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin: 0 auto 2.5rem auto;
+  max-width: 680px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .stats-inner {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+  }
 }
 
 .stat-item {
@@ -1609,7 +1619,6 @@ textarea:focus {
   background-color: #cf6376;
 }
 
-/* CSS Grid Wizard Form Controls (Problem #7) */
 .wizard-grid-fields {
   display: grid;
   grid-template-columns: 1fr;
@@ -1623,31 +1632,67 @@ textarea:focus {
 }
 .wizard-field-group {
   display: flex;
-  align-items: center;
   background: #fff;
   border: 1px solid rgba(200, 161, 90, 0.18);
   border-radius: 8px;
   overflow: hidden;
-  min-height: 52px;
+  box-sizing: border-box;
 }
+
+/* Responsive side-by-side vs stacked layout */
+@media (max-width: 767px) {
+  .wizard-field-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .wizard-field-label {
+    width: 100% !important;
+    border-left: none !important;
+    border-bottom: 1px solid rgba(200, 161, 90, 0.12);
+    padding: 0.6rem 1rem !important;
+    min-height: auto !important;
+    display: flex;
+    align-items: center;
+  }
+  .wizard-field-input-wrap {
+    width: 100% !important;
+    padding: 0.6rem 1rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .wizard-field-group {
+    flex-direction: row;
+    align-items: center;
+    min-height: 52px;
+  }
+  .wizard-field-label {
+    width: 210px !important;
+    flex-shrink: 0;
+    min-height: 52px;
+    border-left: 1px solid rgba(200, 161, 90, 0.12);
+    display: flex;
+    align-items: center;
+    white-space: nowrap; /* Prevents wrapping and row height issues! */
+  }
+  .wizard-field-input-wrap {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+}
+
 .wizard-field-label {
   padding: 0.75rem 1rem;
   font-weight: 800;
   color: var(--green-dark);
   background: rgba(13, 92, 70, 0.025);
-  width: 35%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
   box-sizing: border-box;
-  min-height: 52px;
-  border-left: 1px solid rgba(200, 161, 90, 0.12);
   font-size: 0.9rem;
 }
 .wizard-field-input-wrap {
-  padding: 0.5rem 1rem;
-  flex-grow: 1;
   box-sizing: border-box;
+  padding: 0.5rem 1rem;
 }
 .wizard-field-input-wrap select,
 .wizard-field-input-wrap input {
@@ -1844,7 +1889,7 @@ textarea:focus {
   font-weight: 900 !important;
   font-size: 4.8cqw !important;
   box-shadow: 0 0.8cqw 2.5cqw rgba(0,0,0,0.12) !important;
-  letter-spacing: 0.1cqw !important;
+  letter-spacing: normal !important;
 }
 .poster-subtitle {
   font-weight: 800 !important;
@@ -1907,7 +1952,7 @@ textarea:focus {
   padding: 0.3cqw 1.8cqw !important;
   border-radius: 2cqw !important;
   width: fit-content !important;
-  letter-spacing: 0.1cqw !important;
+  letter-spacing: normal !important;
 }
 .poster-row-name {
   font-size: 4cqw !important;
@@ -1977,6 +2022,12 @@ textarea:focus {
   border-width: 7px !important;
   outline-width: 2.3px !important;
   outline-offset: -9px !important;
+  direction: rtl !important;
+  unicode-bidi: isolate !important;
+  overflow: hidden !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  transform: none !important;
 }
 #weekly-honor-poster.for-export::before {
   border-width: 1.2px !important;
@@ -2003,7 +2054,7 @@ textarea:focus {
   border-radius: 35px !important;
   font-size: 28px !important;
   box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
-  letter-spacing: 0.5px !important;
+  letter-spacing: normal !important;
   border-width: 2.3px !important;
 }
 #weekly-honor-poster.for-export .poster-subtitle {
@@ -2093,14 +2144,6 @@ textarea:focus {
 
 /* Grid layout breakpoints for 1024px+ */
 @media (min-width: 1024px) {
-  .stats-inner {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 1.5rem !important;
-  }
-  .stats-inner .stat-item {
-    grid-column: span 2 !important;
-  }
   .honor-split-layout {
     display: grid !important;
     grid-template-columns: 1.2fr 1fr !important;

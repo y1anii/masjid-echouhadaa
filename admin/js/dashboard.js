@@ -908,9 +908,12 @@ updateToggleUI();
     }
   }
 
-  window.downloadHonorBoardAsJpg = function() {
+  window.downloadHonorBoardAsJpg = async function() {
     const node = document.getElementById('weekly-honor-poster');
-    if (!node) return Promise.reject("Poster element not found");
+    if (!node) throw new Error("Poster element not found");
+    
+    // Ensure all custom fonts (Tajawal/Amiri) are fully loaded (Issue #2)
+    await document.fonts.ready;
     
     // Create an offscreen container for export rendering
     const exportContainer = document.createElement('div');
@@ -919,37 +922,57 @@ updateToggleUI();
     exportContainer.style.top = '-9999px';
     exportContainer.style.width = '580px';
     exportContainer.style.height = '725px';
+    exportContainer.style.direction = 'rtl'; // Explicit RTL enforcement
+    exportContainer.style.textAlign = 'right';
     document.body.appendChild(exportContainer);
     
     // Clone the poster
     const clone = node.cloneNode(true);
     clone.id = 'weekly-honor-poster';
-    clone.classList.add('for-export'); // Forces fixed width/height and px units (Problem #3)
+    clone.classList.add('for-export'); // Forces fixed width/height and px units
+    clone.style.direction = 'rtl'; // Explicit RTL enforcement
     
     exportContainer.appendChild(clone);
+    
+    // Ensure all images are fully loaded inside the clone before capture
+    const images = Array.from(clone.getElementsByTagName('img'));
+    await Promise.all(images.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
+    
+    // Wait for next animation frame and a layout settling timeout
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 150));
     
     const genderLabel = activeHonorGender === "females" ? "إناث" : "ذكور";
     const weekName = wizardWeekName.value || "الأسبوع";
     const fileName = `لوحة_الشرف_مسجد_الشهداء_${genderLabel}_${weekName}_${Date.now()}.jpg`;
 
-    return html2canvas(clone, { 
-      useCORS: true, 
-      scale: 2.5, // High resolution (1450px x 1812px)
-      logging: false,
-      backgroundColor: activeHonorGender === "females" ? "#fff9fa" : "#fbfaf6",
-      width: 580,
-      height: 725
-    }).then(canvas => {
+    try {
+      const canvas = await html2canvas(clone, { 
+        useCORS: true, 
+        scale: 2.5, // High resolution (1450px x 1812px)
+        logging: false,
+        backgroundColor: activeHonorGender === "females" ? "#fff9fa" : "#fbfaf6",
+        width: 580,
+        height: 725
+      });
+      
       exportContainer.remove();
       const link = document.createElement('a');
       link.download = fileName;
       link.href = canvas.toDataURL('image/jpeg', 0.98);
       link.click();
-    }).catch(err => {
+    } catch (err) {
       exportContainer.remove();
       console.error("html2canvas failed:", err);
       alert("حدث خطأ أثناء محاولة توليد الصورة وتحميلها. يرجى المحاولة مرة أخرى.");
-    });
+      throw err;
+    }
   };
 
   // Bind download button
