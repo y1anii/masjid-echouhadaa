@@ -1,4 +1,4 @@
-const CACHE_NAME = 'masjid-admin-v54';
+const CACHE_NAME = 'masjid-admin-v55';
 const ASSETS = [
   'index.html',
   'lessons.html',

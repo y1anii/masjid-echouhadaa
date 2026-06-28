@@ -10,13 +10,13 @@
 
 <title>لوحة الإحصائيات العامة | مسجد الشهداء</title>
 
-<link rel="stylesheet" href="../css/style.css?v=54" />
+<link rel="stylesheet" href="../css/style.css?v=55" />
 
-<link rel="stylesheet" href="css/admin.css?v=54" />
+<link rel="stylesheet" href="css/admin.css?v=55" />
 
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-<script type="module" src="js/auth.js?v=54"></script>
+<script type="module" src="js/auth.js?v=55"></script>
 
 <script>
 
@@ -258,125 +258,138 @@ navigator.serviceWorker.register('sw.js');
 </p>
 
 
-<div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; background: rgba(13, 92, 70, 0.02); padding: 1rem; border-radius: 8px; border: 1px solid rgba(200, 161, 90, 0.15); align-items: center; justify-content: center;">
+<div class="settings-grid-container">
+  <!-- Males toggle (Problem #5 Clickable toggle card) -->
+  <label class="toggle-row-card males-theme" for="toggle-males-board">
+    <span class="toggle-row-label">تفعيل لوحة البنين (الذكور):</span>
+    <div class="toggle-switch-wrapper">
+      <span class="toggle-status-text" id="toggle-males-status">غير مفعل</span>
+      <div class="toggle-switch-inner">
+        <input type="checkbox" id="toggle-males-board" class="toggle-checkbox" style="opacity: 0; width: 0; height: 0; margin: 0;">
+        <span class="toggle-slider"></span>
+      </div>
+    </div>
+  </label>
 
-<div style="display: flex; align-items: center; gap: 0.75rem;">
-
-<span style="font-weight: 800; color: var(--green-dark); font-size: 0.95rem;">تفعيل لوحة البنين (الذكور):</span>
-
-<label class="switch-toggle" style="position: relative; display: inline-block; width: 50px; height: 26px;">
-
-<input type="checkbox" id="toggle-males-board" style="opacity: 0; width: 0; height: 0; margin: 0;">
-
-<span class="slider-toggle-round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
-
-</label>
-
-</div>
-
-
-<div style="display: flex; align-items: center; gap: 0.75rem; border-right: 1.5px solid rgba(13, 92, 70, 0.1); padding-right: 2rem;">
-
-<span style="font-weight: 800; color: #cf6376; font-size: 0.95rem;">تفعيل لوحة البنات (الإناث):</span>
-
-<label class="switch-toggle" style="position: relative; display: inline-block; width: 50px; height: 26px;">
-
-<input type="checkbox" id="toggle-females-board" style="opacity: 0; width: 0; height: 0; margin: 0;">
-
-<span class="slider-toggle-round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
-
-</label>
-
-</div>
-
+  <!-- Females toggle (Problem #5 Clickable toggle card) -->
+  <label class="toggle-row-card female-theme" for="toggle-females-board">
+    <span class="toggle-row-label">تفعيل لوحة البنات (الإناث):</span>
+    <div class="toggle-switch-wrapper">
+      <span class="toggle-status-text" id="toggle-females-status">غير مفعل</span>
+      <div class="toggle-switch-inner">
+        <input type="checkbox" id="toggle-females-board" class="toggle-checkbox" style="opacity: 0; width: 0; height: 0; margin: 0;">
+        <span class="toggle-slider"></span>
+      </div>
+    </div>
+  </label>
 </div>
 
 
 <!-- Active Board Selection / Calculation Container -->
-<div id="honor-wizard-container" style="display: none; background: rgba(13, 92, 70, 0.015); border: 1px solid rgba(200,161,90,0.25); border-radius: 12px; padding: 1.5rem; margin-top: 1rem;">
+<div id="honor-wizard-container" style="display: none; background: rgba(13, 92, 70, 0.015); border: 1px solid rgba(200,161,90,0.25); border-radius: 12px; padding: 1.5rem; margin-top: 1rem; min-height: 850px;">
 <h4 id="wizard-title" style="color: var(--green-dark); font-weight: 900; margin-bottom: 1.25rem; font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">توليد لوحة الشرف</h4>
 
+<!-- Shimmer Skeleton Loader (Problem #1 & #2) -->
+<div id="honor-skeleton-loader" style="display: none;">
+  <div class="skeleton-split-layout">
+    <div class="skeleton-form-col">
+      <div class="skeleton-field shimmers"></div>
+      <div class="skeleton-field shimmers"></div>
+      <div class="skeleton-field shimmers"></div>
+      <div class="skeleton-field shimmers"></div>
+      <div class="skeleton-field shimmers"></div>
+      <div class="skeleton-field shimmers"></div>
+    </div>
+    <div class="skeleton-preview-col">
+      <div class="skeleton-poster shimmers"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Empty State Container (Problem #8) -->
+<div id="wizard-empty-state" style="display: none; text-align: center; padding: 3rem 1.5rem; background: var(--white); border: 1px dashed rgba(200, 161, 90, 0.35); border-radius: 12px;">
+  <i class="ph-bold ph-info" style="font-size: 3.5rem; color: var(--gold); margin-bottom: 1rem; display: block;"></i>
+  <h4 style="color: var(--green-dark); font-weight: 800; font-size: 1.15rem; margin-bottom: 0.5rem;">لا يمكن توليد لوحة الشرف</h4>
+  <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">لا توجد بيانات كافية لتوليد لوحة الشرف لهذا الأسبوع</p>
+</div>
+
 <div class="honor-split-layout">
-<!-- Right/Start Column: The Wizard Form -->
+<!-- Right/Start Column: The Wizard Form (Problem #7 Grid Form Layout) -->
 <div class="honor-wizard-form-col">
-<form id="honor-wizard-form" style="width: 100%; margin: 0; background: #fff; border: 1px solid rgba(200, 161, 90, 0.22); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-<table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.95rem;">
-<tbody>
-<!-- Week Selection -->
-<tr style="border-bottom: 1px solid #eee;">
-<td style="padding: 0.9rem 1rem; font-weight: 800; color: var(--green-dark); background: rgba(13, 92, 70, 0.02); width: 35%;">أسبوع لوحة الشرف:</td>
-<td style="padding: 0.9rem 1rem;">
-<select id="wizard-week-name" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; font-weight: 700; color: var(--green-dark);">
-<option value="الأسبوع الأول" selected>الأسبوع الأول</option>
-<option value="الأسبوع الثاني">الأسبوع الثاني</option>
-<option value="الأسبوع الثالث">الأسبوع الثالث</option>
-<option value="الأسبوع الرابع">الأسبوع الرابع</option>
-<option value="الأسبوع الخامس">الأسبوع الخامس</option>
-<option value="الأسبوع السادس">الأسبوع السادس</option>
-<option value="الأسبوع السابع">الأسبوع السابع</option>
-<option value="الأسبوع الثامن">الأسبوع الثامن</option>
-<option value="الأسبوع التاسع">الأسبوع التاسع</option>
-<option value="الأسبوع العاشر">الأسبوع العاشر</option>
-</select>
-</td>
-</tr>
+<form id="honor-wizard-form" class="honor-wizard-grid-form">
+  <div class="wizard-grid-fields">
+    <!-- Week Selection -->
+    <div class="wizard-field-group">
+      <span class="wizard-field-label">أسبوع لوحة الشرف:</span>
+      <div class="wizard-field-input-wrap">
+        <select id="wizard-week-name" required>
+          <option value="الأسبوع الأول" selected>الأسبوع الأول</option>
+          <option value="الأسبوع الثاني">الأسبوع الثاني</option>
+          <option value="الأسبوع الثالث">الأسبوع الثالث</option>
+          <option value="الأسبوع الرابع">الأسبوع الرابع</option>
+          <option value="الأسبوع الخامس">الأسبوع الخامس</option>
+          <option value="الأسبوع السادس">الأسبوع السادس</option>
+          <option value="الأسبوع السابع">الأسبوع السابع</option>
+          <option value="الأسبوع الثامن">الأسبوع الثامن</option>
+          <option value="الأسبوع التاسع">الأسبوع التاسع</option>
+          <option value="الأسبوع العاشر">الأسبوع العاشر</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Rank 1: Memorization -->
-<tr style="border-bottom: 1px solid #eee;">
-<td style="padding: 0.9rem 1rem; font-weight: 800; color: var(--green-dark); background: rgba(13, 92, 70, 0.02);" id="lbl-select-rank1">المركز الأول (الأكثر حفظاً):</td>
-<td style="padding: 0.9rem 1rem;">
-<select id="select-rank1-winner" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; font-weight: 700;">
-<option value="">-- اختر طالباً --</option>
-</select>
-</td>
-</tr>
+    <!-- Best Team -->
+    <div class="wizard-field-group">
+      <span class="wizard-field-label" id="lbl-select-team">أفضل فريق:</span>
+      <div class="wizard-field-input-wrap">
+        <input type="text" id="wizard-distinguished-team" placeholder="مثال: فريق الفرسان..." />
+      </div>
+    </div>
 
-<!-- Rank 2: Behavior -->
-<tr style="border-bottom: 1px solid #eee;">
-<td style="padding: 0.9rem 1rem; font-weight: 800; color: var(--green-dark); background: rgba(13, 92, 70, 0.02);" id="lbl-select-rank2">المركز الثاني (الأكثر سلوكاً):</td>
-<td style="padding: 0.9rem 1rem;">
-<select id="select-rank2-winner" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; font-weight: 700;">
-<option value="">-- اختر طالباً --</option>
-</select>
-</td>
-</tr>
+    <!-- Rank 1: Memorization -->
+    <div class="wizard-field-group">
+      <span class="wizard-field-label" id="lbl-select-rank1">المركز الأول (الأكثر حفظاً):</span>
+      <div class="wizard-field-input-wrap">
+        <select id="select-rank1-winner" required>
+          <option value="">-- اختر طالباً --</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Rank 3: Participation -->
-<tr style="border-bottom: 1px solid #eee;">
-<td style="padding: 0.9rem 1rem; font-weight: 800; color: var(--green-dark); background: rgba(13, 92, 70, 0.02);" id="lbl-select-rank3">المركز الثالث (الأكثر مشاركة):</td>
-<td style="padding: 0.9rem 1rem;">
-<select id="select-rank3-winner" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; font-weight: 700;">
-<option value="">-- اختر طالباً --</option>
-</select>
-</td>
-</tr>
+    <!-- Rank 2: Behavior -->
+    <div class="wizard-field-group">
+      <span class="wizard-field-label" id="lbl-select-rank2">المركز الثاني (الأكثر سلوكاً):</span>
+      <div class="wizard-field-input-wrap">
+        <select id="select-rank2-winner" required>
+          <option value="">-- اختر طالباً --</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Best Team -->
-<tr style="border-bottom: 1px solid #eee;">
-<td style="padding: 0.9rem 1rem; font-weight: 800; color: var(--green-dark); background: rgba(13, 92, 70, 0.02);" id="lbl-select-team">أفضل فريق:</td>
-<td style="padding: 0.9rem 1rem;">
-<input type="text" id="wizard-distinguished-team" placeholder="مثال: فريق الفرسان..." style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit;" />
-</td>
-</tr>
+    <!-- Rank 3: Participation -->
+    <div class="wizard-field-group">
+      <span class="wizard-field-label" id="lbl-select-rank3">المركز الثالث (الأكثر مشاركة):</span>
+      <div class="wizard-field-input-wrap">
+        <select id="select-rank3-winner" required>
+          <option value="">-- اختر طالباً --</option>
+        </select>
+      </div>
+    </div>
 
-<!-- General Note -->
-<tr style="border-bottom: 1px solid #eee;">
-<td style="padding: 0.9rem 1rem; font-weight: 800; color: var(--green-dark); background: rgba(13, 92, 70, 0.02);" id="lbl-select-notes">ملاحظة:</td>
-<td style="padding: 0.9rem 1rem;">
-<input type="text" id="wizard-notes" placeholder="اكتب ملاحظة أو توجيه عام لأولياء الأمور..." style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #ccc; font-family: inherit;" />
-</td>
-</tr>
+    <!-- General Note -->
+    <div class="wizard-field-group">
+      <span class="wizard-field-label" id="lbl-select-notes">ملاحظة:</span>
+      <div class="wizard-field-input-wrap">
+        <input type="text" id="wizard-notes" placeholder="اكتب ملاحظة أو توجيه عام لأولياء الأمور..." />
+      </div>
+    </div>
+  </div>
 
-<!-- Submit Actions -->
-<tr>
-<td colspan="2" style="padding: 1.25rem 1rem; text-align: center; background: rgba(13, 92, 70, 0.01);">
-<button type="submit" id="btn-save-wizard-honor" class="btn" style="background: var(--gold); color: var(--green-dark); font-weight: 900; padding: 0.75rem 2.5rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; width: 100%; max-width: 300px; font-family: inherit; font-size: 1rem;">
-<i class="ph-bold ph-floppy-disk"></i> حفظ وتوليد اللوحة
-</button>
-</td>
-</tr>
-</tbody>
-</table>
+  <!-- Submit Actions -->
+  <div class="wizard-submit-bar">
+    <button type="submit" id="btn-save-wizard-honor" class="btn" style="background: var(--gold); color: var(--green-dark); font-weight: 900; padding: 0.75rem 2.5rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; width: 100%; max-width: 300px; font-family: inherit; font-size: 1rem;">
+      <i class="ph-bold ph-floppy-disk"></i> حفظ وتوليد اللوحة
+    </button>
+  </div>
 </form>
 </div>
 
@@ -387,300 +400,7 @@ navigator.serviceWorker.register('sw.js');
 <i class="ph-bold ph-image" style="color: var(--gold);"></i> معاينة لوحة الشرف (Facebook 4:5)
 </h5>
 
-<!-- Styles for the premium honor board poster (optimized for 4:5 aspect ratio) -->
-<style>
-/* Slider Toggles styling */
-.switch-toggle input:checked + .slider-toggle-round {
-background-color: var(--green);
-}
-.switch-toggle input:checked + .slider-toggle-round::before {
-transform: translateX(24px);
-}
-
-#weekly-honor-poster {
-width: 580px;
-height: 725px; /* 4:5 Aspect Ratio */
-padding: 1.75rem 2rem 1.25rem 2rem;
-box-sizing: border-box;
-position: relative;
-font-family: var(--font-sans), sans-serif;
-text-align: center;
-border-radius: 12px;
-box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
-overflow: hidden;
-direction: rtl;
-margin: 0 auto 1rem;
-}
-
-/* Mobile scale transformation for the poster */
-@media (max-width: 620px) {
-#weekly-honor-poster {
-transform: scale(calc((100vw - 40px) / 580)) !important;
-transform-origin: top center !important;
-margin-bottom: calc(725px * (1 - ((100vw - 40px) / 580))) !important;
-}
-}
-
-/* Males Theme (Green / Gold) */
-#weekly-honor-poster.theme-males {
-border: 6px solid #0d5c46;
-outline: 2px solid #d4af37;
-outline-offset: -8px;
-background-color: #fbfaf6;
-background-image: var(--pattern);
-}
-#weekly-honor-poster.theme-males::before {
-content: "";
-position: absolute;
-inset: 0;
-border: 1px solid rgba(13, 92, 70, 0.12);
-border-radius: 10px;
-pointer-events: none;
-z-index: 1;
-}
-#weekly-honor-poster.theme-males .poster-title-banner {
-background: linear-gradient(135deg, #0d5c46, #073a2c);
-color: #d4af37;
-border: 2px solid #d4af37;
-}
-#weekly-honor-poster.theme-males .poster-subtitle {
-color: #0d5c46;
-}
-#weekly-honor-poster.theme-males .poster-row-card {
-background: #ffffff;
-border: 1.5px solid rgba(13, 92, 70, 0.1);
-border-right: 5px solid #0d5c46;
-box-shadow: 0 4px 10px rgba(13, 92, 70, 0.03);
-}
-#weekly-honor-poster.theme-males .poster-row-title-badge {
-background-color: rgba(13, 92, 70, 0.08);
-color: #0d5c46;
-}
-#weekly-honor-poster.theme-males .poster-row-name {
-color: #0d5c46;
-}
-#weekly-honor-poster.theme-males .poster-footer-text {
-color: #555555;
-}
-#weekly-honor-poster.theme-males .poster-motto-banner {
-background-color: rgba(13, 92, 70, 0.06);
-color: #0d5c46;
-border: 1px solid rgba(13, 92, 70, 0.1);
-}
-#weekly-honor-poster.theme-males .lantern-svg {
-fill: rgba(13, 92, 70, 0.07);
-}
-#weekly-honor-poster.theme-males .medal-ribbon {
-fill: #0d5c46;
-}
-#weekly-honor-poster.theme-males .poster-decorations-bg {
-color: rgba(13, 92, 70, 0.035);
-}
-
-/* Females Theme (Pink / Gold) */
-#weekly-honor-poster.theme-females {
-border: 6px solid #cf6376;
-outline: 2px solid #d4af37;
-outline-offset: -8px;
-background-color: #fff9fa;
-background-image: var(--pattern);
-}
-#weekly-honor-poster.theme-females::before {
-content: "";
-position: absolute;
-inset: 0;
-border: 1px solid rgba(207, 99, 118, 0.12);
-border-radius: 10px;
-pointer-events: none;
-z-index: 1;
-}
-#weekly-honor-poster.theme-females .poster-title-banner {
-background: linear-gradient(135deg, #cf6376, #a84355);
-color: #fffdf9;
-border: 2px solid #d4af37;
-}
-#weekly-honor-poster.theme-females .poster-subtitle {
-color: #cf6376;
-}
-#weekly-honor-poster.theme-females .poster-row-card {
-background: #ffffff;
-border: 1.5px solid rgba(207, 99, 118, 0.1);
-border-right: 5px solid #cf6376;
-box-shadow: 0 4px 10px rgba(207, 99, 118, 0.03);
-}
-#weekly-honor-poster.theme-females .poster-row-title-badge {
-background-color: rgba(207, 99, 118, 0.08);
-color: #cf6376;
-}
-#weekly-honor-poster.theme-females .poster-row-name {
-color: #cf6376;
-}
-#weekly-honor-poster.theme-females .poster-footer-text {
-color: #555555;
-}
-#weekly-honor-poster.theme-females .poster-motto-banner {
-background-color: rgba(207, 99, 118, 0.06);
-color: #cf6376;
-border: 1px solid rgba(207, 99, 118, 0.1);
-}
-#weekly-honor-poster.theme-females .lantern-svg {
-fill: rgba(207, 99, 118, 0.07);
-}
-#weekly-honor-poster.theme-females .medal-ribbon {
-fill: #cf6376;
-}
-#weekly-honor-poster.theme-females .poster-decorations-bg {
-color: rgba(207, 99, 118, 0.035);
-}
-
-.poster-inner-border {
-position: absolute;
-inset: 10px;
-border: 2px dashed rgba(200, 161, 90, 0.3);
-border-radius: 8px;
-pointer-events: none;
-z-index: 2;
-}
-.poster-content-wrap {
-position: relative;
-z-index: 3;
-margin-top: 5px;
-}
-.poster-logo-container {
-width: 70px;
-height: 70px;
-background: #ffffff;
-border-radius: 50%;
-border: 3px solid #d4af37;
-display: flex;
-align-items: center;
-justify-content: center;
-margin: 0 auto 0.5rem;
-box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-.poster-logo-container img {
-width: 55px;
-height: 55px;
-object-fit: contain;
-}
-.poster-title-banner {
-width: fit-content;
-margin: 0 auto 0.25rem;
-padding: 0.25rem 2rem;
-border-radius: 30px;
-font-weight: 900;
-font-size: 1.4rem;
-box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-letter-spacing: 0.5px;
-}
-.poster-subtitle {
-font-weight: 800;
-font-size: 0.95rem;
-margin-bottom: 0.75rem;
-}
-.poster-rows-container {
-display: flex;
-flex-direction: column;
-gap: 0.5rem;
-margin-bottom: 0.75rem;
-}
-.poster-row-card {
-border-radius: 8px;
-padding: 0.45rem 0.85rem;
-display: flex;
-align-items: center;
-gap: 0.85rem;
-text-align: right;
-box-sizing: border-box;
-min-height: 58px;
-}
-.poster-row-medal {
-width: 36px;
-height: 46px;
-display: flex;
-align-items: center;
-justify-content: center;
-flex-shrink: 0;
-}
-.poster-row-icon-circle {
-width: 34px;
-height: 34px;
-border-radius: 50%;
-border: 2px solid #d4af37;
-display: flex;
-align-items: center;
-justify-content: center;
-flex-shrink: 0;
-background-color: rgba(212, 175, 55, 0.05);
-}
-.poster-row-icon-circle svg {
-color: #d4af37;
-}
-.poster-row-details {
-display: flex;
-flex-direction: column;
-justify-content: center;
-flex-grow: 1;
-gap: 0.15rem;
-}
-.poster-row-title-badge {
-font-size: 0.7rem;
-font-weight: 800;
-padding: 0.1rem 0.55rem;
-border-radius: 10px;
-width: fit-content;
-letter-spacing: 0.3px;
-}
-.poster-row-name {
-font-size: 1.15rem;
-font-weight: 900;
-margin-top: 0.1rem;
-}
-.poster-footer-text {
-font-size: 0.75rem;
-font-weight: 800;
-line-height: 1.5;
-margin: 0 auto 0.5rem;
-max-width: 480px;
-}
-.poster-motto-banner {
-padding: 0.3rem 1.25rem;
-border-radius: 20px;
-font-size: 0.78rem;
-font-weight: 900;
-display: inline-flex;
-align-items: center;
-gap: 0.35rem;
-margin: 0 auto;
-}
-.poster-lantern-left {
-position: absolute;
-top: 15px;
-left: 20px;
-z-index: 2;
-}
-.poster-lantern-right {
-position: absolute;
-top: 15px;
-right: 20px;
-z-index: 2;
-}
-.poster-decorations-bg {
-position: absolute;
-bottom: 0;
-left: 0;
-right: 0;
-display: flex;
-justify-content: space-between;
-padding: 0 10px;
-pointer-events: none;
-z-index: 1;
-}
-.poster-decorations-svg {
-opacity: 0.3;
-}
-</style>
-
+<div class="poster-container">
 <div id="weekly-honor-poster" class="theme-males">
 <div class="poster-inner-border"></div>
 
@@ -817,6 +537,7 @@ opacity: 0.3;
 </svg>
 </div>
 </div>
+</div> <!-- .poster-container -->
 </div>
 
 <button type="button" id="btn-download-honor-img" class="btn" style="background: var(--gold); color: var(--green-dark); font-weight: 900; padding: 0.75rem 2rem; border-radius: 12px; font-size: 1.05rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; margin: 0.5rem auto 0; width: 100%; max-width: 280px; box-sizing: border-box;">
@@ -874,77 +595,137 @@ opacity: 0.3;
 </div>
 
 
-<!-- Premium Appreciation Certificate Print Area -->
-<div id="appreciation-print-area" style="display: none; direction: rtl;">
-<div style="border: 10px double var(--gold); padding: 3rem; border-radius: 15px; outline: 3px solid var(--green-dark); outline-offset: -15px; text-align: center; background: #fffdf6; position: relative; width: 100%; box-sizing: border-box; page-break-inside: avoid;">
-<span style="font-family: var(--font-quran); font-size: 1.4rem; color: var(--green-dark); display: block; margin-bottom: 1rem;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
-<img src="../images/masjidlogo.png" alt="مسجد الشهداء" style="width: 80px; height: 80px; margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto;" />
-<h1 style="color: var(--green-dark); font-weight: 900; font-size: 2.6rem; margin: 0; font-family: var(--font-quran); letter-spacing: 1px;">شَهَادَةُ شُكْرٍ وَتَقْدِيرٍ</h1>
-<p style="color: var(--gold); font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem;">يتقدم بها مسجد الشهداء بقرية إيباشيرن</p>
+<!-- Premium Appreciation Certificate Print Area -->
 
-<div style="margin: 2.5rem 0; font-size: 1.35rem; line-height: 2.2; color: #222;">
-تَتَقَدَّمُ إِدَارَةُ مَسْجِدِ الشُّهَدَاءِ بِأَخْلَصِ عِبَارَاتِ الشُّكْرِ وَالْعِرْفَانِ لِلطَّالِبِ(ة):<br>
-<strong style="font-size: 2rem; color: var(--green-dark); border-bottom: 2px dashed var(--gold); padding: 0 1.5rem; display: inline-block; margin: 0.5rem 0;" id="appr-student-name">...</strong><br>
-نَظِيرَ مَجْهُودَاتِهِ المُمَيَّزَةِ، وَانْضِبَاطِهِ الطَّيِّبِ، وَتَفَوُّقِهِ فِي حِفْظِ وَمُرَاجَعَةِ القُرْآنِ الكَرِيمِ<br>
-خِلَالَ الدَّوْرَةِ القُرْآنِيَّةِ الصَّيْفِيَّةِ لِعَامِ 2026م، سَائِلِينَ اللهَ لَهُ المَزِيدَ مِنَ التَّوْفِيقِ وَالسَّدَادِ.
-</div>
+<div id="appreciation-print-area" style="display: none; direction: rtl;">
 
-<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 3rem; direction: rtl; padding: 0 3rem; text-align: center;">
-<div style="display: flex; flex-direction: column; align-items: center; min-width: 140px;">
-<span style="font-weight: 800; color: var(--green-dark); font-size: 1.1rem; display: block; margin-bottom: 3rem;">إمضاء إمام المسجد</span>
-<span style="font-size: 0.85rem; color: var(--text-muted); display: block; width: 150px; border-top: 1.5px dashed var(--gold);"></span>
-</div>
-<div style="display: flex; flex-direction: column; align-items: center; min-width: 140px;">
-<span style="font-weight: 800; color: var(--green-dark); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">ختم المسجد</span>
-<div style="border: 2px dashed rgba(200, 161, 90, 0.4); border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; background: rgba(0,0,0,0.01);">محل الختم</div>
-</div>
-</div>
-</div>
-</div>
+<div style="border: 10px double var(--gold); padding: 3rem; border-radius: 15px; outline: 3px solid var(--green-dark); outline-offset: -15px; text-align: center; background: #fffdf6; position: relative; width: 100%; box-sizing: border-box; page-break-inside: avoid;">
 
-<!-- Print styling for Appreciation Certificates -->
-<style>
-@media print {
-@page {
-size: A4 portrait;
-margin: 0;
-}
-body.printing-appreciation {
-background: #fffdf6 !important;
-margin: 0;
-padding: 0;
-width: 210mm;
-height: 297mm;
-}
-body.printing-appreciation #appreciation-print-area {
-display: block !important;
-position: absolute;
-inset: 0;
-width: 210mm;
-height: 297mm;
-box-sizing: border-box;
-padding: 12mm;
-page-break-inside: avoid;
-page-break-after: avoid;
-}
-body.printing-appreciation #appreciation-print-area > div {
-height: 100%;
-box-sizing: border-box;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-padding: 2.5rem !important;
-}
-body.printing-appreciation .navbar, 
-body.printing-appreciation .site-footer, 
-body.printing-appreciation .admin-container {
-display: none !important;
-}
-}
-</style>
+<span style="font-family: var(--font-quran); font-size: 1.4rem; color: var(--green-dark); display: block; margin-bottom: 1rem;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
 
-<!-- Script loading -->
-<script type="module" src="js/db.js?v=54"></script>
-<script type="module" src="js/dashboard.js?v=54"></script>
-</body>
+<img src="../images/masjidlogo.png" alt="مسجد الشهداء" style="width: 80px; height: 80px; margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto;" />
+
+<h1 style="color: var(--green-dark); font-weight: 900; font-size: 2.6rem; margin: 0; font-family: var(--font-quran); letter-spacing: 1px;">شَهَادَةُ شُكْرٍ وَتَقْدِيرٍ</h1>
+
+<p style="color: var(--gold); font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem;">يتقدم بها مسجد الشهداء بقرية إيباشيرن</p>
+
+
+<div style="margin: 2.5rem 0; font-size: 1.35rem; line-height: 2.2; color: #222;">
+
+تَتَقَدَّمُ إِدَارَةُ مَسْجِدِ الشُّهَدَاءِ بِأَخْلَصِ عِبَارَاتِ الشُّكْرِ وَالْعِرْفَانِ لِلطَّالِبِ(ة):<br>
+
+<strong style="font-size: 2rem; color: var(--green-dark); border-bottom: 2px dashed var(--gold); padding: 0 1.5rem; display: inline-block; margin: 0.5rem 0;" id="appr-student-name">...</strong><br>
+
+نَظِيرَ مَجْهُودَاتِهِ المُمَيَّزَةِ، وَانْضِبَاطِهِ الطَّيِّبِ، وَتَفَوُّقِهِ فِي حِفْظِ وَمُرَاجَعَةِ القُرْآنِ الكَرِيمِ<br>
+
+خِلَالَ الدَّوْرَةِ القُرْآنِيَّةِ الصَّيْفِيَّةِ لِعَامِ 2026م، سَائِلِينَ اللهَ لَهُ المَزِيدَ مِنَ التَّوْفِيقِ وَالسَّدَادِ.
+
+</div>
+
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 3rem; direction: rtl; padding: 0 3rem; text-align: center;">
+
+<div style="display: flex; flex-direction: column; align-items: center; min-width: 140px;">
+
+<span style="font-weight: 800; color: var(--green-dark); font-size: 1.1rem; display: block; margin-bottom: 3rem;">إمضاء إمام المسجد</span>
+
+<span style="font-size: 0.85rem; color: var(--text-muted); display: block; width: 150px; border-top: 1.5px dashed var(--gold);"></span>
+
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; min-width: 140px;">
+
+<span style="font-weight: 800; color: var(--green-dark); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">ختم المسجد</span>
+
+<div style="border: 2px dashed rgba(200, 161, 90, 0.4); border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; background: rgba(0,0,0,0.01);">محل الختم</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Print styling for Appreciation Certificates -->
+
+<style>
+
+@media print {
+
+@page {
+
+size: A4 portrait;
+
+margin: 0;
+
+}
+
+body.printing-appreciation {
+
+background: #fffdf6 !important;
+
+margin: 0;
+
+padding: 0;
+
+width: 210mm;
+
+height: 297mm;
+
+}
+
+body.printing-appreciation #appreciation-print-area {
+
+display: block !important;
+
+position: absolute;
+
+inset: 0;
+
+width: 210mm;
+
+height: 297mm;
+
+box-sizing: border-box;
+
+padding: 12mm;
+
+page-break-inside: avoid;
+
+page-break-after: avoid;
+
+}
+
+body.printing-appreciation #appreciation-print-area > div {
+
+height: 100%;
+
+box-sizing: border-box;
+
+display: flex;
+
+flex-direction: column;
+
+justify-content: space-between;
+
+padding: 2.5rem !important;
+
+}
+
+body.printing-appreciation .navbar, 
+
+body.printing-appreciation .site-footer, 
+
+body.printing-appreciation .admin-container {
+
+}
+}
+</style>
+
+<!-- Script loading -->
+<script type="module" src="js/db.js?v=55"></script>
+<script type="module" src="js/dashboard.js?v=55"></script>
+</body>
 </html>
