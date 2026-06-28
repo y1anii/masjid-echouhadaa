@@ -1175,6 +1175,16 @@ body::after {
 
 
 
+#honor-wizard-container {
+  background: rgba(13, 92, 70, 0.015);
+  border: 1px solid rgba(200, 161, 90, 0.25);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  min-height: 850px;
+  box-sizing: border-box;
+}
+
 /* ── Custom Split Layout for Honor Board Live Preview ── */
 .honor-split-layout {
   display: flex;
@@ -1216,6 +1226,13 @@ body::after {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+  }
+  #honor-wizard-container {
+    padding: 0.75rem !important;
+    min-height: auto !important;
+  }
+  .honor-preview-col {
+    padding: 0.75rem !important;
   }
 }
 
