@@ -2025,3 +2025,156 @@ textarea:focus {
 .mobile-bottom-nav {
   display: none !important;
 }
+
+/* ═══════════════════════════════════════════════
+   تصميم لوحة التحكم الفاخر للكمبيوتر (Premium Desktop PC Sidebar Layout)
+   ═══════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  /* تحويل الهيدر العلوي إلى شريط جانبي أيمن كامل الارتفاع */
+  .navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(180deg, var(--green-dark) 0%, #05261d 100%) !important;
+    border-left: 3px solid var(--gold) !important;
+    border-bottom: none !important;
+    z-index: 1000;
+    box-shadow: 4px 0 30px rgba(0,0,0,0.25) !important;
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 1.5rem !important;
+  }
+  
+  .navbar__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 3rem;
+    padding: 0 !important;
+  }
+
+  .navbar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .navbar-logo {
+    height: 75px !important;
+    margin-bottom: 1.25rem;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+    transition: transform 0.4s ease;
+  }
+
+  .navbar-logo:hover {
+    transform: rotate(10deg) scale(1.05);
+  }
+  
+  .navbar-brand__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .navbar-brand__title {
+    font-size: 1.4rem !important;
+    color: var(--white) !important;
+    font-weight: 950;
+    letter-spacing: 0.5px;
+  }
+  
+  .navbar-brand__sub {
+    font-size: 0.8rem !important;
+    color: var(--gold) !important;
+    margin-top: 0.35rem;
+    font-weight: 700;
+  }
+
+  .navbar-nav {
+    display: block !important;
+    flex: 1;
+  }
+  
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    padding: 0.95rem 1.25rem;
+    border-radius: 12px;
+    color: rgba(255,255,255,0.7) !important;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  
+  .nav-links a i {
+    font-size: 1.45rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .nav-links a:hover {
+    color: var(--gold) !important;
+    background: rgba(212, 175, 55, 0.07);
+    border-color: rgba(212, 175, 55, 0.15);
+    transform: translateX(-6px);
+  }
+
+  .nav-links a:hover i {
+    transform: scale(1.15);
+  }
+  
+  .nav-links a.active {
+    color: var(--green-dark) !important;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%) !important;
+    box-shadow: 0 8px 22px rgba(212, 175, 55, 0.3) !important;
+    border-color: var(--gold-light);
+  }
+  
+  .nav-links a.active i {
+    color: var(--green-dark) !important;
+  }
+  
+  .nav-links a.nav-cta {
+    margin-top: auto;
+    background: rgba(255, 68, 68, 0.12) !important;
+    border: 1px solid rgba(255, 68, 68, 0.3) !important;
+    color: #ff4d4d !important;
+    justify-content: center;
+  }
+  
+  .nav-links a.nav-cta:hover {
+    background: #ff4d4d !important;
+    color: var(--white) !important;
+    box-shadow: 0 8px 22px rgba(255, 68, 68, 0.3) !important;
+    transform: none;
+  }
+
+  /* إزاحة المحتوى جهة اليسار لوجود القائمة الجانبية في جهة اليمين */
+  body {
+    padding-right: 280px !important;
+    padding-left: 0 !important;
+    direction: rtl;
+  }
+  
+  .admin-container {
+    padding-top: 40px !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    max-width: 1250px;
+    margin: 0 auto;
+  }
+}

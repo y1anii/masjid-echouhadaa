@@ -275,7 +275,7 @@
                   <span id="copy-btn-text">نسخ المعرف</span>
                 </button>
               </div>
-              <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: #b8860b; font-weight: 800; line-height: 1.6;">⚠️ يرجى حفظ هذا المعرف ونسخه بعناية، ستحتاجه للدخول لبوابة أولياء الأمور لمتابعة ابنكم.</p>
+              <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: #b8860b; font-weight: 800; line-height: 1.6; display: flex; align-items: center; justify-content: center; gap: 0.35rem;"><i class="ph-bold ph-warning-circle" style="font-size: 1.15rem; color: #b8860b;"></i> يرجى حفظ هذا المعرف ونسخه بعناية، ستحتاجه للدخول لبوابة أولياء الأمور لمتابعة ابنكم.</p>
             </div>
 
 
@@ -381,7 +381,7 @@
           console.log("[Register] Registered successfully with Firestore ID:", finalStudentId);
         } catch (error) {
           console.error('Registration failed:', error);
-          alert("❌ حدث خطأ أثناء التسجيل: " + (error.message || error));
+          alert("حدث خطأ أثناء التسجيل: " + (error.message || error));
           submitBtn.disabled = false;
           submitBtn.textContent = 'إرسال طلب التسجيل';
           return;

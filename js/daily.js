@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (err) {
       console.error(err);
-      dailyTimelineList.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 2rem 0;">❌ حدث خطأ أثناء الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.</p>`;
+      dailyTimelineList.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 2rem 0;"><i class="ph ph-warning-circle" style="font-size: 1.5rem; color: #ff4d4d; display: block; margin-bottom: 0.5rem;"></i> حدث خطأ أثناء الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.</p>`;
     }
   }
 

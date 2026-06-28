@@ -275,6 +275,7 @@ runWhenReady(() => {
   function saveAgendaState() {
     const sessionCategoryVal = localStorage.getItem("masjid_session_category") || "الصغار";
     let agenda = {};
+    let selectedCourses = [];
 
     if (sessionCategoryVal === "الكبار") {
       agenda = {
@@ -282,6 +283,14 @@ runWhenReady(() => {
         adultTajweed: agendaAdultTajweed.checked,
         adultSharia: agendaAdultSharia.checked
       };
+      if (agendaAdultQuran.checked) selectedCourses.push("تحفيظ القرآن");
+      if (agendaAdultTajweed.checked) selectedCourses.push("علوم التجويد");
+      if (agendaAdultSharia.checked) selectedCourses.push("الدروس الشرعية");
+      if (selectedCourses.length === 0) {
+        selectedCourses.push("تحفيظ القرآن");
+        agendaAdultQuran.checked = true;
+        agenda.adultQuran = true;
+      }
     } else {
       agenda = {
         quran: agendaQuran.checked,
@@ -293,8 +302,41 @@ runWhenReady(() => {
         quranComp: agendaQuranComp.checked,
         sports: agendaSports.checked
       };
+      if (agendaQuran.checked) selectedCourses.push("حفظ القرآن ومراجعته");
+      if (agendaCreed.checked) selectedCourses.push("دروس في العقيدة والسلوك");
+      if (agendaProphets.checked) selectedCourses.push("قصص الأنبياء عليهم السلام");
+      if (agendaCatchup.checked) selectedCourses.push("استدراك الحفظ ومراجعة القرآن");
+      if (agendaCulture.checked) selectedCourses.push("مسابقات ثقافية");
+      if (agendaHealth.checked) selectedCourses.push("جلسات الصحة الجسمية");
+      if (agendaQuranComp.checked) selectedCourses.push("مسابقات قرآنية");
+      if (agendaSports.checked) selectedCourses.push("نشاطات رياضية");
+      if (selectedCourses.length === 0) {
+        selectedCourses.push("حفظ القرآن ومراجعته");
+        agendaQuran.checked = true;
+        agenda.quran = true;
+      }
     }
     localStorage.setItem("masjid_session_agenda", JSON.stringify(agenda));
+    localStorage.setItem("masjid_session_courses", JSON.stringify(selectedCourses));
+    if (activeSession) {
+      activeSession.selectedCourses = selectedCourses;
+    }
+    const sumCoursesTags = document.getElementById("sum-courses-tags");
+    if (sumCoursesTags) {
+      const tagColors = [
+        { bg: 'rgba(13,92,70,0.08)', color: 'var(--green-dark)', border: 'rgba(13,92,70,0.25)' },
+        { bg: 'rgba(212,175,55,0.1)', color: '#7a5900', border: 'rgba(212,175,55,0.4)' },
+        { bg: 'rgba(100,149,237,0.08)', color: '#2b4a8a', border: 'rgba(100,149,237,0.3)' },
+      ];
+      sumCoursesTags.innerHTML = '<span style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">المقررات:</span>';
+      selectedCourses.forEach((course, i) => {
+        const c = tagColors[i % tagColors.length];
+        const tag = document.createElement('span');
+        tag.style.cssText = `background:${c.bg}; color:${c.color}; border:1px solid ${c.border}; border-radius:20px; padding:0.2rem 0.75rem; font-size:0.82rem; font-weight:800;`;
+        tag.textContent = course.trim();
+        sumCoursesTags.appendChild(tag);
+      });
+    }
   }
 
   // Bind saveAgendaState to checkboxes
@@ -1855,6 +1897,24 @@ runWhenReady(() => {
         };
       }
       localStorage.setItem("masjid_session_agenda", JSON.stringify(agenda));
+      
+      // Parse and restore session courses in localStorage
+      let restoredCoursesList = [];
+      if (sessionCategoryVal === "الكبار") {
+        if (agenda.adultQuran) restoredCoursesList.push("تحفيظ القرآن");
+        if (agenda.adultTajweed) restoredCoursesList.push("علوم التجويد");
+        if (agenda.adultSharia) restoredCoursesList.push("الدروس الشرعية");
+      } else {
+        if (agenda.quran) restoredCoursesList.push("حفظ القرآن ومراجعته");
+        if (agenda.creed) restoredCoursesList.push("دروس في العقيدة والسلوك");
+        if (agenda.prophets) restoredCoursesList.push("قصص الأنبياء عليهم السلام");
+        if (agenda.catchup) restoredCoursesList.push("استدراك الحفظ ومراجعة القرآن");
+        if (agenda.culture) restoredCoursesList.push("مسابقات ثقافية");
+        if (agenda.health) restoredCoursesList.push("جلسات الصحة الجسمية");
+        if (agenda.quranComp) restoredCoursesList.push("مسابقات قرآنية");
+        if (agenda.sports) restoredCoursesList.push("نشاطات رياضية");
+      }
+      localStorage.setItem("masjid_session_courses", JSON.stringify(restoredCoursesList));
       
       // Ensure allStudents is loaded
       if (allStudents.length === 0) {

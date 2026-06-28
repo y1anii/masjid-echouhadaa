@@ -619,7 +619,7 @@ updateToggleUI();
     if (!list || list.length === 0) return "لا توجد بيانات كافية";
     const top = list.slice(0, maxCount).map(x => x.name).join("، ");
     return list.length > 1 && list[0].score === list[1]?.score
-      ? `${top} ⚠️ (تعادل)` : top;
+      ? `${top} (تعادل)` : top;
   }
 
   const tabEditMales = document.getElementById("tab-edit-males");
@@ -746,7 +746,7 @@ updateToggleUI();
 
         if (tieMessages.length > 0 && tieWarning) {
           tieWarning.style.display = "flex";
-          if (tieText) tieText.textContent = `⚠️ يوجد تعادل في: ${tieMessages.join("، ")}. سيتم حفظ أول المتعادلين.`;
+          if (tieText) tieText.textContent = `تنبيه: يوجد تعادل في: ${tieMessages.join("، ")}. سيتم حفظ أول المتعادلين.`;
         } else if (tieWarning) {
           tieWarning.style.display = "none";
         }
@@ -756,7 +756,7 @@ updateToggleUI();
 
       } catch (err) {
         console.error("[Dashboard] calculateWeeklyHonors failed:", err);
-        alert("❌ حدث خطأ أثناء احتساب النجوم. تأكد من صحة البيانات.");
+        alert("حدث خطأ أثناء احتساب النجوم. تأكد من صحة البيانات.");
       } finally {
         btnCalculateHonors.innerHTML = originalHtml;
         btnCalculateHonors.disabled = false;
@@ -805,13 +805,13 @@ updateToggleUI();
       try {
         const success = await window.DB.saveWeeklyHonorBoard(boardData, activeHonorGender);
         if (success) {
-          alert("✅ تم حفظ وتحديث نجوم الأسبوع بنجاح!");
+          alert("تم حفظ وتحديث نجوم الأسبوع بنجاح!");
         } else {
-          alert("❌ فشل في حفظ نجوم الأسبوع.");
+          alert("فشل في حفظ نجوم الأسبوع.");
         }
       } catch (err) {
         console.error(err);
-        alert("❌ حدث خطأ أثناء محاولة حفظ البيانات.");
+        alert("حدث خطأ أثناء محاولة حفظ البيانات.");
       } finally {
         isWeeklySaving = false;
         btnSaveWizardHonor.disabled = false;

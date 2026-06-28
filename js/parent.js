@@ -1,4 +1,4 @@
-﻿/**
+/**
  * مسجد الشهداء — لوحة تحكم ولي الأمر (بوابة المتابعة الشاملة)
  */
 
@@ -167,7 +167,7 @@ function normalizeArabic(text) {
       }
     } catch (err) {
       console.error(err);
-      alert("❌ فشل التحقق من الهوية. يرجى التأكد من معرف الطالب ورقم هاتف ولي الأمر بدقة.");
+      alert("فشل التحقق من الهوية. يرجى التأكد من معرف الطالب ورقم هاتف ولي الأمر بدقة.");
       if (isManualLogin) {
         logoutParent();
       }
@@ -328,7 +328,7 @@ function normalizeArabic(text) {
 
         bannerEl.innerHTML = `
           <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
-            <span style="font-size:2rem; line-height:1;">⭐</span>
+            <i class="ph-fill ph-star" style="font-size:2rem; color:var(--gold); line-height:1;"></i>
             <div>
               <div style="font-weight:900; font-size:1.05rem; color:#7a5900;">
                 مبارك! الطالب <strong>${studentName}</strong> نجم الأسبوع
@@ -337,7 +337,7 @@ function normalizeArabic(text) {
                 ${weekDisplay}
               </div>
             </div>
-            <span style="font-size:1.5rem; line-height:1; margin-right:auto;">🌟</span>
+            <i class="ph-bold ph-sparkles" style="font-size:1.5rem; color:var(--gold); line-height:1; margin-right:auto;"></i>
           </div>
         `;
         bannerEl.style.display = 'block';
@@ -476,9 +476,9 @@ function normalizeArabic(text) {
     const finalAttRate = parseFloat(portalDataCache.attendance.rate) || 0;
     const finalStars = portalDataCache.rewards.stars || 0;
     let finalGrade = "مقبول";
-    if (finalAttRate >= 90 && finalStars >= 40) finalGrade = "ممتاز مع مرتبة الشرف 🏆";
-    else if (finalAttRate >= 80 && finalStars >= 25) finalGrade = "ممتاز 🌟";
-    else if (finalAttRate >= 70 && finalStars >= 15) finalGrade = "جيد جداً ✨";
+    if (finalAttRate >= 90 && finalStars >= 40) finalGrade = "ممتاز مع مرتبة الشرف (تميز مطلق)";
+    else if (finalAttRate >= 80 && finalStars >= 25) finalGrade = "ممتاز (أداء عالي)";
+    else if (finalAttRate >= 70 && finalStars >= 15) finalGrade = "جيد جداً (مستوى رائع)";
     else if (finalAttRate >= 50) finalGrade = "جيد";
 
     if (certStudentName) certStudentName.textContent = student.name;

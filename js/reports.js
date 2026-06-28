@@ -147,9 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const finalAttRate = parseFloat(result.attendance.rate) || 0;
         const finalStars = result.rewards.stars || 0;
         let finalGrade = "مقبول";
-        if (finalAttRate >= 90 && finalStars >= 40) finalGrade = "ممتاز مع مرتبة الشرف 🏆";
-        else if (finalAttRate >= 80 && finalStars >= 25) finalGrade = "ممتاز 🌟";
-        else if (finalAttRate >= 70 && finalStars >= 15) finalGrade = "جيد جداً ✨";
+        if (finalAttRate >= 90 && finalStars >= 40) finalGrade = "ممتاز مع مرتبة الشرف (تميز مطلق)";
+        else if (finalAttRate >= 80 && finalStars >= 25) finalGrade = "ممتاز (أداء عالي)";
+        else if (finalAttRate >= 70 && finalStars >= 15) finalGrade = "جيد جداً (مستوى رائع)";
         else if (finalAttRate >= 50) finalGrade = "جيد";
 
         if (certOverallGrade) certOverallGrade.textContent = finalGrade;
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (err) {
       console.error(err);
-      alert("❌ حدث خطأ أثناء الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.");
+      alert("حدث خطأ أثناء الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.");
     }
   }
 

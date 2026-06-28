@@ -125,16 +125,16 @@ function attachLessonListeners() {
           btn.textContent = 'جاري الحذف...';
           const success = await DB.deleteLesson(lesson.id);
           if (success) {
-            alert('✅ تم حذف الدرس بنجاح');
+            alert('تم حذف الدرس بنجاح');
             initLessons();
           } else {
-            alert('❌ فشل حذف الدرس');
+            alert('فشل حذف الدرس');
             btn.disabled = false;
             btn.innerHTML = '<i class="ph ph-trash"></i> حذف';
           }
         } catch (err) {
           console.error(err);
-          alert('❌ حدث خطأ أثناء حذف الدرس');
+          alert('حدث خطأ أثناء حذف الدرس');
           btn.disabled = false;
           btn.innerHTML = '<i class="ph ph-trash"></i> حذف';
         }
@@ -202,7 +202,7 @@ if (lessonForm) {
     const dayVal = daySelectVal === 'custom' ? lessonDayCustomInput.value.trim() : daySelectVal;
 
     if (!dayVal) {
-      alert('❌ يرجى تحديد أو كتابة اليوم/الفترة');
+      alert('يرجى تحديد أو كتابة اليوم/الفترة');
       return;
     }
 
@@ -223,29 +223,29 @@ if (lessonForm) {
         submitBtn.textContent = 'جاري الحفظ...';
         const success = await DB.updateLesson(editingId, lessonData);
         if (success) {
-          alert('✅ تم تحديث الدرس بنجاح');
+          alert('تم تحديث الدرس بنجاح');
           cancelEdit();
           initLessons();
         } else {
-          alert('❌ فشل التحديث');
+          alert('فشل التحديث');
         }
       } else {
         // إضافة
         submitBtn.textContent = 'جاري الإضافة...';
         const success = await DB.addLesson(lessonData);
         if (success) {
-          alert('✅ تم إضافة الدرس بنجاح');
+          alert('تم إضافة الدرس بنجاح');
           lessonForm.reset();
           customDayGroup.style.display = 'none';
           lessonDayCustomInput.required = false;
           initLessons();
         } else {
-          alert('❌ فشل إضافة الدرس');
+          alert('فشل إضافة الدرس');
         }
       }
     } catch (err) {
       console.error(err);
-      alert('❌ حدث خطأ أثناء حفظ بيانات الدرس');
+      alert('حدث خطأ أثناء حفظ بيانات الدرس');
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = editingId ? 'حفظ التعديلات' : 'إضافة الدرس';

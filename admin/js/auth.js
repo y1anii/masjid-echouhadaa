@@ -267,7 +267,7 @@ runWhenReady(() => {
             if (res && res.success) {
               // Successfully synced
             } else {
-              alert("❌ فشلت المزامنة. يرجى التحقق من اتصالك بالإنترنت.");
+              alert("فشلت المزامنة. يرجى التحقق من اتصالك بالإنترنت.");
               syncBtn.disabled = false;
               syncBtn.textContent = "مزامنة الآن";
             }
