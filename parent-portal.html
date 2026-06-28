@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>بوابة أولياء الأمور | مسجد الشهداء</title>
     <meta name="description" content="بوابة متابعة أولياء الأمور لطلاب الدورة الصيفية القرآنية بمسجد الشهداء" />
-    <link rel="stylesheet" href="css/style.css?v=52" />
+    <link rel="stylesheet" href="css/style.css?v=53" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
       if (sessionStorage.getItem('masjid_parent_logged') === 'true') {
@@ -451,40 +451,6 @@
           font-size: 1.4rem !important;
           padding: 0 0.5rem !important;
         }
-        /* New Weekly Stars Modal Styling */
-        #weekly-stars-modal {
-          backdrop-filter: blur(6px);
-          transition: all 0.3s ease;
-        }
-        #weekly-stars-modal .profile-card {
-          border-top: 5px solid var(--gold);
-          box-shadow: 0 10px 30px rgba(13, 92, 70, 0.15) !important;
-        }
-        #col-weekly-stars-males .stars-cards-container > div,
-        #col-weekly-stars-females .stars-cards-container > div {
-          box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        #col-weekly-stars-males .stars-cards-container > div:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 10px rgba(13, 92, 70, 0.06);
-          border-color: var(--green) !important;
-        }
-        #col-weekly-stars-females .stars-cards-container > div:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 10px rgba(207, 99, 118, 0.08);
-          border-color: #cf6376 !important;
-        }
-        #btn-show-weekly-stars {
-          transition: all 0.2s ease;
-          box-shadow: 0 4px 10px rgba(13, 92, 70, 0.1);
-        }
-        #btn-show-weekly-stars:hover {
-          transform: translateY(-1.5px);
-          box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25);
-          background-color: #16482a !important;
-        }
-        
         /* Unified Shape Uniformity (12px Border-Radius Overrides) */
       .login-card,
       .about-card,
@@ -888,9 +854,9 @@
       </div>
     </footer>
 
-    <script src="js/main.js?v=52"></script>
-    <script type="module" src="admin/js/db.js?v=52"></script>
-    <script type="module" src="js/parent.js?v=52"></script>
+    <script src="js/main.js?v=53"></script>
+    <script type="module" src="admin/js/db.js?v=53"></script>
+    <script type="module" src="js/parent.js?v=53"></script>
   <!-- Weekly Stars Modal -->
   <div id="weekly-stars-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
     <div class="profile-card animate-modal" style="max-width: 800px; width: 100%; background: #fff; border-radius: var(--radius); border-top: 5px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;">

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>الدورة الصيفية القرآنية | مسجد الشهداء</title>
     <meta name="description" content="الدورة الصيفية القرآنية التربوية في مسجد الشهداء — قرية ايباشيرن، بلدية واد غير، بجاية" />
-    <link rel="stylesheet" href="css/style.css?v=52" />
+    <link rel="stylesheet" href="css/style.css?v=53" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="icon" type="image/png" href="images/masjidlogo.png" />
   </head>
@@ -121,62 +121,14 @@
             </a>
           </div>
 
-          <!-- Weekly Honor Board (لوحة الشرف الأسبوعية) -->
-          <div class="about-card" style="margin: 3rem auto; border: 2.5px solid var(--gold); background: #fffdf9; display: none; max-width: 38rem; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow);" id="weekly-honor-board-card">
-            <h2 style="color: var(--green-dark); font-weight: 900; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.4rem;">
-              <i class="ph-fill ph-trophy" style="color: var(--gold); font-size: 1.6rem;"></i> 
-              <span id="weekly-honor-board-title">لوحة الشرف للأسبوع الحالي</span>
-            </h2>
-
-            <!-- TABS FOR GENDER SELECTOR -->
-            <div id="honor-board-tabs" style="display: none; justify-content: center; gap: 0.75rem; margin-bottom: 1.5rem; direction: rtl;">
-              <button id="btn-tab-males" class="btn" style="padding: 0.5rem 1.5rem; border-radius: 20px; font-weight: 800; cursor: pointer; transition: all 0.3s; background: var(--green); color: white; border: none; font-family: inherit;">البنين (الذكور)</button>
-              <button id="btn-tab-females" class="btn" style="padding: 0.5rem 1.5rem; border-radius: 20px; font-weight: 700; cursor: pointer; transition: all 0.3s; background: rgba(13, 92, 70, 0.05); color: var(--text-muted); border: 1px solid rgba(13, 92, 70, 0.15); font-family: inherit;">البنات (الإناث)</button>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-top: 1rem; direction: rtl;">
-              <!-- 1st Place: Memorization Champion -->
-              <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.06), rgba(212, 175, 55, 0.12)); border: 1.5px solid rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 1rem; text-align: center;">
-                <div style="background: var(--gold); color: var(--green-dark); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem auto; font-size: 1.2rem;">
-                  <i class="ph-fill ph-medal"></i>
-                </div>
-                <h4 style="color: var(--green-dark); margin: 0; font-weight: 800; font-size: 1rem;">بطل الحفظ</h4>
-                <p style="color: #c5a028; font-size: 0.7rem; font-weight: 700; margin: 0.1rem 0 0.4rem 0;">الأكثر إتقاناً وتأخراً</p>
-                <strong style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;" id="honor-memo-champ-val">-</strong>
-              </div>
-
-              <!-- 2nd Place: Behavior Champion -->
-              <div style="background: linear-gradient(135deg, rgba(13, 92, 70, 0.04), rgba(13, 92, 70, 0.08)); border: 1.5px solid rgba(13, 92, 70, 0.2); border-radius: 12px; padding: 1rem; text-align: center;">
-                <div style="background: var(--green); color: var(--white); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem auto; font-size: 1.2rem;">
-                  <i class="ph-fill ph-shield-check"></i>
-                </div>
-                <h4 style="color: var(--green-dark); margin: 0; font-weight: 800; font-size: 1rem;">بطل السلوك</h4>
-                <p style="color: var(--green); font-size: 0.7rem; font-weight: 700; margin: 0.1rem 0 0.4rem 0;">أفضل انضباطاً</p>
-                <strong style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;" id="honor-behavior-champ-val">-</strong>
-              </div>
-
-              <!-- 3rd Place: Participation Champion -->
-              <div style="background: linear-gradient(135deg, rgba(0, 168, 204, 0.04), rgba(0, 168, 204, 0.08)); border: 1.5px solid rgba(0, 168, 204, 0.2); border-radius: 12px; padding: 1rem; text-align: center;">
-                <div style="background: #00a8cc; color: var(--white); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem auto; font-size: 1.2rem;">
-                  <i class="ph-fill ph-star"></i>
-                </div>
-                <h4 style="color: var(--green-dark); margin: 0; font-weight: 800; font-size: 1rem;">بطل المشاركة</h4>
-                <p style="color: #00a8cc; font-size: 0.7rem; font-weight: 700; margin: 0.1rem 0 0.4rem 0;">أنشط طالب</p>
-                <strong style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;" id="honor-participation-champ-val">-</strong>
-              </div>
-
-              <!-- Group Award: Distinguished Team -->
-              <div style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.04), rgba(156, 39, 176, 0.08)); border: 1.5px solid rgba(156, 39, 176, 0.2); border-radius: 12px; padding: 1rem; text-align: center;">
-                <div style="background: #9c27b0; color: var(--white); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem auto; font-size: 1.2rem;">
-                  <i class="ph-fill ph-users-three"></i>
-                </div>
-                <h4 style="color: var(--green-dark); margin: 0; font-weight: 800; font-size: 1rem;">الفريق المتميز</h4>
-                <p style="color: #9c27b0; font-size: 0.7rem; font-weight: 700; margin: 0.1rem 0 0.4rem 0;">أفضل أداء جماعي</p>
-                <strong style="color: var(--green-dark); font-size: 1rem; font-weight: 900;" id="honor-distinguished-team-val">-</strong>
-              </div>
-            </div>
+          <!-- Stars of the Week Button (نجوم الأسبوع) -->
+          <div id="weekly-stars-promo-container" style="display: none; margin: 3rem auto; text-align: center; max-width: 38rem;">
+            <button id="btn-show-weekly-stars" class="btn" style="background: var(--green); border: 2.5px solid var(--gold); color: #fff; padding: 0.85rem 2.2rem; font-weight: 800; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(13, 92, 70, 0.15); transition: all 0.2s ease;">
+              <i class="ph-fill ph-trophy" style="color: var(--gold); font-size: 1.4rem;"></i>
+              <span>عرض نجوم الأسبوع</span>
+            </button>
           </div>
-
+          
           <div class="register-panel reveal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; max-width: 38rem; margin: 0 auto; padding: 3rem 2rem;">
             <div class="register-panel__intro">
               <h2>التسجيل في الدورة الصيفية</h2>
@@ -255,104 +207,207 @@
       </div>
     </footer>
 
-    <script src="js/main.js?v=52"></script>
-    <script type="module" src="admin/js/db.js?v=52"></script>
+    <script src="js/main.js?v=53"></script>
+    <script type="module" src="admin/js/db.js?v=53"></script>
     <script type="module">
       document.addEventListener("DOMContentLoaded", async () => {
-        const boardCard = document.getElementById("weekly-honor-board-card");
-        if (!boardCard) return;
+        const btnStars = document.getElementById("btn-show-weekly-stars");
+        const promoContainer = document.getElementById("weekly-stars-promo-container");
+        if (!btnStars) return;
 
         try {
-          // Query settings in parallel
-          const [malesActiveVal, femalesActiveVal] = await Promise.all([
-            window.DB.getSetting("weekly_honor_board_males_active"),
-            window.DB.getSetting("weekly_honor_board_females_active")
-          ]);
+          const malesActive = await window.DB.getSetting("weekly_honor_board_males_active") === "true";
+          const femalesActive = await window.DB.getSetting("weekly_honor_board_females_active") === "true";
 
-          const malesActive = malesActiveVal === "true";
-          const femalesActive = femalesActiveVal === "true";
-
-          if (!malesActive && !femalesActive) {
-            boardCard.style.display = "none";
+          if (malesActive || femalesActive) {
+            if (promoContainer) promoContainer.style.display = "block";
+          } else {
+            if (promoContainer) promoContainer.style.display = "none";
             return;
           }
 
-          const tabsContainer = document.getElementById("honor-board-tabs");
-          const btnTabMales = document.getElementById("btn-tab-males");
-          const btnTabFemales = document.getElementById("btn-tab-females");
+          btnStars.onclick = async () => {
+            const modal = document.getElementById("weekly-stars-modal");
+            if (!modal) return;
 
-          let currentGender = "";
-
-          if (malesActive && femalesActive) {
-            tabsContainer.style.display = "flex";
-            currentGender = "males";
-            setActiveTab(btnTabMales, btnTabFemales);
-            
-            btnTabMales.onclick = () => {
-              if (currentGender === "males") return;
-              currentGender = "males";
-              setActiveTab(btnTabMales, btnTabFemales);
-              loadGenderBoard("males");
+            const setField = (id, val) => {
+              const el = document.getElementById(id);
+              if (el) el.textContent = val || "-";
             };
 
-            btnTabFemales.onclick = () => {
-              if (currentGender === "females") return;
-              currentGender = "females";
-              setActiveTab(btnTabFemales, btnTabMales);
-              loadGenderBoard("females");
-            };
-          } else {
-            tabsContainer.style.display = "none";
-            currentGender = malesActive ? "males" : "females";
-          }
+            const colMales = document.getElementById("col-weekly-stars-males");
+            const colFemales = document.getElementById("col-weekly-stars-females");
+            const weekNameBanner = document.getElementById("weekly-stars-week-name");
 
-          async function loadGenderBoard(gender) {
-            const data = await window.DB.getWeeklyHonorBoard(gender);
-            const titleEl = document.getElementById("weekly-honor-board-title");
-            const memoEl = document.getElementById("honor-memo-champ-val");
-            const behaviorEl = document.getElementById("honor-behavior-champ-val");
-            const participationEl = document.getElementById("honor-participation-champ-val");
-            const teamEl = document.getElementById("honor-distinguished-team-val");
+            let activeWeekName = "";
 
-            const genderLabel = gender === "females" ? "الإناث" : "الذكور";
-            if (titleEl) {
-              const weekName = (data && data.weekName) ? data.weekName : "الأسبوع الحالي";
-              titleEl.textContent = `لوحة الشرف الأسبوعية (${genderLabel} - ${weekName})`;
-            }
-
-            if (data) {
-              if (memoEl) memoEl.textContent = data.rank1 || data.memorizationChampion || "-";
-              if (behaviorEl) behaviorEl.textContent = data.rank2 || data.behaviorChampion || "-";
-              if (participationEl) participationEl.textContent = data.rank3 || data.participationChampion || "-";
-              if (teamEl) teamEl.textContent = data.distinguishedTeam || "لا يوجد هذا الأسبوع";
+            if (malesActive) {
+              if (colMales) colMales.style.display = "block";
+              const malesData = await window.DB.getWeeklyHonorBoard("males");
+              if (malesData) {
+                activeWeekName = malesData.weekName || activeWeekName;
+                setField("stars-males-rank1", malesData.rank1 || malesData.memorizationChampion);
+                setField("stars-males-rank2", malesData.rank2 || malesData.behaviorChampion);
+                setField("stars-males-rank3", malesData.rank3 || malesData.participationChampion);
+                setField("stars-males-team", malesData.distinguishedTeam);
+                setField("stars-males-notes", malesData.notes);
+              } else {
+                if (colMales) colMales.style.display = "none";
+              }
             } else {
-              if (memoEl) memoEl.textContent = "-";
-              if (behaviorEl) behaviorEl.textContent = "-";
-              if (participationEl) participationEl.textContent = "-";
-              if (teamEl) teamEl.textContent = "-";
+              if (colMales) colMales.style.display = "none";
             }
+
+            if (femalesActive) {
+              if (colFemales) colFemales.style.display = "block";
+              const femalesData = await window.DB.getWeeklyHonorBoard("females");
+              if (femalesData) {
+                activeWeekName = femalesData.weekName || activeWeekName;
+                setField("stars-females-rank1", femalesData.rank1 || femalesData.memorizationChampion);
+                setField("stars-females-rank2", femalesData.rank2 || femalesData.behaviorChampion);
+                setField("stars-females-rank3", femalesData.rank3 || femalesData.participationChampion);
+                setField("stars-females-team", femalesData.distinguishedTeam);
+                setField("stars-females-notes", femalesData.notes);
+              } else {
+                if (colFemales) colFemales.style.display = "none";
+              }
+            } else {
+              if (colFemales) colFemales.style.display = "none";
+            }
+
+            if (weekNameBanner) {
+              weekNameBanner.textContent = activeWeekName ? `نجوم الأسبوع الحالي - ${activeWeekName}` : "نجوم الأسبوع الحالي";
+            }
+
+            modal.style.display = "flex";
+          };
+
+          const closeModalBtn = document.getElementById("close-weekly-stars-modal");
+          const modal = document.getElementById("weekly-stars-modal");
+          if (closeModalBtn && modal) {
+            closeModalBtn.onclick = () => {
+              modal.style.display = "none";
+            };
+            modal.onclick = (e) => {
+              if (e.target === modal) {
+                modal.style.display = "none";
+              }
+            };
           }
-
-          function setActiveTab(activeBtn, inactiveBtn) {
-            activeBtn.style.background = "var(--green)";
-            activeBtn.style.color = "white";
-            activeBtn.style.border = "none";
-            activeBtn.style.fontWeight = "800";
-
-            inactiveBtn.style.background = "rgba(13, 92, 70, 0.05)";
-            inactiveBtn.style.color = "var(--text-muted)";
-            inactiveBtn.style.border = "1px solid rgba(13, 92, 70, 0.15)";
-            inactiveBtn.style.fontWeight = "700";
-          }
-
-          // Initial load
-          await loadGenderBoard(currentGender);
-          boardCard.style.display = "block";
 
         } catch (err) {
-          console.error("Failed to load weekly honor board settings/data:", err);
+          console.error("Failed to init weekly stars on public course page:", err);
         }
-      });
-    </script>
+      });</script>
+  <!-- Weekly Stars Modal -->
+  <div id="weekly-stars-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="profile-card animate-modal" style="max-width: 800px; width: 100%; background: #fff; border-radius: var(--radius); border-top: 5px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;">
+      <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1.5px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; position: sticky; top: 0; background: #fff; z-index: 10;">
+        <h3 style="color: var(--green-dark); font-weight: 900; margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem;">
+          <i class="ph-bold ph-chalkboard" style="color: var(--gold);"></i> لوحة نجوم الأسبوع
+        </h3>
+        <button id="close-weekly-stars-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+      </div>
+      
+      <div class="weekly-stars-content" style="display: flex; flex-direction: column; gap: 1.5rem; padding: 0.5rem 0;">
+        <!-- Week Name Banner -->
+        <div id="weekly-stars-week-name" style="background: rgba(13, 92, 70, 0.03); border-right: 4px solid var(--gold); padding: 0.75rem 1rem; font-weight: 800; color: var(--green-dark); font-size: 1.1rem; border-radius: 4px; text-align: center;">
+          -
+        </div>
+
+        <!-- Two Columns: Males / Females -->
+        <div class="weekly-stars-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          <!-- Boys Column -->
+          <div id="col-weekly-stars-males" style="background: #fbfaf6; border: 1.5px solid rgba(200, 161, 90, 0.15); border-radius: 12px; padding: 1.25rem;">
+            <h4 style="color: var(--green-dark); font-weight: 900; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid var(--green); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-gender-male" style="color: #00a8cc;"></i> نجوم الأسبوع (البنين)
+            </h4>
+            <div class="stars-cards-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-medal" style="color: var(--gold); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الأول (الأكثر حفظاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank1">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-shield-check" style="color: #c0c0c0; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثاني (الأكثر سلوكاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank2">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-star" style="color: #cd7f32; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثالث (الأكثر مشاركة)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank3">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-users-three" style="color: var(--green); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">أفضل فريق</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-team">-</strong>
+                </div>
+              </div>
+              <div style="background: rgba(255,152,0,0.03); padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed rgba(255,152,0,0.25); display: flex; align-items: flex-start; gap: 0.75rem;">
+                <i class="ph-fill ph-info" style="color: #ff9800; font-size: 1.3rem; margin-top: 0.15rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ملاحظة وتوجيه</span>
+                  <p style="margin: 0.15rem 0 0 0; font-size: 0.88rem; color: var(--text-dark); font-weight: 700; line-height: 1.4;" id="stars-males-notes">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Girls Column -->
+          <div id="col-weekly-stars-females" style="background: #fff9fa; border: 1.5px solid rgba(207, 99, 118, 0.15); border-radius: 12px; padding: 1.25rem;">
+            <h4 style="color: #b84e60; font-weight: 900; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid #cf6376; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-gender-female" style="color: #cf6376;"></i> نجوم الأسبوع (البنات)
+            </h4>
+            <div class="stars-cards-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-medal" style="color: var(--gold); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الأول (الأكثر حفظاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank1">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-shield-check" style="color: #c0c0c0; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثاني (الأكثر سلوكاً)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank2">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-star" style="color: #cd7f32; font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثالث (الأكثر مشاركة)</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank3">-</strong>
+                </div>
+              </div>
+              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph-fill ph-users-three" style="color: var(--green); font-size: 1.4rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">أفضل فريق</span>
+                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-team">-</strong>
+                </div>
+              </div>
+              <div style="background: rgba(255,152,0,0.03); padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed rgba(255,152,0,0.25); display: flex; align-items: flex-start; gap: 0.75rem;">
+                <i class="ph-fill ph-info" style="color: #ff9800; font-size: 1.3rem; margin-top: 0.15rem;"></i>
+                <div>
+                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ملاحظة وتوجيه</span>
+                  <p style="margin: 0.15rem 0 0 0; font-size: 0.88rem; color: var(--text-dark); font-weight: 700; line-height: 1.4;" id="stars-females-notes">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </body>
 </html>

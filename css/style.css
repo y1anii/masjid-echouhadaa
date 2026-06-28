@@ -1735,3 +1735,37 @@ textarea:focus {
 .team-item {
   border-radius: 12px !important;
 }
+
+/* ── Weekly Stars Modal Styling (Shared) ── */
+#weekly-stars-modal {
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+#weekly-stars-modal .profile-card {
+  border-top: 5px solid var(--gold);
+  box-shadow: 0 10px 30px rgba(13, 92, 70, 0.15) !important;
+}
+#col-weekly-stars-males .stars-cards-container > div,
+#col-weekly-stars-females .stars-cards-container > div {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#col-weekly-stars-males .stars-cards-container > div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(13, 92, 70, 0.06);
+  border-color: var(--green) !important;
+}
+#col-weekly-stars-females .stars-cards-container > div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(207, 99, 118, 0.08);
+  border-color: #cf6376 !important;
+}
+#btn-show-weekly-stars {
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(13, 92, 70, 0.1);
+}
+#btn-show-weekly-stars:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25);
+  background-color: #16482a !important;
+}
