@@ -211,94 +211,9 @@
     <script type="module" src="admin/js/db.js?v=53"></script>
     <script type="module">
       document.addEventListener("DOMContentLoaded", async () => {
-        const btnStars = document.getElementById("btn-show-weekly-stars");
-        const promoContainer = document.getElementById("weekly-stars-promo-container");
-        if (!btnStars) return;
-
-        try {
-          const malesActive = await window.DB.getSetting("weekly_honor_board_males_active") === "true";
-          const femalesActive = await window.DB.getSetting("weekly_honor_board_females_active") === "true";
-
-          if (malesActive || femalesActive) {
-            if (promoContainer) promoContainer.style.display = "block";
-          } else {
-            if (promoContainer) promoContainer.style.display = "none";
-            return;
-          }
-
-          btnStars.onclick = async () => {
-            const modal = document.getElementById("weekly-stars-modal");
-            if (!modal) return;
-
-            const setField = (id, val) => {
-              const el = document.getElementById(id);
-              if (el) el.textContent = val || "-";
-            };
-
-            const colMales = document.getElementById("col-weekly-stars-males");
-            const colFemales = document.getElementById("col-weekly-stars-females");
-            const weekNameBanner = document.getElementById("weekly-stars-week-name");
-
-            let activeWeekName = "";
-
-            if (malesActive) {
-              if (colMales) colMales.style.display = "block";
-              const malesData = await window.DB.getWeeklyHonorBoard("males");
-              if (malesData) {
-                activeWeekName = malesData.weekName || activeWeekName;
-                setField("stars-males-rank1", malesData.rank1 || malesData.memorizationChampion);
-                setField("stars-males-rank2", malesData.rank2 || malesData.behaviorChampion);
-                setField("stars-males-rank3", malesData.rank3 || malesData.participationChampion);
-                setField("stars-males-team", malesData.distinguishedTeam);
-                setField("stars-males-notes", malesData.notes);
-              } else {
-                if (colMales) colMales.style.display = "none";
-              }
-            } else {
-              if (colMales) colMales.style.display = "none";
-            }
-
-            if (femalesActive) {
-              if (colFemales) colFemales.style.display = "block";
-              const femalesData = await window.DB.getWeeklyHonorBoard("females");
-              if (femalesData) {
-                activeWeekName = femalesData.weekName || activeWeekName;
-                setField("stars-females-rank1", femalesData.rank1 || femalesData.memorizationChampion);
-                setField("stars-females-rank2", femalesData.rank2 || femalesData.behaviorChampion);
-                setField("stars-females-rank3", femalesData.rank3 || femalesData.participationChampion);
-                setField("stars-females-team", femalesData.distinguishedTeam);
-                setField("stars-females-notes", femalesData.notes);
-              } else {
-                if (colFemales) colFemales.style.display = "none";
-              }
-            } else {
-              if (colFemales) colFemales.style.display = "none";
-            }
-
-            if (weekNameBanner) {
-              weekNameBanner.textContent = activeWeekName ? `نجوم الأسبوع الحالي - ${activeWeekName}` : "نجوم الأسبوع الحالي";
-            }
-
-            modal.style.display = "flex";
-          };
-
-          const closeModalBtn = document.getElementById("close-weekly-stars-modal");
-          const modal = document.getElementById("weekly-stars-modal");
-          if (closeModalBtn && modal) {
-            closeModalBtn.onclick = () => {
-              modal.style.display = "none";
-            };
-            modal.onclick = (e) => {
-              if (e.target === modal) {
-                modal.style.display = "none";
-              }
-            };
-          }
-
-        } catch (err) {
-          console.error("Failed to init weekly stars on public course page:", err);
-        }
-      });</script>
+        // نجوم الأسبوع معطلة بناءً على الطلب
+      });
+    </script>
   <!-- Weekly Stars Modal -->
   <div id="weekly-stars-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
     <div class="profile-card animate-modal" style="max-width: 800px; width: 100%; background: #fff; border-radius: var(--radius); border-top: 5px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;">

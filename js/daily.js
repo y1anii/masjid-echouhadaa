@@ -339,11 +339,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.type === "مراجعة") typeColor = "var(--gold)";
       else if (item.type === "استدراك") typeColor = "var(--green-dark)";
 
+      const rangeText = (fromV > 0 && toV > 0) ? `<span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; margin-right: 0.5rem;">(من الآية ${item.fromVerse} إلى ${item.toVerse}) [${formatAyahCount(count)}]</span>` : "";
+
       qBlocks += `
         <div class="quran-log-item">
           <div>
             <span style="font-weight: 850; color: var(--green-dark); font-size: 0.95rem;">سورة ${item.surah}</span>
-            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; margin-right: 0.5rem;">(من الآية ${item.fromVerse} إلى ${item.toVerse}) [${formatAyahCount(count)}]</span>
+            ${rangeText}
             ${item.notes ? `<div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem;"><strong style="color:var(--gold);">ملاحظة:</strong> ${item.notes}</div>` : ''}
           </div>
           <div style="text-align: left; min-width: 80px;">

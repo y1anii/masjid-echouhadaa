@@ -1402,6 +1402,8 @@ runWhenReady(() => {
       const notesStr = isAbsent ? "" : (document.getElementById("metric-notes-general").value || "");
 
       if (!isAbsent) {
+        let sectionAverages = [];
+
         // 1. التقييم العام
         const behavior = parseInt(document.getElementById("metric-behavior").value) || 0;
         const discipline = parseInt(document.getElementById("metric-discipline").value) || 0;
@@ -1416,7 +1418,8 @@ runWhenReady(() => {
         };
         
         const genStarsSum = behavior + discipline + respect + participation;
-        totalStars += genStarsSum;
+        const genStarsAvg = genStarsSum / 4;
+        sectionAverages.push(genStarsAvg);
 
         // 2. المقررات الاختيارية
         if (agendaQuran.checked) {
@@ -1433,7 +1436,8 @@ runWhenReady(() => {
           const p5 = parseInt(document.getElementById("metric-quran-التركيز أثناء التسميع").value) || 0;
 
           const qStarsSum = p1 + p2 + p3 + p4 + p5;
-          totalStars += qStarsSum;
+          const qStarsAvg = qStarsSum / 5;
+          sectionAverages.push(qStarsAvg);
 
           courseEvaluations.push({
             courseName: "حفظ القرآن ومراجعته",
@@ -1479,7 +1483,8 @@ runWhenReady(() => {
               criteriaObj[m] = val;
               cStarsSum += val;
             });
-            totalStars += cStarsSum;
+            const cStarsAvg = cStarsSum / c.metrics.length;
+            sectionAverages.push(cStarsAvg);
 
             const notesInput = document.getElementById(`metric-notes-${c.prefix}`);
             courseEvaluations.push({
@@ -1490,6 +1495,10 @@ runWhenReady(() => {
             });
           }
         });
+
+        // Calculate overall session stars as the average of active sections, capped at 5 stars max.
+        const overallStars = sectionAverages.length > 0 ? Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length) : 0;
+        totalStars = Math.min(5, Math.max(0, overallStars));
 
         // 3. الشارات الممنوحة
         const chks = evalDynamicFieldsContainer.querySelectorAll('input[name="badges-chk"]:checked');
@@ -1670,14 +1679,25 @@ runWhenReady(() => {
     }
     
     listContainer.innerHTML = sessions.map(s => {
+      const isAdults = s.category === "الكبار";
       const circleLabel = s.circleType || "حلقة";
-      const circleIcon = circleLabel.includes("مسائية") ? "ph-moon" : "ph-sun";
+      let iconClass = "ph-users";
+      let displayLabel = "الكبار";
+      
+      if (!isAdults) {
+        iconClass = circleLabel.includes("مسائية") ? "ph-moon" : "ph-sun";
+        displayLabel = circleLabel;
+      }
+      
       return `
         <div class="about-card" style="margin: 0; padding: 1.25rem; background: #fff; border: 1px solid rgba(200, 161, 90, 0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-radius: 12px;">
           <div style="flex: 1; min-width: 250px;">
-            <h4 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.25rem;">
-              <i class="ph-bold ${circleIcon}" style="color: var(--gold); font-size: 1rem;"></i>
-              جلسة يوم ${s.date} — <span style="color: var(--gold); font-size: 0.9rem;">${circleLabel}</span>
+            <h4 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
+              <i class="ph-bold ${iconClass}" style="color: var(--gold); font-size: 1.15rem;"></i>
+              <span>جلسة يوم ${s.date} — </span>
+              <span class="badge" style="background: ${isAdults ? 'rgba(212, 175, 55, 0.15)' : 'rgba(13, 92, 70, 0.08)'}; color: ${isAdults ? '#7a5900' : 'var(--green-dark)'}; padding: 0.2rem 0.6rem; font-size: 0.78rem; border-radius: 30px; font-weight: 800;">
+                ${displayLabel}
+              </span>
             </h4>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
               <strong>المشرف:</strong> ${s.supervisor} | 
@@ -1798,24 +1818,7 @@ runWhenReady(() => {
 
       cachedArchivedSessions = finished;
       
-      // Perform filtering if query exists in search input
-      const searchInput = document.getElementById("archive-search-input");
-      const queryText = searchInput ? searchInput.value.trim().toLowerCase() : "";
-      if (queryText) {
-        const filtered = cachedArchivedSessions.filter(s => {
-          const supervisor = String(s.supervisor || "").toLowerCase();
-          const circleType = String(s.circleType || "").toLowerCase();
-          const date = String(s.date || "");
-          const courses = String(s.courses || "").toLowerCase();
-          return supervisor.includes(queryText) ||
-                 circleType.includes(queryText) ||
-                 date.includes(queryText) ||
-                 courses.includes(queryText);
-        });
-        renderArchiveSessions(filtered);
-      } else {
-        renderArchiveSessions(cachedArchivedSessions);
-      }
+      applyArchiveFilters();
     }
 
     // Load instantly using getDocs
@@ -1978,16 +1981,24 @@ runWhenReady(() => {
     }
   }
   
-  // Bind archive search input
+  // Bind archive filters and search input
+  let archiveCategoryFilter = "all";
   const archiveSearchInput = document.getElementById("archive-search-input");
-  if (archiveSearchInput) {
-    archiveSearchInput.addEventListener("input", () => {
-      const queryText = archiveSearchInput.value.trim().toLowerCase();
-      if (!queryText) {
-        renderArchiveSessions(cachedArchivedSessions);
-        return;
-      }
-      const filtered = cachedArchivedSessions.filter(s => {
+
+  function applyArchiveFilters() {
+    const queryText = archiveSearchInput ? archiveSearchInput.value.trim().toLowerCase() : "";
+    let filtered = cachedArchivedSessions;
+
+    // 1. Category Filter
+    if (archiveCategoryFilter === "kids") {
+      filtered = filtered.filter(s => s.category !== "الكبار");
+    } else if (archiveCategoryFilter === "adults") {
+      filtered = filtered.filter(s => s.category === "الكبار");
+    }
+
+    // 2. Search Text Filter
+    if (queryText) {
+      filtered = filtered.filter(s => {
         const supervisor = String(s.supervisor || "").toLowerCase();
         const circleType = String(s.circleType || "").toLowerCase();
         const date = String(s.date || "");
@@ -1997,8 +2008,53 @@ runWhenReady(() => {
                date.includes(queryText) ||
                courses.includes(queryText);
       });
-      renderArchiveSessions(filtered);
+    }
+
+    renderArchiveSessions(filtered);
+  }
+
+  const filterAllBtn = document.getElementById("archive-filter-all");
+  const filterKidsBtn = document.getElementById("archive-filter-kids");
+  const filterAdultsBtn = document.getElementById("archive-filter-adults");
+
+  const setFilterActive = (activeBtn, otherBtns) => {
+    activeBtn.style.background = "var(--green)";
+    activeBtn.style.color = "#fff";
+    activeBtn.style.borderColor = "var(--green)";
+    
+    otherBtns.forEach(btn => {
+      if (btn) {
+        btn.style.background = "rgba(13, 92, 70, 0.05)";
+        btn.style.color = "var(--green-dark)";
+        btn.style.borderColor = "rgba(13, 92, 70, 0.15)";
+      }
     });
+  };
+
+  if (filterAllBtn) {
+    filterAllBtn.onclick = () => {
+      archiveCategoryFilter = "all";
+      setFilterActive(filterAllBtn, [filterKidsBtn, filterAdultsBtn]);
+      applyArchiveFilters();
+    };
+  }
+  if (filterKidsBtn) {
+    filterKidsBtn.onclick = () => {
+      archiveCategoryFilter = "kids";
+      setFilterActive(filterKidsBtn, [filterAllBtn, filterAdultsBtn]);
+      applyArchiveFilters();
+    };
+  }
+  if (filterAdultsBtn) {
+    filterAdultsBtn.onclick = () => {
+      archiveCategoryFilter = "adults";
+      setFilterActive(filterAdultsBtn, [filterAllBtn, filterKidsBtn]);
+      applyArchiveFilters();
+    };
+  }
+
+  if (archiveSearchInput) {
+    archiveSearchInput.addEventListener("input", applyArchiveFilters);
   }
 
   // Expose archive callbacks globally for inline HTML onclick handlers
