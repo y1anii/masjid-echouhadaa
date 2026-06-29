@@ -789,16 +789,46 @@ updateToggleUI();
         if (emptyState) emptyState.style.display = "none";
         if (autoResults) autoResults.style.display = "block";
 
-        const getRankNames = (list) => {
-          if (!list || list.length === 0) return "لا توجد بيانات كافية";
-          const maxScore = list[0].score;
-          const topScorers = list.filter(x => x.score === maxScore).map(x => x.name);
-          return topScorers.join(" و ");
-        };
+        const tbody = document.getElementById("weekly-ranks-tbody");
+        if (tbody) {
+          if (!candidates.rank || candidates.rank.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">لا توجد أي تقييمات لهذا الأسبوع لحساب الترتيب.</td></tr>`;
+          } else {
+            let currentRank = 1;
+            let prevPoints = -1;
+            
+            tbody.innerHTML = candidates.rank.map((item, index) => {
+              if (prevPoints !== -1 && item.points !== prevPoints) {
+                currentRank = index + 1;
+              }
+              prevPoints = item.points;
 
-        if (r1El) r1El.textContent = getRankNames(candidates.memorization);
-        if (r2El) r2El.textContent = getRankNames(candidates.behavior);
-        if (r3El) r3El.textContent = getRankNames(candidates.participation);
+              let rankText = "";
+              if (currentRank === 1) {
+                rankText = `<i class="ph-fill ph-trophy" style="color: var(--gold); vertical-align: middle; margin-left: 0.25rem;"></i> الأول`;
+              } else {
+                rankText = currentRank;
+              }
+
+              return `
+                <tr style="border-bottom: 1px solid #eee; transition: background 0.2s;">
+                  <td style="padding: 1.1rem 0.75rem; font-weight: 800; color: var(--green-dark); text-align: center; vertical-align: middle;">
+                    ${rankText}
+                  </td>
+                  <td style="padding: 1.1rem 0.75rem; font-weight: 700; text-align: center; vertical-align: middle;">${item.studentName}</td>
+                  <td style="padding: 1.1rem 0.75rem; text-align: center; font-weight: 800; color: var(--green); vertical-align: middle;">${item.points}</td>
+                  <td style="padding: 1.1rem 0.75rem; text-align: center; font-weight: 800; color: var(--gold); vertical-align: middle;">${item.stars} <i class="ph-fill ph-star" style="vertical-align: middle; margin-right: 0.15rem;"></i></td>
+                  <td style="padding: 1.1rem 0.75rem; text-align: center; vertical-align: middle;">
+                    <span style="background: rgba(212,175,55,0.1); color: var(--gold); padding: 0.35rem 0.75rem; border-radius: 12px; font-weight: 800; font-size: 0.8rem; display: inline-block;">
+                      ${item.badgesCount} شارات
+                    </span>
+                  </td>
+                </tr>
+              `;
+            }).join("");
+          }
+        }
+
         if (teamEl) teamEl.textContent = distinguishedTeam || "لا يوجد فريق متميز";
 
         // Update statistics cards

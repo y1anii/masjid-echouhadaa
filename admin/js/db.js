@@ -1718,6 +1718,7 @@ window.DB = {
       const participationScores = {};
       const totalPoints = {};
       const teamPoints = {};
+      const weeklyBadges = {};
 
       querySnap.forEach(d => {
         const data = d.data();
@@ -1742,17 +1743,25 @@ window.DB = {
           memoVerses[studentId] = (memoVerses[studentId] || 0) + verses;
         }
 
-        // Behavior / Participation: Check "التقييم العام"
-        if (data["نوع النشاط"] === "التقييم العام" && data["عناصر التقييم"]) {
-          try {
-            const criteria = JSON.parse(data["عناصر التقييم"]);
-            const behVal = Number(criteria["السلوك"]) || 0;
-            const partVal = Number(criteria["المشاركة العامة"]) || 0;
+        // Behavior / Participation / Badges: Check "التقييم العام"
+        if (data["نوع النشاط"] === "التقييم العام") {
+          if (data["الشارات الممنوحة"]) {
+            const badges = data["الشارات الممنوحة"];
+            if (Array.isArray(badges)) {
+              weeklyBadges[studentId] = (weeklyBadges[studentId] || 0) + badges.length;
+            }
+          }
+          if (data["عناصر التقييم"]) {
+            try {
+              const criteria = JSON.parse(data["عناصر التقييم"]);
+              const behVal = Number(criteria["السلوك"]) || 0;
+              const partVal = Number(criteria["المشاركة العامة"]) || 0;
 
-            behaviorScores[studentId] = (behaviorScores[studentId] || 0) + behVal;
-            participationScores[studentId] = (participationScores[studentId] || 0) + partVal;
-          } catch (e) {
-            console.error("[Weekly Honors] Error parsing general criteria:", e);
+              behaviorScores[studentId] = (behaviorScores[studentId] || 0) + behVal;
+              participationScores[studentId] = (participationScores[studentId] || 0) + partVal;
+            } catch (e) {
+              console.error("[Weekly Honors] Error parsing general criteria:", e);
+            }
           }
         }
       });
@@ -1769,7 +1778,18 @@ window.DB = {
       const memoList = formatLeaderList(memoVerses);
       const behList = formatLeaderList(behaviorScores);
       const partList = formatLeaderList(participationScores);
-      const pointList = formatLeaderList(totalPoints);
+      
+      const pointList = Object.keys(totalPoints).map(id => {
+        const score = totalPoints[id];
+        return {
+          studentId: id,
+          studentName: studentMap[id],
+          points: score,
+          stars: Math.round(score / 2),
+          badgesCount: weeklyBadges[id] || 0,
+          score: score // for compatibility with any legacy code checking candidate.score
+        };
+      }).filter(x => x.points > 0).sort((a, b) => b.points - a.points);
 
       const checkTies = (list) => {
         if (list.length === 0) return { champions: [], hasTie: false };

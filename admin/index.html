@@ -473,51 +473,29 @@ navigator.serviceWorker.register('sw.js');
       </div>
     </div>
 
-    <!-- Winners Individual Cards Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
-      <!-- 1st Place (Gold): Memorization -->
-      <div style="background: #fdfaf2; border: 1.5px solid #d4af37; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 12px rgba(212,175,55,0.08); position: relative; overflow: hidden;">
-        <div style="position: absolute; left: -10px; top: -10px; font-size: 4rem; color: rgba(212,175,55,0.05); transform: rotate(-15deg); pointer-events: none;"><i class="ph-bold ph-medal"></i></div>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-            <i class="ph-bold ph-medal" style="color: #d4af37; font-size: 1.25rem;"></i>
-          </div>
-          <span style="background: #d4af37; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.2rem;"><i class="ph-bold ph-crown"></i> المركز الأول</span>
-        </div>
-        <div style="margin-top: 0.25rem;">
-          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">الأكثر حفظاً للآيات</span>
-          <strong id="result-rank1" style="display: block; color: var(--green-dark); font-size: 1.15rem; font-weight: 950; line-height: 1.3;">—</strong>
-        </div>
-      </div>
-
-      <!-- 2nd Place (Silver): Behavior -->
-      <div style="background: #f5f6f8; border: 1.5px solid #c0c0c0; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 12px rgba(192,192,192,0.08); position: relative; overflow: hidden;">
-        <div style="position: absolute; left: -10px; top: -10px; font-size: 4rem; color: rgba(192,192,192,0.05); transform: rotate(-15deg); pointer-events: none;"><i class="ph-bold ph-student"></i></div>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="background: rgba(192, 192, 192, 0.2); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-            <i class="ph-bold ph-student" style="color: #8c96a0; font-size: 1.25rem;"></i>
-          </div>
-          <span style="background: #8c96a0; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.2rem;"><i class="ph-bold ph-shield-check"></i> المركز الثاني</span>
-        </div>
-        <div style="margin-top: 0.25rem;">
-          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">الأعلى سلوكاً ومواظبة</span>
-          <strong id="result-rank2" style="display: block; color: var(--green-dark); font-size: 1.15rem; font-weight: 950; line-height: 1.3;">—</strong>
-        </div>
-      </div>
-
-      <!-- 3rd Place (Bronze): Participation -->
-      <div style="background: #faf6f3; border: 1.5px solid #cd7f32; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 12px rgba(205,127,50,0.08); position: relative; overflow: hidden;">
-        <div style="position: absolute; left: -10px; top: -10px; font-size: 4rem; color: rgba(205,127,50,0.05); transform: rotate(-15deg); pointer-events: none;"><i class="ph-bold ph-sparkles"></i></div>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="background: rgba(205, 127, 50, 0.15); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-            <i class="ph-bold ph-sparkles" style="color: #cd7f32; font-size: 1.25rem;"></i>
-          </div>
-          <span style="background: #cd7f32; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.2rem;"><i class="ph-bold ph-star"></i> المركز الثالث</span>
-        </div>
-        <div style="margin-top: 0.25rem;">
-          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">الأعلى تفاعلاً ومشاركة</span>
-          <strong id="result-rank3" style="display: block; color: var(--green-dark); font-size: 1.15rem; font-weight: 950; line-height: 1.3;">—</strong>
-        </div>
+    <!-- Weekly Ranking Table Card -->
+    <div class="about-card" style="border: 1px solid rgba(200, 161, 90, 0.25); background: var(--white); margin: 1.25rem 0 1rem 0; padding: 1.25rem; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; border-radius: 12px;">
+      <h3 style="color: var(--green-dark); font-weight: 850; border-bottom: 1.5px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.5rem; margin-bottom: 1rem; font-size: 1.15rem; display: flex; align-items: center; gap: 0.4rem;">
+        <i class="ph-bold ph-ranking" style="color: var(--gold);"></i> جدول الترتيب الأسبوعي للطلاب
+      </h3>
+      
+      <div style="overflow-x: auto; overflow-y: auto; max-height: 350px; width: 100%;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; text-align: center;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--gold); color: var(--green-dark); font-weight: 800; text-align: center;">
+              <th style="padding: 0.5rem; text-align: center; vertical-align: middle;">الترتيب</th>
+              <th style="padding: 0.5rem; text-align: center; vertical-align: middle;">اسم الطالب</th>
+              <th style="padding: 0.5rem; text-align: center; vertical-align: middle;">النقاط</th>
+              <th style="padding: 0.5rem; text-align: center; vertical-align: middle;">النجوم</th>
+              <th style="padding: 0.5rem; text-align: center; vertical-align: middle;">الشارات</th>
+            </tr>
+          </thead>
+          <tbody id="weekly-ranks-tbody">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">جاري تحميل جدول الترتيب الأسبوعي...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -531,9 +509,6 @@ navigator.serviceWorker.register('sw.js');
           <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">الفريق المتميز لهذا الأسبوع</span>
           <strong id="result-team" style="color: var(--green-dark); font-size: 1.1rem; font-weight: 950;">—</strong>
         </div>
-      </div>
-      <div style="background: rgba(13,92,70,0.08); color: var(--green-dark); font-size: 0.75rem; font-weight: 800; padding: 0.35rem 0.75rem; border-radius: 6px; display: flex; align-items: center; gap: 0.35rem;">
-        <i class="ph-bold ph-shield-check"></i> الصدارة التراكمية
       </div>
     </div>
 
