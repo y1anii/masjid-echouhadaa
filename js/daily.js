@@ -47,6 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
     return dateStr;
   }
 
+  function parseDateStr(dateStr) {
+    if (!dateStr) return null;
+    dateStr = dateStr.trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+      const parts = dateStr.split('T')[0].split('-');
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    if (/^\d{2}-\d{2}-\d{4}/.test(dateStr)) {
+      const parts = dateStr.split('-');
+      return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
   function formatAyahCount(count) {
     count = parseInt(count) || 0;
     if (count === 0) return "0 آية";
@@ -101,7 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const sortedDates = Array.from(uniqueDatesSet).sort((a, b) => b.localeCompare(a));
 
-    sortedDates.forEach((dateStr, index) => {
+    let timelineIndex = 0;
+    sortedDates.forEach((dateStr) => {
       // Filter logs for this specific date
       const dateAttRecords = attHistory.filter(att => formatDateOnly(att.date) === dateStr);
       const dateEvaluations = evaluations.filter(ev => formatDateOnly(ev.date) === dateStr);
@@ -114,33 +130,28 @@ document.addEventListener("DOMContentLoaded", () => {
       dateQuranLogs.forEach(q => { if (q.sessionId) sessionIds.add(q.sessionId); });
 
       if (sessionIds.size === 0) {
-        // No sessionId info, render as single day
-        renderDailyAccordionItem(dateStr, dateAttRecords[0] || null, dateEvaluations, dateQuranLogs, index, null);
-        return;
-      }
-
-      const sessionsArr = Array.from(sessionIds);
-
-      // Sort sessions: morning first, evening second (by circleType)
-      const getAttForSession = (sId) => dateAttRecords.find(a => a.sessionId === sId);
-      sessionsArr.sort((a, b) => {
-        const circleA = (getAttForSession(a) || {}).circleType || "";
-        const circleB = (getAttForSession(b) || {}).circleType || "";
-        const isMorningA = circleA.includes("صباحية") ? 0 : 1;
-        const isMorningB = circleB.includes("صباحية") ? 0 : 1;
-        return isMorningA - isMorningB;
-      });
-
-      if (sessionsArr.length === 1) {
-        // Single session: render single accordion
-        const sId = sessionsArr[0];
-        const attRec = getAttForSession(sId) || null;
-        const sessEvals = dateEvaluations.filter(e => e.sessionId === sId);
-        const sessQuran = dateQuranLogs.filter(q => q.sessionId === sId);
-        renderDailyAccordionItem(dateStr, attRec, sessEvals, sessQuran, index, null);
+        // No sessionId info, render as single session
+        renderDailyAccordionItem(dateStr, dateAttRecords[0] || null, dateEvaluations, dateQuranLogs, timelineIndex, null);
+        timelineIndex++;
       } else {
-        // Multiple sessions (morning + evening): render one accordion with two cards inside
-        renderMultiSessionAccordionItem(dateStr, sessionsArr, getAttForSession, dateEvaluations, dateQuranLogs, index);
+        const sessionsArr = Array.from(sessionIds);
+        // Sort sessions: evening first (newest on top)
+        const getAttForSession = (sId) => dateAttRecords.find(a => a.sessionId === sId);
+        sessionsArr.sort((a, b) => {
+          const circleA = (getAttForSession(a) || {}).circleType || "";
+          const circleB = (getAttForSession(b) || {}).circleType || "";
+          const isMorningA = circleA.includes("صباحية") ? 0 : 1;
+          const isMorningB = circleB.includes("صباحية") ? 0 : 1;
+          return isMorningB - isMorningA;
+        });
+
+        sessionsArr.forEach(sId => {
+          const attRec = getAttForSession(sId) || null;
+          const sessEvals = dateEvaluations.filter(e => e.sessionId === sId);
+          const sessQuran = dateQuranLogs.filter(q => q.sessionId === sId);
+          renderDailyAccordionItem(dateStr, attRec, sessEvals, sessQuran, timelineIndex, null);
+          timelineIndex++;
+        });
       }
     });
   }
@@ -260,7 +271,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>كان الطالب غائباً في هذه الحصة</span>
         </div>
       `;
-    } else if (dateEvals.length === 0) {
+    }
+
+    const filteredEvals = dateEvals.filter(ev => ev.activityType !== "حفظ القرآن" && ev.activityType !== "مراجعة القرآن");
+
+    if (filteredEvals.length === 0) {
       return `
         <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 0;">
           <i class="ph-bold ph-clipboard-text" style="font-size: 2rem; color: var(--gold); display: block; margin-bottom: 0.5rem;"></i>
@@ -270,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let evBlocks = "";
-    dateEvals.forEach(ev => {
+    filteredEvals.forEach(ev => {
       let criteriaObj = {};
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
 
@@ -364,6 +379,10 @@ document.addEventListener("DOMContentLoaded", () => {
       item.classList.add("is-open");
     }
 
+    const daysOfWeek = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+    const parsedDate = parseDateStr(dateStr);
+    const arabicDay = parsedDate ? daysOfWeek[parsedDate.getDay()] : "";
+
     // Determine if date matches today's date
     const localDate = new Date();
     const year = localDate.getFullYear();
@@ -373,12 +392,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const isToday = (dateStr === todayStr);
 
     const circleType = circleTypeOverride || (attRecord && attRecord.circleType) || "";
-    const circleLabel = circleType ? ` — ${circleType}` : "";
+    
+    let periodLabel = "الفترة الصباحية";
+    if (circleType.includes("مسائية") || circleType.includes("مساء")) {
+      periodLabel = "الفترة المسائية";
+    } else if (circleType.includes("صباحية") || circleType.includes("صباح")) {
+      periodLabel = "الفترة الصباحية";
+    } else if (circleType) {
+      periodLabel = circleType;
+    }
 
-    let reportTitle = `سجل يوم ${dateStr}${circleLabel}`;
+    // Determine Courses
+    const coursesSet = new Set();
+    dateEvals.forEach(ev => {
+      if (ev.activityType === "حفظ القرآن" || ev.activityType === "مراجعة القرآن") {
+        return;
+      }
+      if (ev.activityType && ev.activityType !== "التقييم العام") {
+        coursesSet.add(ev.activityType);
+      }
+    });
+    
+    if (dateQuran.length > 0) {
+      coursesSet.add("حفظ القرآن ومراجعته");
+    }
+    
+    if (attRecord && attRecord.courses && attRecord.courses !== "-") {
+      attRecord.courses.split(/[،,]/).forEach(c => {
+        const trimmed = c.trim();
+        if (trimmed) coursesSet.add(trimmed);
+      });
+    }
+    
+    const finalCoursesList = coursesSet.size > 0 
+      ? Array.from(coursesSet).join("، ") 
+      : ((attRecord && attRecord.courses && attRecord.courses !== "-") ? attRecord.courses : "حفظ القرآن ومراجعته");
+
+    let reportTitle = `يوم ${arabicDay} ${dateStr} — ${periodLabel} — المقرر: ${finalCoursesList}`;
     let liveBadge = "";
     if (isToday) {
-      reportTitle = `تقرير الحصة اليومية (رصد نهائي)${circleLabel}`;
+      reportTitle = `تقرير حصة اليوم ${dateStr} — ${periodLabel} — المقرر: ${finalCoursesList}`;
       liveBadge = `
         <span style="background: rgba(13,92,70,0.08); color: var(--green); border: 1px solid rgba(13,92,70,0.2); font-size: 0.75rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
           <i class="ph-bold ph-check-circle"></i> رصد نهائي
@@ -407,32 +460,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Supervisor Info & Courses ---
     let extraHeaderInfo = "";
     if (attRecord) {
-      const coursesSet = new Set();
-      
-      // 1. Add courses from evaluations of this day
-      dateEvals.forEach(ev => {
-        if (ev.activityType && ev.activityType !== "التقييم العام") {
-          coursesSet.add(ev.activityType);
-        }
-      });
-      
-      // 2. Add Quran memorization if there is progress
-      if (dateQuran.length > 0) {
-        coursesSet.add("حفظ القرآن ومراجعته");
-      }
-      
-      // 3. Add courses from the attendance record itself
-      if (attRecord.courses && attRecord.courses !== "-") {
-        attRecord.courses.split(/[،,]/).forEach(c => {
-          const trimmed = c.trim();
-          if (trimmed) coursesSet.add(trimmed);
-        });
-      }
-      
-      const finalCoursesList = coursesSet.size > 0 
-        ? Array.from(coursesSet).join("، ") 
-        : (attRecord.courses || "حفظ القرآن ومراجعته");
-
       extraHeaderInfo = `
         <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.75rem; border-top: 1px dashed rgba(200, 161, 90, 0.15); padding-top: 0.5rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; width: 100%;">
           <span><strong>المشرف:</strong> ${attRecord.supervisor}</span>
@@ -444,7 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
     item.innerHTML = `
       <button class="accordion-trigger" type="button" aria-expanded="${index === 0 ? 'true' : 'false'}">
         <div class="accordion-title-group" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
-          <span class="accordion-title">${reportTitle}</span>
+          <span class="accordion-title" style="font-size: 0.95rem;">${reportTitle}</span>
           ${liveBadge}
           <span style="${badgeStyle} font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
             <i class="ph-bold ph-user-check"></i> الحضور: ${attStatus}

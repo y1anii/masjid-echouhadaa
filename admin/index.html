@@ -407,17 +407,11 @@ navigator.serviceWorker.register('sw.js');
     <form id="honor-wizard-form" class="honor-wizard-grid-form" style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(200, 161, 90, 0.15); box-shadow: var(--shadow);">
       <div class="wizard-grid-fields">
 
-        <!-- Date Range -->
-        <div class="wizard-field-group">
-          <span class="wizard-field-label">من تاريخ:</span>
+        <!-- Week Selection -->
+        <div class="wizard-field-group" style="grid-column: 1 / -1;">
+          <span class="wizard-field-label">اختر الأسبوع:</span>
           <div class="wizard-field-input-wrap">
-            <input type="date" id="wizard-date-start" required />
-          </div>
-        </div>
-        <div class="wizard-field-group">
-          <span class="wizard-field-label">إلى تاريخ:</span>
-          <div class="wizard-field-input-wrap">
-            <input type="date" id="wizard-date-end" required />
+            <select id="wizard-week-select" required style="width: 100%; padding: 0.75rem; border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; font-weight: 700; color: var(--green-dark);"></select>
           </div>
         </div>
 

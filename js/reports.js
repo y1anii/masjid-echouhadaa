@@ -170,7 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Helper Functions to build detailed weekly/monthly log blocks ---
   function buildPeriodEvaluationHtml(evaluations, periodName) {
-    if (!evaluations || evaluations.length === 0) {
+    const filteredEvals = evaluations ? evaluations.filter(ev => ev.activityType !== "حفظ القرآن" && ev.activityType !== "مراجعة القرآن") : [];
+    if (filteredEvals.length === 0) {
       return `
         <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 0;">
           <i class="ph-bold ph-clipboard-text" style="font-size: 1.8rem; color: var(--gold); display: block; margin-bottom: 0.5rem; opacity: 0.6;"></i>
@@ -180,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let evBlocks = "";
-    evaluations.forEach(ev => {
+    filteredEvals.forEach(ev => {
       let criteriaObj = {};
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
 
@@ -294,6 +295,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Process and Render Weekly & Monthly reports timeline ---
   function renderWeeklyReports() {
     if (!portalDataCache) return;
+
+    const algerianMonths = [
+      "جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان",
+      "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+    ];
     
     // We will render everything in reports-timeline-list
     const timelineList = document.getElementById("reports-timeline-list");
@@ -333,28 +339,78 @@ document.addEventListener("DOMContentLoaded", () => {
     allDates.sort((a, b) => a.getTime() - b.getTime());
     const startDate = allDates[0];
 
-    // Helper to get week/month relative to course start date
-    function getWeekAndMonth(dateObj) {
-      const diffTime = dateObj.getTime() - startDate.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const weekNum = diffDays < 0 ? 1 : Math.floor(diffDays / 7) + 1;
-      const monthNum = diffDays < 0 ? 1 : Math.floor(diffDays / 30) + 1;
-      return { weekNum, monthNum };
-    }
+    // Find the course start Friday
+    let startDayDiff = startDate.getDay() - 5;
+    if (startDayDiff < 0) startDayDiff += 7;
+    const courseStartFriday = new Date(startDate);
+    courseStartFriday.setDate(startDate.getDate() - startDayDiff);
+    courseStartFriday.setHours(0, 0, 0, 0);
 
     const weeks = {};
     const months = {};
 
-    // Group Attendance
+    // Helper to get Friday-to-Thursday week info
+    function getWeekInfo(dateObj) {
+      let dayDiff = dateObj.getDay() - 5;
+      if (dayDiff < 0) dayDiff += 7;
+      
+      const fridayDate = new Date(dateObj);
+      fridayDate.setDate(dateObj.getDate() - dayDiff);
+      fridayDate.setHours(0, 0, 0, 0);
+      
+      const thursdayDate = new Date(fridayDate);
+      thursdayDate.setDate(fridayDate.getDate() + 6);
+      thursdayDate.setHours(23, 59, 59, 999);
+      
+      const timeDiff = fridayDate.getTime() - courseStartFriday.getTime();
+      const weeksDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24 * 7));
+      const weekIndex = weeksDiff + 1;
+
+      return {
+        key: toISODateOnly(fridayDate),
+        startStr: toISODateOnly(fridayDate),
+        endStr: toISODateOnly(thursdayDate),
+        weekNum: weekIndex,
+        fridayDate: fridayDate
+      };
+    }
+
+    // Helper to get Calendar Month info
+    function getMonthInfo(dateObj) {
+      const year = dateObj.getFullYear();
+      const monthIndex = dateObj.getMonth(); // 0-11
+      const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+      
+      const firstDay = new Date(year, monthIndex, 1);
+      const lastDay = new Date(year, monthIndex + 1, 0);
+
+      return {
+        key: key,
+        startStr: toISODateOnly(firstDay),
+        endStr: toISODateOnly(lastDay),
+        monthIndex: monthIndex,
+        year: year,
+        monthName: algerianMonths[monthIndex]
+      };
+    }
+
+    // Process Attendance
     attHistory.forEach(sess => {
       const parsed = parseDateStr(sess.date);
       if (!parsed) return;
-      const { weekNum, monthNum } = getWeekAndMonth(parsed);
       
-      if (!weeks[weekNum]) {
-        weeks[weekNum] = {
-          name: arabicWeeks[weekNum] || `الأسبوع ${weekNum}`,
-          label: `الأسبوع ${weekNum}`,
+      const wInfo = getWeekInfo(parsed);
+      const mInfo = getMonthInfo(parsed);
+
+      // Initialize Week
+      if (!weeks[wInfo.key]) {
+        weeks[wInfo.key] = {
+          name: arabicWeeks[wInfo.weekNum] || `الأسبوع ${wInfo.weekNum}`,
+          label: `الأسبوع ${wInfo.weekNum}`,
+          weekNum: wInfo.weekNum,
+          startStr: wInfo.startStr,
+          endStr: wInfo.endStr,
+          fridayDate: wInfo.fridayDate,
           sessionsCount: 0,
           presentCount: 0,
           points: 0,
@@ -365,11 +421,15 @@ document.addEventListener("DOMContentLoaded", () => {
           quranLogs: []
         };
       }
-      
-      if (!months[monthNum]) {
-        months[monthNum] = {
-          name: arabicMonths[monthNum] || `الشهر ${monthNum}`,
-          label: `الشهر ${monthNum}`,
+
+      // Initialize Month
+      if (!months[mInfo.key]) {
+        months[mInfo.key] = {
+          name: `شهر ${mInfo.monthName}`,
+          label: `شهر ${mInfo.monthName}`,
+          monthKey: mInfo.key,
+          startStr: mInfo.startStr,
+          endStr: mInfo.endStr,
           sessionsCount: 0,
           presentCount: 0,
           points: 0,
@@ -382,30 +442,32 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Add to week
-      weeks[weekNum].sessionsCount++;
+      weeks[wInfo.key].sessionsCount++;
       if (sess.status === "حاضر" || sess.status.startsWith("متأخر") || sess.status === "حاظر") {
-        weeks[weekNum].presentCount++;
+        weeks[wInfo.key].presentCount++;
       }
-      if (!weeks[weekNum].dates.includes(sess.date)) {
-        weeks[weekNum].dates.push(sess.date);
+      if (!weeks[wInfo.key].dates.includes(sess.date)) {
+        weeks[wInfo.key].dates.push(sess.date);
       }
 
       // Add to month
-      months[monthNum].sessionsCount++;
+      months[mInfo.key].sessionsCount++;
       if (sess.status === "حاضر" || sess.status.startsWith("متأخر") || sess.status === "حاظر") {
-        months[monthNum].presentCount++;
+        months[mInfo.key].presentCount++;
       }
-      if (!months[monthNum].dates.includes(sess.date)) {
-        months[monthNum].dates.push(sess.date);
+      if (!months[mInfo.key].dates.includes(sess.date)) {
+        months[mInfo.key].dates.push(sess.date);
       }
     });
 
-    // Group Evaluations
+    // Process Evaluations
     evaluations.forEach(ev => {
       const parsedDate = parseDateStr(ev.date);
       if (!parsedDate) return;
-      const { weekNum, monthNum } = getWeekAndMonth(parsedDate);
-      
+
+      const wInfo = getWeekInfo(parsedDate);
+      const mInfo = getMonthInfo(parsedDate);
+
       let evStars = 0;
       try {
         const criteriaObj = JSON.parse(ev.criteria);
@@ -415,10 +477,14 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch(e) {}
 
       // Ensure week exists
-      if (!weeks[weekNum]) {
-        weeks[weekNum] = {
-          name: arabicWeeks[weekNum] || `الأسبوع ${weekNum}`,
-          label: `الأسبوع ${weekNum}`,
+      if (!weeks[wInfo.key]) {
+        weeks[wInfo.key] = {
+          name: arabicWeeks[wInfo.weekNum] || `الأسبوع ${wInfo.weekNum}`,
+          label: `الأسبوع ${wInfo.weekNum}`,
+          weekNum: wInfo.weekNum,
+          startStr: wInfo.startStr,
+          endStr: wInfo.endStr,
+          fridayDate: wInfo.fridayDate,
           sessionsCount: 0,
           presentCount: 0,
           points: 0,
@@ -429,18 +495,21 @@ document.addEventListener("DOMContentLoaded", () => {
           quranLogs: []
         };
       }
-      weeks[weekNum].points += ev.points || 0;
-      weeks[weekNum].stars += evStars;
-      weeks[weekNum].evaluations.push(ev);
-      if (!weeks[weekNum].dates.includes(ev.date)) {
-        weeks[weekNum].dates.push(ev.date);
+      weeks[wInfo.key].points += ev.points || 0;
+      weeks[wInfo.key].stars += evStars;
+      weeks[wInfo.key].evaluations.push(ev);
+      if (!weeks[wInfo.key].dates.includes(ev.date)) {
+        weeks[wInfo.key].dates.push(ev.date);
       }
 
       // Ensure month exists
-      if (!months[monthNum]) {
-        months[monthNum] = {
-          name: arabicMonths[monthNum] || `الشهر ${monthNum}`,
-          label: `الشهر ${monthNum}`,
+      if (!months[mInfo.key]) {
+        months[mInfo.key] = {
+          name: `شهر ${mInfo.monthName}`,
+          label: `شهر ${mInfo.monthName}`,
+          monthKey: mInfo.key,
+          startStr: mInfo.startStr,
+          endStr: mInfo.endStr,
           sessionsCount: 0,
           presentCount: 0,
           points: 0,
@@ -451,20 +520,22 @@ document.addEventListener("DOMContentLoaded", () => {
           quranLogs: []
         };
       }
-      months[monthNum].points += ev.points || 0;
-      months[monthNum].stars += evStars;
-      months[monthNum].evaluations.push(ev);
-      if (!months[monthNum].dates.includes(ev.date)) {
-        months[monthNum].dates.push(ev.date);
+      months[mInfo.key].points += ev.points || 0;
+      months[mInfo.key].stars += evStars;
+      months[mInfo.key].evaluations.push(ev);
+      if (!months[mInfo.key].dates.includes(ev.date)) {
+        months[mInfo.key].dates.push(ev.date);
       }
     });
 
-    // Group Quran Progress
+    // Process Quran Logs
     quranHistory.forEach(q => {
       const parsedDate = parseDateStr(q.date);
       if (!parsedDate) return;
-      const { weekNum, monthNum } = getWeekAndMonth(parsedDate);
-      
+
+      const wInfo = getWeekInfo(parsedDate);
+      const mInfo = getMonthInfo(parsedDate);
+
       const fromV = parseInt(q.fromVerse) || 0;
       const toV = parseInt(q.toVerse) || 0;
       let ayahsCount = 0;
@@ -473,10 +544,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Ensure week exists
-      if (!weeks[weekNum]) {
-        weeks[weekNum] = {
-          name: arabicWeeks[weekNum] || `الأسبوع ${weekNum}`,
-          label: `الأسبوع ${weekNum}`,
+      if (!weeks[wInfo.key]) {
+        weeks[wInfo.key] = {
+          name: arabicWeeks[wInfo.weekNum] || `الأسبوع ${wInfo.weekNum}`,
+          label: `الأسبوع ${wInfo.weekNum}`,
+          weekNum: wInfo.weekNum,
+          startStr: wInfo.startStr,
+          endStr: wInfo.endStr,
+          fridayDate: wInfo.fridayDate,
           sessionsCount: 0,
           presentCount: 0,
           points: 0,
@@ -487,17 +562,20 @@ document.addEventListener("DOMContentLoaded", () => {
           quranLogs: []
         };
       }
-      weeks[weekNum].ayahs += ayahsCount;
-      weeks[weekNum].quranLogs.push(q);
-      if (!weeks[weekNum].dates.includes(q.date)) {
-        weeks[weekNum].dates.push(q.date);
+      weeks[wInfo.key].ayahs += ayahsCount;
+      weeks[wInfo.key].quranLogs.push(q);
+      if (!weeks[wInfo.key].dates.includes(q.date)) {
+        weeks[wInfo.key].dates.push(q.date);
       }
 
       // Ensure month exists
-      if (!months[monthNum]) {
-        months[monthNum] = {
-          name: arabicMonths[monthNum] || `الشهر ${monthNum}`,
-          label: `الشهر ${monthNum}`,
+      if (!months[mInfo.key]) {
+        months[mInfo.key] = {
+          name: `شهر ${mInfo.monthName}`,
+          label: `شهر ${mInfo.monthName}`,
+          monthKey: mInfo.key,
+          startStr: mInfo.startStr,
+          endStr: mInfo.endStr,
           sessionsCount: 0,
           presentCount: 0,
           points: 0,
@@ -508,10 +586,10 @@ document.addEventListener("DOMContentLoaded", () => {
           quranLogs: []
         };
       }
-      months[monthNum].ayahs += ayahsCount;
-      months[monthNum].quranLogs.push(q);
-      if (!months[monthNum].dates.includes(q.date)) {
-        months[monthNum].dates.push(q.date);
+      months[mInfo.key].ayahs += ayahsCount;
+      months[mInfo.key].quranLogs.push(q);
+      if (!months[mInfo.key].dates.includes(q.date)) {
+        months[mInfo.key].dates.push(q.date);
       }
     });
 
@@ -554,48 +632,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Build Combined Timeline List
     const timelineItems = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     Object.keys(weeks).forEach(w => {
-      const wNum = parseInt(w);
-      timelineItems.push({
-        type: "week",
-        number: wNum,
-        endDay: wNum * 7,
-        data: weeks[w]
-      });
+      const releaseDate = new Date(weeks[w].fridayDate);
+      releaseDate.setDate(weeks[w].fridayDate.getDate() + 7); // Friday after week ends
+      const isCompleted = today.getTime() >= releaseDate.getTime();
+      
+      if (isCompleted && weeks[w].sessionsCount > 0) {
+        timelineItems.push({
+          type: "week",
+          key: w,
+          releaseTime: releaseDate.getTime(),
+          data: weeks[w]
+        });
+      }
     });
 
     Object.keys(months).forEach(m => {
-      const mNum = parseInt(m);
-      timelineItems.push({
-        type: "month",
-        number: mNum,
-        endDay: mNum * 30,
-        data: months[m]
-      });
+      const [year, month] = m.split("-").map(Number);
+      const releaseDate = new Date(year, month, 1); // 1st of next month
+      const isCompleted = today.getTime() >= releaseDate.getTime();
+
+      if (isCompleted && months[m].sessionsCount > 0) {
+        timelineItems.push({
+          type: "month",
+          key: m,
+          releaseTime: releaseDate.getTime(),
+          data: months[m]
+        });
+      }
     });
 
-    // Sort by endDay descending (newest first)
-    timelineItems.sort((a, b) => b.endDay - a.endDay);
-
-    // Calculate calendar days elapsed from first session to today
-    const today = new Date();
-    const diffTime = today.getTime() - startDate.getTime();
-    const daysElapsed = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    // Filter to show only completed periods
-    const completedItems = timelineItems.filter(item => {
-      return item.data.sessionsCount > 0 && daysElapsed >= item.endDay;
-    });
+    // Sort by releaseTime descending (newest first)
+    timelineItems.sort((a, b) => b.releaseTime - a.releaseTime);
 
     let renderedCount = 0;
 
-    completedItems.forEach((item, index) => {
+    timelineItems.forEach((item, index) => {
       renderedCount++;
       const data = item.data;
-      const dateRangeStr = data.dates.length > 0 
-        ? `من ${data.dates[0]} إلى ${data.dates[data.dates.length - 1]}`
-        : "";
+      const dateRangeStr = `من ${data.startStr} إلى ${data.endStr}`;
 
       const accordionItem = document.createElement("div");
       accordionItem.className = "accordion-item";
@@ -625,7 +703,7 @@ document.addEventListener("DOMContentLoaded", () => {
         contentHtml = `
           <div class="accordion-content" style="display: ${isOpen ? 'block' : 'none'}; padding: 1.25rem 1.75rem;">
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700; border-bottom: 1px dashed rgba(200,161,90,0.15); padding-bottom: 0.5rem; margin-top: 1rem;">
-              <i class="ph ph-info" style="vertical-align: middle;"></i> تفاصيل التقرير الأسبوعي للأسبوع ${item.number} (عدد الحصص: ${data.sessionsCount})
+              <i class="ph ph-info" style="vertical-align: middle;"></i> تفاصيل التقرير الأسبوعي للأسبوع ${data.weekNum} (عدد الحصص: ${data.sessionsCount})
             </p>
             
             <div class="report-details-grid">
@@ -707,7 +785,7 @@ document.addEventListener("DOMContentLoaded", () => {
         contentHtml = `
           <div class="accordion-content" style="display: ${isOpen ? 'block' : 'none'}; padding: 1.25rem 1.75rem; border-top-color: rgba(212,175,55,0.3);">
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700; border-bottom: 1px dashed rgba(212,175,55,0.25); padding-bottom: 0.5rem; margin-top: 1rem;">
-              <i class="ph ph-info" style="vertical-align: middle;"></i> تفاصيل التقرير الشهري التراكمي للشهر ${item.number} (عدد الحصص: ${data.sessionsCount})
+              <i class="ph ph-info" style="vertical-align: middle;"></i> تفاصيل التقرير الشهري التراكمي لـ ${data.name} (عدد الحصص: ${data.sessionsCount})
             </p>
             
             <div class="report-details-grid">

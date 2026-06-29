@@ -608,8 +608,67 @@ updateToggleUI();
   const wizardNotes = document.getElementById("wizard-notes");
   const btnSaveWizardHonor = document.getElementById("btn-save-wizard-honor");
   const btnCalculateHonors = document.getElementById("btn-calculate-honors");
-  const wizardDateStart = document.getElementById("wizard-date-start");
-  const wizardDateEnd = document.getElementById("wizard-date-end");
+  const wizardWeekSelect = document.getElementById("wizard-week-select");
+
+  // Generate weeks options dynamically: Friday to Thursday, past 8 weeks
+  function populateWizardWeeks() {
+    if (!wizardWeekSelect) return;
+    wizardWeekSelect.innerHTML = "";
+    
+    const today = new Date();
+    const options = [];
+    
+    // Find the current week's Friday
+    let dayDiff = today.getDay() - 5;
+    if (dayDiff < 0) dayDiff += 7;
+    
+    const currentFriday = new Date(today);
+    currentFriday.setDate(today.getDate() - dayDiff);
+    
+    for (let i = 0; i < 8; i++) {
+      const startOfWeek = new Date(currentFriday);
+      startOfWeek.setDate(currentFriday.getDate() - (i * 7));
+      
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thursday
+      
+      const yyyyStart = startOfWeek.getFullYear();
+      const mmStart = String(startOfWeek.getMonth() + 1).padStart(2, '0');
+      const ddStart = String(startOfWeek.getDate()).padStart(2, '0');
+      
+      const yyyyEnd = endOfWeek.getFullYear();
+      const mmEnd = String(endOfWeek.getMonth() + 1).padStart(2, '0');
+      const ddEnd = String(endOfWeek.getDate()).padStart(2, '0');
+      
+      const startStr = `${yyyyStart}-${mmStart}-${ddStart}`;
+      const endStr = `${yyyyEnd}-${mmEnd}-${ddEnd}`;
+      
+      const valueStr = `${startStr} → ${endStr}`;
+      
+      let labelStr = "";
+      if (i === 0) {
+        labelStr = `الأسبوع الحالي (من ${startStr} إلى ${endStr})`;
+      } else if (i === 1) {
+        labelStr = `الأسبوع الماضي (من ${startStr} إلى ${endStr})`;
+      } else {
+        labelStr = `الأسبوع من ${startStr} إلى ${endStr}`;
+      }
+      
+      options.push({ value: valueStr, label: labelStr, start: startStr, end: endStr });
+    }
+    
+    options.forEach(opt => {
+      const el = document.createElement("option");
+      el.value = opt.value;
+      el.textContent = opt.label;
+      el.setAttribute("data-start", opt.start);
+      el.setAttribute("data-end", opt.end);
+      wizardWeekSelect.appendChild(el);
+    });
+  }
+
+  // Populate wizard weeks dropdown
+  populateWizardWeeks();
 
   // Stores the last auto-calculated results
   let autoCalculatedResults = null;
@@ -704,15 +763,12 @@ updateToggleUI();
   // ── Auto Calculate Button ──
   if (btnCalculateHonors) {
     btnCalculateHonors.addEventListener("click", async () => {
-      const startDate = wizardDateStart ? wizardDateStart.value : "";
-      const endDate = wizardDateEnd ? wizardDateEnd.value : "";
+      const selectedOpt = wizardWeekSelect ? wizardWeekSelect.options[wizardWeekSelect.selectedIndex] : null;
+      const startDate = selectedOpt ? selectedOpt.getAttribute("data-start") : "";
+      const endDate = selectedOpt ? selectedOpt.getAttribute("data-end") : "";
 
       if (!startDate || !endDate) {
-        alert("يرجى تحديد نطاق التاريخ (من/إلى) أولاً.");
-        return;
-      }
-      if (startDate > endDate) {
-        alert("تاريخ البداية يجب أن يكون قبل تاريخ النهاية.");
+        alert("يرجى اختيار أسبوع أولاً.");
         return;
       }
 
@@ -779,9 +835,10 @@ updateToggleUI();
       const rank1 = candidates.memorization[0]?.name || "";
       const rank2 = candidates.behavior[0]?.name || "";
       const rank3 = candidates.participation[0]?.name || "";
-      const startDate = wizardDateStart ? wizardDateStart.value : "";
-      const endDate = wizardDateEnd ? wizardDateEnd.value : "";
-      const weekName = `${startDate} → ${endDate}`;
+      const selectedOpt = wizardWeekSelect ? wizardWeekSelect.options[wizardWeekSelect.selectedIndex] : null;
+      const startDate = selectedOpt ? selectedOpt.getAttribute("data-start") : "";
+      const endDate = selectedOpt ? selectedOpt.getAttribute("data-end") : "";
+      const weekName = selectedOpt ? selectedOpt.value : "";
       const distinguishedTeam = wizardDistinguishedTeam?.value.trim() || "لا يوجد هذا الأسبوع";
       const notes = wizardNotes?.value.trim() || "";
 
