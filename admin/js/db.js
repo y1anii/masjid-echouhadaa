@@ -1592,8 +1592,10 @@ window.DB = {
       const targetGender = gender === "females" ? "أنثى" : "ذكر";
       const targetStudents = students.filter(s => s.status === "مقبول" && s.gender === targetGender);
       const studentMap = {};
+      const studentTeamMap = {};
       targetStudents.forEach(s => {
         studentMap[s.id] = s.name;
+        studentTeamMap[s.id] = s.teamName || "";
       });
 
       // 2. Query Ratings documents within the date range [startDate, endDate]
@@ -1610,6 +1612,7 @@ window.DB = {
       const behaviorScores = {};
       const participationScores = {};
       const totalPoints = {};
+      const teamPoints = {};
 
       querySnap.forEach(d => {
         const data = d.data();
@@ -1621,6 +1624,12 @@ window.DB = {
         // Sum overall points
         const points = Number(data["النقاط"]) || 0;
         totalPoints[studentId] = (totalPoints[studentId] || 0) + points;
+
+        // Sum team points
+        const teamName = studentTeamMap[studentId];
+        if (teamName) {
+          teamPoints[teamName] = (teamPoints[teamName] || 0) + points;
+        }
 
         // Memorization: Check "حفظ القرآن"
         if (data["نوع النشاط"] === "حفظ القرآن") {
@@ -1671,7 +1680,21 @@ window.DB = {
       const behRes = checkTies(behList);
       const partRes = checkTies(partList);
 
+      // Find distinguished team automatically
+      const sortedTeams = Object.keys(teamPoints).map(tName => ({
+        name: tName,
+        score: teamPoints[tName]
+      })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+
+      let distinguishedTeam = "لا يوجد فريق متميز هذا الأسبوع";
+      if (sortedTeams.length > 0) {
+        const maxTeamScore = sortedTeams[0].score;
+        const topTeams = sortedTeams.filter(t => t.score === maxTeamScore).map(t => t.name);
+        distinguishedTeam = topTeams.join(" و ");
+      }
+
       const results = {
+        distinguishedTeam,
         candidates: {
           memorization: memoList,
           behavior: behList,

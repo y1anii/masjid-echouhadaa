@@ -425,9 +425,9 @@ navigator.serviceWorker.register('sw.js');
         <!-- Auto Results Area (hidden until calculated) -->
         <div id="honor-auto-results" style="display:none; grid-column: 1 / -1; background: #f8fff8; border: 1.5px solid rgba(13,92,70,0.15); border-radius: 8px; padding: 1.25rem; margin-top: 0.5rem;">
           <h5 style="color: var(--green-dark); font-weight: 900; margin: 0 0 1rem 0; font-size: 1rem; display:flex; align-items:center; gap:0.4rem;">
-            <i class="ph-bold ph-trophy" style="color:var(--gold);"></i> نتائج الاحتساب التلقائي
+            <i class="ph-bold ph-trophy" style="color:var(--gold);"></i> نتائج الاحتساب التلقائي لنجوم الأسبوع
           </h5>
-          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
               <span style="font-size:1.4rem;">🥇</span>
               <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأكثر حفظاً للآيات:</span>
@@ -443,38 +443,13 @@ navigator.serviceWorker.register('sw.js');
               <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأعلى مشاركةً:</span>
               <span id="result-rank3" style="font-weight:900; color:var(--green-dark);">—</span>
             </div>
-          </div>
-          <!-- Tie Warning -->
-          <div id="honor-tie-warning" style="display:none; margin-top:0.85rem; background:#fffbe6; border:1px solid #f0c040; border-radius:6px; padding:0.6rem 0.9rem; font-size:0.88rem; color:#7a5900; display:flex; align-items:center; gap:0.4rem;">
-            <i class="ph-bold ph-warning" style="font-size:1.1rem;"></i>
-            <span id="honor-tie-text">يوجد تعادل في أحد المراكز.</span>
-          </div>
-        </div>
-
-        <!-- Best Team -->
-        <div class="wizard-field-group" style="grid-column: 1 / -1;">
-          <span class="wizard-field-label">أفضل فريق (اختياري):</span>
-          <div class="wizard-field-input-wrap">
-            <input type="text" id="wizard-distinguished-team" placeholder="مثال: فريق الفرسان..." />
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem; border-top: 1px dashed rgba(200, 161, 90, 0.15); padding-top: 0.5rem; margin-top: 0.25rem;">
+              <span style="font-size:1.4rem;">🏆</span>
+              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الفريق المتميز:</span>
+              <span id="result-team" style="font-weight:900; color:var(--gold);">—</span>
+            </div>
           </div>
         </div>
-
-        <!-- General Note -->
-        <div class="wizard-field-group" style="grid-column: 1 / -1;">
-          <span class="wizard-field-label">ملاحظة:</span>
-          <div class="wizard-field-input-wrap">
-            <input type="text" id="wizard-notes" placeholder="اكتب ملاحظة أو توجيه عام لأولياء الأمور..." />
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Submit Actions -->
-      <div class="wizard-submit-bar" style="margin-top: 1.5rem; text-align: center;">
-        <button type="submit" id="btn-save-wizard-honor" class="btn" style="background: var(--gold); color: var(--green-dark); font-weight: 900; padding: 0.75rem 2.5rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; width: 100%; max-width: 300px; font-family: inherit; font-size: 1rem;" disabled>
-          <i class="ph-bold ph-floppy-disk"></i> حفظ نجوم الأسبوع
-        </button>
-      </div>
     </form>
   </div>
 </div>

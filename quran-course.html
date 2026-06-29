@@ -121,13 +121,7 @@
             </a>
           </div>
 
-          <!-- Stars of the Week Button (نجوم الأسبوع) -->
-          <div id="weekly-stars-promo-container" style="display: none; margin: 3rem auto; text-align: center; max-width: 38rem;">
-            <button id="btn-show-weekly-stars" class="btn" style="background: var(--green); border: 2.5px solid var(--gold); color: #fff; padding: 0.85rem 2.2rem; font-weight: 800; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(13, 92, 70, 0.15); transition: all 0.2s ease;">
-              <i class="ph-fill ph-trophy" style="color: var(--gold); font-size: 1.4rem;"></i>
-              <span>عرض نجوم الأسبوع</span>
-            </button>
-          </div>
+
           
           <div class="register-panel reveal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; max-width: 38rem; margin: 0 auto; padding: 3rem 2rem;">
             <div class="register-panel__intro">
@@ -214,115 +208,7 @@
         // نجوم الأسبوع معطلة بناءً على الطلب
       });
     </script>
-  <!-- Weekly Stars Modal -->
-  <div id="weekly-stars-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
-    <div class="profile-card animate-modal" style="max-width: 800px; width: 100%; background: #fff; border-radius: var(--radius); border-top: 5px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;">
-      <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1.5px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; position: sticky; top: 0; background: #fff; z-index: 10;">
-        <h3 style="color: var(--green-dark); font-weight: 900; margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem;">
-          <i class="ph-bold ph-chalkboard" style="color: var(--gold);"></i> لوحة نجوم الأسبوع
-        </h3>
-        <button id="close-weekly-stars-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
-      </div>
-      
-      <div class="weekly-stars-content" style="display: flex; flex-direction: column; gap: 1.5rem; padding: 0.5rem 0;">
-        <!-- Week Name Banner -->
-        <div id="weekly-stars-week-name" style="background: rgba(13, 92, 70, 0.03); border-right: 4px solid var(--gold); padding: 0.75rem 1rem; font-weight: 800; color: var(--green-dark); font-size: 1.1rem; border-radius: 4px; text-align: center;">
-          -
-        </div>
 
-        <!-- Two Columns: Males / Females -->
-        <div class="weekly-stars-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
-          <!-- Boys Column -->
-          <div id="col-weekly-stars-males" style="background: #fbfaf6; border: 1.5px solid rgba(200, 161, 90, 0.15); border-radius: 12px; padding: 1.25rem;">
-            <h4 style="color: var(--green-dark); font-weight: 900; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid var(--green); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-              <i class="ph-bold ph-gender-male" style="color: #00a8cc;"></i> نجوم الأسبوع (البنين)
-            </h4>
-            <div class="stars-cards-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-medal" style="color: var(--gold); font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الأول (الأكثر حفظاً)</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank1">-</strong>
-                </div>
-              </div>
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-shield-check" style="color: #c0c0c0; font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثاني (الأكثر سلوكاً)</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank2">-</strong>
-                </div>
-              </div>
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-star" style="color: #cd7f32; font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثالث (الأكثر مشاركة)</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-rank3">-</strong>
-                </div>
-              </div>
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-users-three" style="color: var(--green); font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">أفضل فريق</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-males-team">-</strong>
-                </div>
-              </div>
-              <div style="background: rgba(255,152,0,0.03); padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed rgba(255,152,0,0.25); display: flex; align-items: flex-start; gap: 0.75rem;">
-                <i class="ph-fill ph-info" style="color: #ff9800; font-size: 1.3rem; margin-top: 0.15rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ملاحظة وتوجيه</span>
-                  <p style="margin: 0.15rem 0 0 0; font-size: 0.88rem; color: var(--text-dark); font-weight: 700; line-height: 1.4;" id="stars-males-notes">-</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Girls Column -->
-          <div id="col-weekly-stars-females" style="background: #fff9fa; border: 1.5px solid rgba(207, 99, 118, 0.15); border-radius: 12px; padding: 1.25rem;">
-            <h4 style="color: #b84e60; font-weight: 900; margin-top: 0; margin-bottom: 1rem; border-bottom: 2px solid #cf6376; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-              <i class="ph-bold ph-gender-female" style="color: #cf6376;"></i> نجوم الأسبوع (البنات)
-            </h4>
-            <div class="stars-cards-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-medal" style="color: var(--gold); font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الأول (الأكثر حفظاً)</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank1">-</strong>
-                </div>
-              </div>
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-shield-check" style="color: #c0c0c0; font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثاني (الأكثر سلوكاً)</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank2">-</strong>
-                </div>
-              </div>
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-star" style="color: #cd7f32; font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">المركز الثالث (الأكثر مشاركة)</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-rank3">-</strong>
-                </div>
-              </div>
-              <div style="background: #fff; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #eee; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="ph-fill ph-users-three" style="color: var(--green); font-size: 1.4rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">أفضل فريق</span>
-                  <strong style="color: var(--green-dark); font-weight: 900; font-size: 1.05rem;" id="stars-females-team">-</strong>
-                </div>
-              </div>
-              <div style="background: rgba(255,152,0,0.03); padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed rgba(255,152,0,0.25); display: flex; align-items: flex-start; gap: 0.75rem;">
-                <i class="ph-fill ph-info" style="color: #ff9800; font-size: 1.3rem; margin-top: 0.15rem;"></i>
-                <div>
-                  <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ملاحظة وتوجيه</span>
-                  <p style="margin: 0.15rem 0 0 0; font-size: 0.88rem; color: var(--text-dark); font-weight: 700; line-height: 1.4;" id="stars-females-notes">-</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   </body>
 </html>

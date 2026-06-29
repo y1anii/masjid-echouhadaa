@@ -1205,6 +1205,7 @@ body::after {
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
+  justify-content: space-between;
 }
 .search-input-field {
   flex: 1;
