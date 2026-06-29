@@ -362,97 +362,183 @@ navigator.serviceWorker.register('sw.js');
 <!-- Weekly Honor Board Manager -->
 
 
-<section class="about-card" style="border: 1.5px solid var(--gold); background: #fffdf9; margin-bottom: 2rem;">
+<section class="about-card" style="border: 1px solid rgba(200, 161, 90, 0.15); background: var(--white); box-shadow: var(--shadow-sm); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; position: relative;">
 
-<h3 style="color: var(--green-dark); font-weight: 900; border-bottom: 2px solid rgba(13, 92, 70, 0.08); padding-bottom: 0.75rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem;">
-  <i class="ph-bold ph-chalkboard" style="color: var(--gold);"></i> نجوم الأسبوع
-</h3>
-
-<p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
-حدد نجوم الأسبوع وتنشيط ظهورهم لأولياء الأمور في بوابة المتابعة.
-</p>
-
-
-
-<!-- Active Board Selection / Calculation Container -->
-<div id="honor-wizard-container">
-  <h4 id="wizard-title" style="color: var(--green-dark); font-weight: 900; margin-bottom: 1.25rem; font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem;">تحديد نجوم الأسبوع</h4>
-
-  <!-- Hidden Gender Tabs (kept for JS compatibility) -->
-  <div style="display: none;">
-    <button type="button" id="tab-edit-males" class="honor-tab active">نجوم الأسبوع (البنين)</button>
-    <button type="button" id="tab-edit-females" class="honor-tab">نجوم الأسبوع (البنات)</button>
+  <!-- Header Section -->
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid rgba(13, 92, 70, 0.06); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <div style="background: rgba(200, 161, 90, 0.1); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+        <i class="ph-bold ph-trophy" style="color: var(--gold); font-size: 1.4rem;"></i>
+      </div>
+      <div>
+        <h3 style="color: var(--green-dark); font-weight: 900; margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+          لوحة التميز ونجوم الأسبوع
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0.2rem 0 0 0;">
+          تتبع متفوقي الأسبوع تلقائياً بناءً على نتائج الحفظ والسلوك والمشاركة
+        </p>
+      </div>
+    </div>
+    
+    <!-- Week Selector Form/Container -->
+    <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 260px;">
+      <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700; white-space: nowrap;">اختر الأسبوع:</span>
+      <div style="position: relative; width: 100%;">
+        <select id="wizard-week-select" required style="width: 100%; padding: 0.55rem 1rem; border: 1.5px solid rgba(200, 161, 90, 0.18); border-radius: 8px; font-weight: 700; color: var(--green-dark); font-family: inherit; font-size: 0.88rem; background: var(--white); cursor: pointer; outline: none; transition: all 0.2s;">
+        </select>
+        <!-- Small spinner loading indicator -->
+        <span id="honor-calc-loading" style="display: none; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.95rem; color: var(--gold);">
+          <i class="ph-bold ph-spinner-gap animate-spin"></i>
+        </span>
+      </div>
+    </div>
   </div>
 
-  <!-- Shimmer Skeleton Loader -->
-  <div id="honor-skeleton-loader" style="display: none; max-width: 680px; margin: 0 auto;">
-    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
-      <div class="skeleton-field shimmers" style="height: 50px; background: #eee; border-radius: 6px;"></div>
-      <div class="skeleton-field shimmers" style="height: 50px; background: #eee; border-radius: 6px;"></div>
-      <div class="skeleton-field shimmers" style="height: 50px; background: #eee; border-radius: 6px;"></div>
-      <div class="skeleton-field shimmers" style="height: 50px; background: #eee; border-radius: 6px;"></div>
-      <div class="skeleton-field shimmers" style="height: 50px; background: #eee; border-radius: 6px;"></div>
+  <!-- Hidden elements for JS compatibility -->
+  <div style="display: none;">
+    <button type="button" id="tab-edit-males" class="honor-tab active"></button>
+    <button type="button" id="tab-edit-females" class="honor-tab"></button>
+    <button type="button" id="btn-calculate-honors"></button>
+    <form id="honor-wizard-form" style="display: none;"></form>
+  </div>
+
+  <!-- Shimmer Loader -->
+  <div id="honor-skeleton-loader" style="display: none; padding: 1rem 0;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+      <div class="shimmers" style="height: 60px; background: #f2f2f2; border-radius: 8px;"></div>
+      <div class="shimmers" style="height: 60px; background: #f2f2f2; border-radius: 8px;"></div>
+      <div class="shimmers" style="height: 60px; background: #f2f2f2; border-radius: 8px;"></div>
+      <div class="shimmers" style="height: 60px; background: #f2f2f2; border-radius: 8px;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <div class="shimmers" style="height: 150px; background: #f2f2f2; border-radius: 8px;"></div>
+      <div class="shimmers" style="height: 150px; background: #f2f2f2; border-radius: 8px;"></div>
+      <div class="shimmers" style="height: 150px; background: #f2f2f2; border-radius: 8px;"></div>
     </div>
   </div>
 
   <!-- Empty State Container -->
-  <div id="wizard-empty-state" style="display: none; text-align: center; padding: 3rem 1.5rem; background: var(--white); border: 1px dashed rgba(200, 161, 90, 0.35); border-radius: 12px; max-width: 680px; margin: 0 auto;">
-    <i class="ph-bold ph-info" style="font-size: 3.5rem; color: var(--gold); margin-bottom: 1rem; display: block;"></i>
-    <h4 style="color: var(--green-dark); font-weight: 800; font-size: 1.15rem; margin-bottom: 0.5rem;">لا يمكن تحديد نجوم الأسبوع</h4>
-    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">لا توجد بيانات كافية لتوليد قائمة الطلاب لهذه الفئة.</p>
+  <div id="wizard-empty-state" style="display: none; text-align: center; padding: 2.5rem 1.5rem; background: rgba(200,161,90,0.02); border: 1.5px dashed rgba(200, 161, 90, 0.2); border-radius: 12px; margin: 1rem 0;">
+    <div style="background: rgba(200, 161, 90, 0.08); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+      <i class="ph-bold ph-info" style="font-size: 1.8rem; color: var(--gold);"></i>
+    </div>
+    <h4 style="color: var(--green-dark); font-weight: 800; font-size: 1.05rem; margin: 0 0 0.25rem 0;">لم يتم احتساب النتائج</h4>
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">لم يتم جمع بيانات كافية لهذا الأسبوع لاحتساب النتائج.</p>
   </div>
 
-  <!-- Centered Wizard Form Layout -->
-  <div class="honor-centered-layout" style="max-width: 680px; margin: 0 auto; display: none;">
-    <form id="honor-wizard-form" class="honor-wizard-grid-form" style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(200, 161, 90, 0.15); box-shadow: var(--shadow);">
-      <div class="wizard-grid-fields">
+  <!-- Main Redesigned Dashboard Layout -->
+  <div class="honor-centered-layout" id="honor-auto-results" style="display: none;">
+    
+    <!-- Summary Statistics Row -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+      <!-- Card 1: Candidate Students -->
+      <div style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(13, 92, 70, 0.08); border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="background: rgba(13, 92, 70, 0.06); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+          <i class="ph-bold ph-identification-card" style="color: var(--green); font-size: 1.1rem;"></i>
+        </div>
+        <div>
+          <span style="display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">الطلاب المرشحون</span>
+          <strong id="stat-candidate-students" style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;">0</strong>
+        </div>
+      </div>
+      <!-- Card 2: Active Students -->
+      <div style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(13, 92, 70, 0.08); border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="background: rgba(13, 92, 70, 0.06); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+          <i class="ph-bold ph-users-three" style="color: var(--green); font-size: 1.1rem;"></i>
+        </div>
+        <div>
+          <span style="display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">الطلاب المشاركون</span>
+          <strong id="stat-active-students" style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;">0</strong>
+        </div>
+      </div>
+      <!-- Card 3: Memorized Verses -->
+      <div style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(13, 92, 70, 0.08); border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="background: rgba(13, 92, 70, 0.06); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+          <i class="ph-bold ph-book-open" style="color: var(--green); font-size: 1.1rem;"></i>
+        </div>
+        <div>
+          <span style="display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">الآيات المنجزة</span>
+          <strong id="stat-memorized-verses" style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;">0</strong>
+        </div>
+      </div>
+      <!-- Card 4: Active Teams -->
+      <div style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(13, 92, 70, 0.08); border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="background: rgba(13, 92, 70, 0.06); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+          <i class="ph-bold ph-shield" style="color: var(--green); font-size: 1.1rem;"></i>
+        </div>
+        <div>
+          <span style="display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">الفرق النشطة</span>
+          <strong id="stat-active-teams" style="color: var(--green-dark); font-size: 1.1rem; font-weight: 900;">0</strong>
+        </div>
+      </div>
+    </div>
 
-        <!-- Week Selection -->
-        <div class="wizard-field-group" style="grid-column: 1 / -1;">
-          <span class="wizard-field-label">اختر الأسبوع:</span>
-          <div class="wizard-field-input-wrap">
-            <select id="wizard-week-select" required style="width: 100%; padding: 0.75rem; border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; font-weight: 700; color: var(--green-dark);"></select>
+    <!-- Winners Individual Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+      <!-- 1st Place (Gold): Memorization -->
+      <div style="background: #fdfaf2; border: 1.5px solid #d4af37; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 12px rgba(212,175,55,0.08); position: relative; overflow: hidden;">
+        <div style="position: absolute; left: -10px; top: -10px; font-size: 4rem; color: rgba(212,175,55,0.05); transform: rotate(-15deg); pointer-events: none;"><i class="ph-bold ph-medal"></i></div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <i class="ph-bold ph-medal" style="color: #d4af37; font-size: 1.25rem;"></i>
           </div>
+          <span style="background: #d4af37; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.2rem;"><i class="ph-bold ph-crown"></i> المركز الأول</span>
         </div>
-
-        <!-- Calculate Button -->
-        <div class="wizard-field-group" style="grid-column: 1 / -1;">
-          <button type="button" id="btn-calculate-honors" class="btn" style="background: var(--green); color: #fff; font-weight: 800; padding: 0.7rem 1.8rem; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; font-family: inherit; font-size: 1rem; width: 100%;">
-            <i class="ph-bold ph-sparkle"></i> احتساب نجوم الأسبوع تلقائياً
-          </button>
+        <div style="margin-top: 0.25rem;">
+          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">الأكثر حفظاً للآيات</span>
+          <strong id="result-rank1" style="display: block; color: var(--green-dark); font-size: 1.15rem; font-weight: 950; line-height: 1.3;">—</strong>
         </div>
+      </div>
 
-        <!-- Auto Results Area (hidden until calculated) -->
-        <div id="honor-auto-results" style="display:none; grid-column: 1 / -1; background: #f8fff8; border: 1.5px solid rgba(13,92,70,0.15); border-radius: 8px; padding: 1.25rem; margin-top: 0.5rem;">
-          <h5 style="color: var(--green-dark); font-weight: 900; margin: 0 0 1rem 0; font-size: 1rem; display:flex; align-items:center; gap:0.4rem;">
-            <i class="ph-bold ph-trophy" style="color:var(--gold);"></i> نتائج الاحتساب التلقائي لنجوم الأسبوع
-          </h5>
-          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
-              <span style="font-size:1.4rem;">🥇</span>
-              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأكثر حفظاً للآيات:</span>
-              <span id="result-rank1" style="font-weight:900; color:var(--green-dark);">—</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
-              <span style="font-size:1.4rem;">🥈</span>
-              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأعلى سلوكاً:</span>
-              <span id="result-rank2" style="font-weight:900; color:var(--green-dark);">—</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem;">
-              <span style="font-size:1.4rem;">🥉</span>
-              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الأعلى مشاركةً:</span>
-              <span id="result-rank3" style="font-weight:900; color:var(--green-dark);">—</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.95rem; border-top: 1px dashed rgba(200, 161, 90, 0.15); padding-top: 0.5rem; margin-top: 0.25rem;">
-              <span style="font-size:1.4rem;">🏆</span>
-              <span style="color:var(--text-muted); font-weight:600; min-width:180px;">الفريق المتميز:</span>
-              <span id="result-team" style="font-weight:900; color:var(--gold);">—</span>
-            </div>
+      <!-- 2nd Place (Silver): Behavior -->
+      <div style="background: #f5f6f8; border: 1.5px solid #c0c0c0; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 12px rgba(192,192,192,0.08); position: relative; overflow: hidden;">
+        <div style="position: absolute; left: -10px; top: -10px; font-size: 4rem; color: rgba(192,192,192,0.05); transform: rotate(-15deg); pointer-events: none;"><i class="ph-bold ph-student"></i></div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="background: rgba(192, 192, 192, 0.2); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <i class="ph-bold ph-student" style="color: #8c96a0; font-size: 1.25rem;"></i>
           </div>
+          <span style="background: #8c96a0; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.2rem;"><i class="ph-bold ph-shield-check"></i> المركز الثاني</span>
         </div>
-    </form>
+        <div style="margin-top: 0.25rem;">
+          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">الأعلى سلوكاً ومواظبة</span>
+          <strong id="result-rank2" style="display: block; color: var(--green-dark); font-size: 1.15rem; font-weight: 950; line-height: 1.3;">—</strong>
+        </div>
+      </div>
+
+      <!-- 3rd Place (Bronze): Participation -->
+      <div style="background: #faf6f3; border: 1.5px solid #cd7f32; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: 0 4px 12px rgba(205,127,50,0.08); position: relative; overflow: hidden;">
+        <div style="position: absolute; left: -10px; top: -10px; font-size: 4rem; color: rgba(205,127,50,0.05); transform: rotate(-15deg); pointer-events: none;"><i class="ph-bold ph-sparkles"></i></div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="background: rgba(205, 127, 50, 0.15); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <i class="ph-bold ph-sparkles" style="color: #cd7f32; font-size: 1.25rem;"></i>
+          </div>
+          <span style="background: #cd7f32; color: #fff; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.2rem;"><i class="ph-bold ph-star"></i> المركز الثالث</span>
+        </div>
+        <div style="margin-top: 0.25rem;">
+          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">الأعلى تفاعلاً ومشاركة</span>
+          <strong id="result-rank3" style="display: block; color: var(--green-dark); font-size: 1.15rem; font-weight: 950; line-height: 1.3;">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Best Team Banner -->
+    <div style="background: linear-gradient(135deg, rgba(13,92,70,0.03) 0%, rgba(200,161,90,0.05) 100%); border: 1.5px solid rgba(200,161,90,0.25); border-radius: 10px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="background: rgba(200, 161, 90, 0.12); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+          <i class="ph-bold ph-users-three" style="color: var(--gold); font-size: 1.25rem;"></i>
+        </div>
+        <div>
+          <span style="display: block; font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">الفريق المتميز لهذا الأسبوع</span>
+          <strong id="result-team" style="color: var(--green-dark); font-size: 1.1rem; font-weight: 950;">—</strong>
+        </div>
+      </div>
+      <div style="background: rgba(13,92,70,0.08); color: var(--green-dark); font-size: 0.75rem; font-weight: 800; padding: 0.35rem 0.75rem; border-radius: 6px; display: flex; align-items: center; gap: 0.35rem;">
+        <i class="ph-bold ph-shield-check"></i> الصدارة التراكمية
+      </div>
+    </div>
+
   </div>
-</div>
+
 </section>
 
 

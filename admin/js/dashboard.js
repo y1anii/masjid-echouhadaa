@@ -758,21 +758,36 @@ updateToggleUI();
     const r3El = document.getElementById("result-rank3");
     const teamEl = document.getElementById("result-team");
     const autoResults = document.getElementById("honor-auto-results");
+    const skeleton = document.getElementById("honor-skeleton-loader");
+    const emptyState = document.getElementById("wizard-empty-state");
+    const loadingSpin = document.getElementById("honor-calc-loading");
 
-    if (autoResults) {
-      autoResults.style.display = "block";
-      if (r1El) r1El.innerHTML = `<span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-bold ph-spinner-gap animate-spin"></i> جاري الاحتساب...</span>`;
-      if (r2El) r2El.innerHTML = `<span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-bold ph-spinner-gap animate-spin"></i> جاري الاحتساب...</span>`;
-      if (r3El) r3El.innerHTML = `<span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-bold ph-spinner-gap animate-spin"></i> جاري الاحتساب...</span>`;
-      if (teamEl) teamEl.innerHTML = `<span style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-bold ph-spinner-gap animate-spin"></i> جاري الاحتساب...</span>`;
-    }
+    // Hide UI states and show skeleton loader
+    if (autoResults) autoResults.style.display = "none";
+    if (emptyState) emptyState.style.display = "none";
+    if (skeleton) skeleton.style.display = "block";
+    if (loadingSpin) loadingSpin.style.display = "block";
 
     try {
       const results = await window.DB.calculateWeeklyHonors(startDate, endDate, activeHonorGender);
       autoCalculatedResults = results;
 
+      if (loadingSpin) loadingSpin.style.display = "none";
+      if (skeleton) skeleton.style.display = "none";
+
       if (results) {
-        const { candidates, distinguishedTeam } = results;
+        const { candidates, distinguishedTeam, activeTeamsCount, totalVerses } = results;
+
+        // Check if there are active participating students
+        const activeStudentsCount = candidates.rank.filter(x => x.score > 0).length;
+        if (activeStudentsCount === 0) {
+          if (emptyState) emptyState.style.display = "block";
+          if (autoResults) autoResults.style.display = "none";
+          return;
+        }
+
+        if (emptyState) emptyState.style.display = "none";
+        if (autoResults) autoResults.style.display = "block";
 
         const getRankNames = (list) => {
           if (!list || list.length === 0) return "لا توجد بيانات كافية";
@@ -785,13 +800,25 @@ updateToggleUI();
         if (r2El) r2El.textContent = getRankNames(candidates.behavior);
         if (r3El) r3El.textContent = getRankNames(candidates.participation);
         if (teamEl) teamEl.textContent = distinguishedTeam || "لا يوجد فريق متميز";
+
+        // Update statistics cards
+        const statCandidates = document.getElementById("stat-candidate-students");
+        const statActive = document.getElementById("stat-active-students");
+        const statVerses = document.getElementById("stat-memorized-verses");
+        const statTeams = document.getElementById("stat-active-teams");
+
+        if (statCandidates) statCandidates.textContent = candidates.rank.length;
+        if (statActive) statActive.textContent = activeStudentsCount;
+        if (statVerses) statVerses.textContent = totalVerses || 0;
+        if (statTeams) statTeams.textContent = activeTeamsCount || 0;
+      } else {
+        if (emptyState) emptyState.style.display = "block";
       }
     } catch (err) {
       console.error("[Dashboard] calculateWeeklyHonors failed:", err);
-      if (r1El) r1El.textContent = "خطأ في الاحتساب";
-      if (r2El) r2El.textContent = "خطأ في الاحتساب";
-      if (r3El) r3El.textContent = "خطأ في الاحتساب";
-      if (teamEl) teamEl.textContent = "خطأ في الاحتساب";
+      if (loadingSpin) loadingSpin.style.display = "none";
+      if (skeleton) skeleton.style.display = "none";
+      if (emptyState) emptyState.style.display = "block";
     }
   }
 

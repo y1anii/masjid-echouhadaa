@@ -318,7 +318,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>كان الطالب غائباً في هذه الحصة</span>
         </div>
       `;
-    } else if (dateQuran.length === 0) {
+    }
+
+    const validQuran = (dateQuran || []).filter(item => item && item.surah && item.surah.trim() !== "");
+
+    if (validQuran.length === 0) {
       const coursesStr = sessionCourses || "";
       const hasQuran = !sessionCourses || 
         coursesStr.includes("قرآن") || 
@@ -328,14 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
         coursesStr.includes("تجويد");
         
       if (!hasQuran) {
-        return `
-          <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 0;">
-            <i class="ph-bold ph-book-open" style="font-size: 2rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; opacity: 0.5;"></i>
-            <span>الحصة غير مخصصة لمقرر القرآن الكريم</span>
-          </div>
-        `;
+        return "";
       }
-      
       return `
         <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 0;">
           <i class="ph-bold ph-book-open" style="font-size: 2rem; color: var(--gold); display: block; margin-bottom: 0.5rem;"></i>
@@ -345,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let qBlocks = "";
-    dateQuran.forEach(item => {
+    validQuran.forEach(item => {
       const fromV = parseInt(item.fromVerse) || 0;
       const toV = parseInt(item.toVerse) || 0;
       const count = (toV >= fromV && fromV > 0) ? (toV - fromV + 1) : 0;

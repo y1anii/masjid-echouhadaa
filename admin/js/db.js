@@ -98,8 +98,7 @@ function isQuranActivity(act) {
   return act === "القرآن الكريم" || 
          act === "حفظ القرآن" || 
          act === "مراجعة القرآن" || 
-         act === "حفظ القرآن الكريم" || 
-         act === "حفظ القرآن ومراجعته";
+         act === "حفظ القرآن الكريم";
 }
 
 // دالة مساعدة لربط الطالب من Firestore مع الحقول الإنجليزية والعربية
@@ -153,12 +152,27 @@ async function recalculateStudentRewards(studentId) {
     const ratingsQuery = query(collection(db, "Ratings"), where("StudentID", "==", studentId));
     const ratingsSnap = await getDocs(ratingsQuery);
     
-    let totalPoints = 0;
     const badgesSet = new Set();
-    
+    const sessionsMap = {};
+
     ratingsSnap.forEach(d => {
       const data = d.data();
-      totalPoints += Number(data["النقاط"]) || 0;
+      const sId = data.SessionID || "";
+      if (!sId) return;
+
+      if (!sessionsMap[sId]) {
+        sessionsMap[sId] = {
+          general: null,
+          courses: []
+        };
+      }
+
+      if (data["نوع النشاط"] === "التقييم العام") {
+        sessionsMap[sId].general = data;
+      } else if (data["نوع الإنجاز"] === "تقييم مقرر") {
+        sessionsMap[sId].courses.push(data);
+      }
+
       if (data["نوع النشاط"] === "التقييم العام" && data["الشارات الممنوحة"]) {
         const badges = data["الشارات الممنوحة"];
         if (Array.isArray(badges)) {
@@ -168,6 +182,50 @@ async function recalculateStudentRewards(studentId) {
             }
           });
         }
+      }
+    });
+
+    let totalPoints = 0;
+
+    Object.keys(sessionsMap).forEach(sId => {
+      const sess = sessionsMap[sId];
+      const sectionAverages = [];
+
+      if (sess.general) {
+        try {
+          const criteria = JSON.parse(sess.general["عناصر التقييم"] || "{}");
+          const behavior = Number(criteria["السلوك"]) || 0;
+          const discipline = Number(criteria["الانضباط"]) || 0;
+          const respect = Number(criteria["الاحترام والآداب"]) || 0;
+          const participation = Number(criteria["المشاركة العامة"]) || 0;
+          const genStarsSum = behavior + discipline + respect + participation;
+          const genStarsAvg = genStarsSum / 4;
+          sectionAverages.push(genStarsAvg);
+        } catch (e) {
+          console.error("Error parsing general criteria during recalculate:", e);
+        }
+      }
+
+      if (sess.courses && sess.courses.length > 0) {
+        sess.courses.forEach(c => {
+          try {
+            const criteria = JSON.parse(c["عناصر التقييم"] || "{}");
+            const values = Object.values(criteria).map(Number).filter(x => !isNaN(x));
+            if (values.length > 0) {
+              const cStarsSum = values.reduce((a, b) => a + b, 0);
+              const cStarsAvg = cStarsSum / values.length;
+              sectionAverages.push(cStarsAvg);
+            }
+          } catch (e) {
+            console.error("Error parsing course criteria during recalculate:", e);
+          }
+        });
+      }
+
+      if (sectionAverages.length > 0) {
+        const overallStars = Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length);
+        const cappedStars = Math.min(5, Math.max(0, overallStars));
+        totalPoints += cappedStars * 2;
       }
     });
 
@@ -985,6 +1043,53 @@ window.DB = {
             totalStarsEarned: 0,
             notes: ""
           };
+        }
+      });
+
+      // Recalculate capped session stars and points for child students
+      Object.keys(studentEvals).forEach(studentId => {
+        const ev = studentEvals[studentId];
+        if (studentId.startsWith("AD")) return;
+        
+        if (ev.attendance.startsWith("غائب")) {
+          ev.totalStarsEarned = 0;
+          ev.totalPointsEarned = 0;
+          return;
+        }
+
+        const sectionAverages = [];
+
+        // 1. التقييم العام
+        if (ev.generalCriteria && ev.generalCriteria["السلوك"] !== undefined) {
+          const behavior = Number(ev.generalCriteria["السلوك"]) || 0;
+          const discipline = Number(ev.generalCriteria["الانضباط"]) || 0;
+          const respect = Number(ev.generalCriteria["الاحترام والآداب"]) || 0;
+          const participation = Number(ev.generalCriteria["المشاركة العامة"]) || 0;
+          const genStarsSum = behavior + discipline + respect + participation;
+          const genStarsAvg = genStarsSum / 4;
+          sectionAverages.push(genStarsAvg);
+        }
+
+        // 2. المقررات الاختيارية
+        if (ev.courseEvaluations && ev.courseEvaluations.length > 0) {
+          ev.courseEvaluations.forEach(c => {
+            const values = Object.values(c.criteria).map(Number).filter(x => !isNaN(x));
+            if (values.length > 0) {
+              const cStarsSum = values.reduce((a, b) => a + b, 0);
+              const cStarsAvg = cStarsSum / values.length;
+              sectionAverages.push(cStarsAvg);
+            }
+          });
+        }
+
+        if (sectionAverages.length > 0) {
+          const overallStars = Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length);
+          const cappedStars = Math.min(5, Math.max(0, overallStars));
+          ev.totalStarsEarned = cappedStars;
+          ev.totalPointsEarned = cappedStars * 2;
+        } else {
+          ev.totalStarsEarned = 0;
+          ev.totalPointsEarned = 0;
         }
       });
 

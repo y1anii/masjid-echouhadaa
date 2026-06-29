@@ -782,7 +782,10 @@ runWhenReady(() => {
       evalDynamicFieldsContainer.classList.remove("absent-fields-disabled");
     }
   }
-  evalAttendance.addEventListener("change", handleAttendanceToggle);
+  evalAttendance.addEventListener("change", () => {
+    handleAttendanceToggle();
+    updatePointsSummary();
+  });
 
   /**
    * بناء الحقول الديناميكية في النموذج حسب المقررات النشطة
@@ -1291,6 +1294,77 @@ runWhenReady(() => {
     }
   }
 
+  function calculateOverallStarsAndPointsFromUI() {
+    if (currentEvalStudent && currentEvalStudent.id && currentEvalStudent.id.startsWith("AD")) {
+      const courseSelect = document.getElementById("eval-adult-course");
+      const activeCourse = courseSelect ? courseSelect.value : "";
+      let stars = 0;
+      if (activeCourse === "تحفيظ القرآن") {
+        const quranVal = document.getElementById("metric-adult-quran");
+        stars = quranVal ? (parseInt(quranVal.value) || 0) : 0;
+      } else if (activeCourse === "علوم التجويد" || activeCourse === "علم التجويد") {
+        const tajweedVal = document.getElementById("metric-adult-tajweed");
+        stars = tajweedVal ? (parseInt(tajweedVal.value) || 0) : 0;
+      }
+      return { stars: stars, points: stars * 2 };
+    } else {
+      // Children calculation
+      const sectionAverages = [];
+
+      // 1. التقييم العام
+      const behaviorEl = document.getElementById("metric-behavior");
+      if (behaviorEl) {
+        const behavior = parseInt(behaviorEl.value) || 0;
+        const discipline = parseInt(document.getElementById("metric-discipline").value) || 0;
+        const respect = parseInt(document.getElementById("metric-respect").value) || 0;
+        const participation = parseInt(document.getElementById("metric-participation").value) || 0;
+        const genStarsSum = behavior + discipline + respect + participation;
+        const genStarsAvg = genStarsSum / 4;
+        sectionAverages.push(genStarsAvg);
+      }
+
+      // 2. المقررات الاختيارية
+      if (agendaQuran.checked) {
+        const p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ").value) || 0;
+        const p2 = parseInt(document.getElementById("metric-quran-إتقان التلاوة").value) || 0;
+        const p3 = parseInt(document.getElementById("metric-quran-أحكام التجويد").value) || 0;
+        const p4 = parseInt(document.getElementById("metric-quran-المراجعة السابقة").value) || 0;
+        const p5 = parseInt(document.getElementById("metric-quran-التركيز أثناء التسميع").value) || 0;
+        const qStarsSum = p1 + p2 + p3 + p4 + p5;
+        const qStarsAvg = qStarsSum / 5;
+        sectionAverages.push(qStarsAvg);
+      }
+
+      const otherCourses = [
+        { prefix: "catchup", metrics: ["إكمال المطلوب", "تصحيح الأخطاء", "الالتزام بالمراجعة", "سرعة الاستجابة للتوجيهات"], active: agendaCatchup.checked },
+        { prefix: "creed", metrics: ["الانتباه للدرس", "المشاركة", "فهم المحتوى", "تطبيق السلوك الإسلامي"], active: agendaCreed.checked },
+        { prefix: "prophets", metrics: ["حسن الاستماع", "التفاعل", "الإجابة على الأسئلة", "استيعاب الدروس والعبر"], active: agendaProphets.checked },
+        { prefix: "culture", metrics: ["المشاركة", "عدد الإجابات الصحيحة", "التعاون", "روح المنافسة"], active: agendaCulture.checked },
+        { prefix: "health", metrics: ["النشاط", "الالتزام بالتعليمات", "المشاركة", "المحافظة على السلامة"], active: agendaHealth.checked },
+        { prefix: "qurancomp", metrics: ["الحفظ", "التجويد", "سرعة الإجابة", "الثقة بالنفس"], active: agendaQuranComp.checked },
+        { prefix: "sports", metrics: ["المشاركة", "الالتزام بالقوانين", "التعاون", "الروح الرياضية"], active: agendaSports.checked }
+      ];
+
+      otherCourses.forEach(c => {
+        if (c.active) {
+          let cStarsSum = 0;
+          c.metrics.forEach(m => {
+            const valEl = document.getElementById(`metric-${c.prefix}-${m}`);
+            const val = valEl ? (parseInt(valEl.value) || 0) : 0;
+            cStarsSum += val;
+          });
+          const cStarsAvg = cStarsSum / c.metrics.length;
+          sectionAverages.push(cStarsAvg);
+        }
+      });
+
+      const overallStars = sectionAverages.length > 0 ? Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length) : 0;
+      const totalStars = Math.min(5, Math.max(0, overallStars));
+      const totalPoints = totalStars * 2;
+      return { stars: totalStars, points: totalPoints };
+    }
+  }
+
   /**
    * حساب إجمالي النجوم والنقاط وتحديث الملخص
    */
@@ -1303,29 +1377,13 @@ runWhenReady(() => {
       return;
     }
 
-    const starInputs = evalDynamicFieldsContainer.querySelectorAll(".stars-hidden-val");
-    let totalStars = 0;
-    starInputs.forEach(input => {
-      if (currentEvalStudent && currentEvalStudent.id && currentEvalStudent.id.startsWith("AD")) {
-        const courseSelect = document.getElementById("eval-adult-course");
-        const activeCourse = courseSelect ? courseSelect.value : "";
-        if (activeCourse === "تحفيظ القرآن" && input.id === "metric-adult-quran") {
-          totalStars += parseInt(input.value) || 0;
-        } else if ((activeCourse === "علوم التجويد" || activeCourse === "علم التجويد") && input.id === "metric-adult-tajweed") {
-          totalStars += parseInt(input.value) || 0;
-        }
-      } else {
-        totalStars += parseInt(input.value) || 0;
-      }
-    });
-
-    const totalPoints = totalStars * 2;
+    const { stars, points } = calculateOverallStarsAndPointsFromUI();
 
     const totalStarsVal = document.getElementById("stars-total-val");
     const totalPointsVal = document.getElementById("points-total-val");
     
-    if (totalStarsVal) totalStarsVal.textContent = totalStars;
-    if (totalPointsVal) totalPointsVal.textContent = totalPoints;
+    if (totalStarsVal) totalStarsVal.textContent = stars;
+    if (totalPointsVal) totalPointsVal.textContent = points;
   }
 
   // Save student provisional report

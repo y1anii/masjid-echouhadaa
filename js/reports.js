@@ -216,7 +216,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildPeriodQuranHtml(quranLogs, periodName) {
-    if (!quranLogs || quranLogs.length === 0) {
+    const validQuran = (quranLogs || []).filter(item => item && item.surah && item.surah.trim() !== "");
+
+    if (validQuran.length === 0) {
       return `
         <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 0;">
           <i class="ph-bold ph-book-open" style="font-size: 1.8rem; color: var(--gold); display: block; margin-bottom: 0.5rem; opacity: 0.6;"></i>
@@ -226,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let qBlocks = "";
-    quranLogs.forEach(item => {
+    validQuran.forEach(item => {
       const fromV = parseInt(item.fromVerse) || 0;
       const toV = parseInt(item.toVerse) || 0;
       const count = (toV >= fromV && fromV > 0) ? (toV - fromV + 1) : 0;
