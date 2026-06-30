@@ -453,11 +453,38 @@
                   <option value="60" selected>60 حزباً (القرآن كاملاً)</option>
                 </select>
               </div>
+
+              <!-- Memorization Direction Selector -->
+              <div style="margin-top: 0.75rem; background: rgba(13, 92, 70, 0.02); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(200, 161, 90, 0.25);">
+                <label for="adult-memo-direction" style="font-weight: 800; color: var(--green-dark); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">
+                  <i class="ph-bold ph-arrows-left-right" style="color: var(--gold); margin-left: 0.3rem; vertical-align: middle;"></i>
+                  اتجاه الحفظ:
+                </label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                  <label id="dir-front-label" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.85rem; border-radius: 8px; border: 2px solid rgba(200,161,90,0.3); cursor: pointer; background: white; transition: all 0.2s;">
+                    <input type="radio" name="memo-direction" id="adult-memo-direction-front" value="front" checked style="accent-color: var(--green); width: 1.1rem; height: 1.1rem;">
+                    <div>
+                      <div style="font-weight: 800; color: var(--green-dark); font-size: 0.85rem;">من الأمام</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">من سورة البقرة</div>
+                    </div>
+                  </label>
+                  <label id="dir-back-label" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.85rem; border-radius: 8px; border: 2px solid rgba(200,161,90,0.3); cursor: pointer; background: white; transition: all 0.2s;">
+                    <input type="radio" name="memo-direction" id="adult-memo-direction-back" value="back" style="accent-color: var(--green); width: 1.1rem; height: 1.1rem;">
+                    <div>
+                      <div style="font-weight: 800; color: var(--green-dark); font-size: 0.85rem;">من الخلف</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">من سورة الناس</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
 
             <!-- Right Column: SVG Progress Circle & Secondary Stats -->
             <div class="target-card" style="margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
-              <h3 class="target-title" style="margin-bottom: 0.5rem; align-self: flex-start; text-align: right;">نسبة إنجاز الهدف</h3>
+              <h3 class="target-title" style="margin-bottom: 0.25rem; align-self: flex-start; text-align: right;">نسبة إنجاز الهدف</h3>
+              <span id="progress-direction-label" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; align-self: flex-start; margin-bottom: 0.25rem; background: rgba(13,92,70,0.06); padding: 0.2rem 0.6rem; border-radius: 20px;">
+                من سورة البقرة ←
+              </span>
               
               <!-- Premium Progress Circle -->
               <div class="progress-circle-wrapper" style="position: relative; width: 160px; height: 160px; margin: 1rem auto; display: flex; align-items: center; justify-content: center;">

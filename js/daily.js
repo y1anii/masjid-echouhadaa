@@ -284,25 +284,62 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
+    // Helper: render N read-only stars out of 5
+    function renderReadOnlyStars(value) {
+      let html = "";
+      for (let i = 1; i <= 5; i++) {
+        html += i <= value
+          ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.25rem;"></i>`
+          : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.25rem;"></i>`;
+      }
+      return html;
+    }
+
     let evBlocks = "";
     filteredEvals.forEach(ev => {
       let criteriaObj = {};
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
 
-      let starsDetails = Object.keys(criteriaObj).map(key => {
-        return `${key}: <strong>${criteriaObj[key]} <i class="ph-fill ph-star" style="color: var(--gold); vertical-align: middle;"></i></strong>`;
-      }).join(" | ");
+      const criteriaKeys = Object.keys(criteriaObj);
+      const gridItemsHtml = criteriaKeys.map(key => {
+        const val = parseInt(criteriaObj[key]) || 0;
+        return `
+          <div style="display:flex;flex-direction:column;gap:0.3rem;background:rgba(13,92,70,0.02);padding:0.6rem 0.75rem;border-radius:8px;border:1px solid rgba(200,161,90,0.12);">
+            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">${key}</span>
+            <div style="display:flex;gap:0.15rem;">${renderReadOnlyStars(val)}</div>
+          </div>
+        `;
+      }).join("");
+
+      const badgesGranted = Array.isArray(ev.badgesGranted) ? ev.badgesGranted : [];
+      const badgesHtml = badgesGranted.length > 0 ? `
+        <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px dashed rgba(200,161,90,0.2);">
+          <span style="font-size:0.75rem;color:var(--gold);font-weight:800;display:block;margin-bottom:0.35rem;">الشارات الممنوحة:</span>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+            ${badgesGranted.map(b => `<span style="background:rgba(200,161,90,0.1);color:var(--gold);border:1.5px solid rgba(200,161,90,0.3);border-radius:6px;padding:0.2rem 0.55rem;font-size:0.73rem;font-weight:800;">🏅 ${b}</span>`).join("")}
+          </div>
+        </div>
+      ` : "";
+
+      const notesHtml = ev.notes ? `
+        <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(200,161,90,0.15);font-size:0.8rem;color:var(--text-muted);">
+          <strong style="color:var(--gold);">ملاحظة المشرف:</strong> ${ev.notes}
+        </div>
+      ` : "";
+
+      const iconClass = ev.activityType === "التقييم العام" ? "ph-user-focus" : "ph-book-open";
 
       evBlocks += `
-        <div class="details-block">
-          <div class="details-block-title" style="display: flex; align-items: center; gap: 0.4rem;">
-            <i class="ph-bold ${ev.activityType === 'التقييم العام' ? 'ph-user-focus' : 'ph-book-open'}" style="color: var(--gold); font-size: 1.15rem;"></i>
-            <span>${ev.activityType}</span>
-          </div>
-          <div class="details-block-val">
-            ${starsDetails}
-            ${ev.notes ? `<br><strong style="color: var(--gold);">ملاحظة:</strong> ${ev.notes}` : ""}
-            <br><strong style="color: var(--green);">النقاط المحصلة:</strong> ${ev.points} نقطة
+        <div style="background:#fff;border:1px solid rgba(200,161,90,0.2);border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.9rem;box-shadow:0 1px 6px rgba(0,0,0,0.05);">
+          <h4 style="color:var(--green-dark);font-size:0.92rem;border-right:3px solid var(--gold);padding-right:0.6rem;margin:0 0 0.75rem 0;font-weight:900;display:flex;align-items:center;gap:0.4rem;">
+            <i class="ph-bold ${iconClass}" style="color:var(--gold);"></i> ${ev.activityType}
+          </h4>
+          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;">${gridItemsHtml}</div>` : ""}
+          ${badgesHtml}
+          ${notesHtml}
+          <div style="margin-top:0.7rem;padding-top:0.5rem;border-top:1px solid rgba(13,92,70,0.06);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">النقاط المحصلة في القسم:</span>
+            <span style="font-size:0.88rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.2rem 0.6rem;border-radius:6px;">${ev.points} نقطة</span>
           </div>
         </div>
       `;

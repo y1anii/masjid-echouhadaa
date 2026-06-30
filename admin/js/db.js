@@ -245,10 +245,10 @@ async function recalculateStudentRewards(studentId) {
       const badgesList = Array.from(badgesSet);
       
       let level = "بذرة المسجد";
-      if (finalStars >= 160) level = "فارس المسجد";
-      else if (finalStars >= 120) level = "نجم المسجد";
-      else if (finalStars >= 80) level = "شجرة المسجد";
-      else if (finalStars >= 40) level = "نبتة المسجد";
+      if (finalStars >= 151) level = "فارس المسجد";
+      else if (finalStars >= 91)  level = "نجم المسجد";
+      else if (finalStars >= 61)  level = "شجرة المسجد";
+      else if (finalStars >= 31)  level = "نبتة المسجد";
       
       transaction.set(pointDocRef, {
         StudentID: studentId,
@@ -1943,6 +1943,16 @@ window.DB = {
       return true;
     } catch (error) {
       console.error("[DB] updateAdultParticipantTarget failed:", error);
+      return false;
+    }
+  },
+
+  async updateAdultParticipantDirection(id, direction) {
+    try {
+      await setDoc(doc(db, "adult_participants", id), { memoDirection: direction }, { merge: true });
+      return true;
+    } catch (error) {
+      console.error("[DB] updateAdultParticipantDirection failed:", error);
       return false;
     }
   },

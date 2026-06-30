@@ -876,10 +876,10 @@ if (addInitialStarsInput && addInitialLevelSelect) {
   addInitialStarsInput.addEventListener('input', () => {
     const stars = parseInt(addInitialStarsInput.value) || 0;
     let level = 'بذرة المسجد';
-    if (stars >= 160) level = 'فارس المسجد';
-    else if (stars >= 120) level = 'نجم المسجد';
-    else if (stars >= 80) level = 'شجرة المسجد';
-    else if (stars >= 40) level = 'نبتة المسجد';
+    if (stars >= 151) level = 'فارس المسجد';
+    else if (stars >= 91)  level = 'نجم المسجد';
+    else if (stars >= 61)  level = 'شجرة المسجد';
+    else if (stars >= 31)  level = 'نبتة المسجد';
     addInitialLevelSelect.value = level;
   });
 }
@@ -1005,10 +1005,10 @@ if (editInitialStarsInput && editInitialLevelSelect) {
   editInitialStarsInput.addEventListener('input', () => {
     const stars = parseInt(editInitialStarsInput.value) || 0;
     let level = 'بذرة المسجد';
-    if (stars >= 160) level = 'فارس المسجد';
-    else if (stars >= 120) level = 'نجم المسجد';
-    else if (stars >= 80) level = 'شجرة المسجد';
-    else if (stars >= 40) level = 'نبتة المسجد';
+    if (stars >= 151) level = 'فارس المسجد';
+    else if (stars >= 91)  level = 'نجم المسجد';
+    else if (stars >= 61)  level = 'شجرة المسجد';
+    else if (stars >= 31)  level = 'نبتة المسجد';
     editInitialLevelSelect.value = level;
   });
 }

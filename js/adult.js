@@ -26,6 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const badgeAdultPrior = document.getElementById("badge-adult-prior");
 
   const adultTargetHizbSelect = document.getElementById("adult-target-hizb");
+  const dirFrontRadio = document.getElementById("adult-memo-direction-front");
+  const dirBackRadio  = document.getElementById("adult-memo-direction-back");
+  const dirFrontLabel = document.getElementById("dir-front-label");
+  const dirBackLabel  = document.getElementById("dir-back-label");
+  const progressDirectionLabel = document.getElementById("progress-direction-label");
   
   const statMemorizedVerses = document.getElementById("stat-memorized-verses");
   const statTargetVerses = document.getElementById("stat-target-verses");
@@ -178,6 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set Target Selector Dropdown
     adultTargetHizbSelect.value = String(p.target || 60);
 
+    // Set Memorization Direction
+    const savedDir = p.memoDirection || "front";
+    if (dirFrontRadio) dirFrontRadio.checked = (savedDir === "front");
+    if (dirBackRadio)  dirBackRadio.checked  = (savedDir === "back");
+    updateDirectionUI(savedDir);
+
     // Compute progress & stats
     updateProgressAndStats();
 
@@ -202,10 +213,28 @@ document.addEventListener("DOMContentLoaded", () => {
     return 0;
   }
 
+  // --- Direction UI Helper ---
+  function updateDirectionUI(dir) {
+    const isBack = (dir === "back");
+    const activeStyle  = "border-color: var(--green); background: rgba(13,92,70,0.06);";
+    const inactiveStyle = "border-color: rgba(200,161,90,0.3); background: white;";
+    if (dirFrontLabel) dirFrontLabel.style.cssText += isBack ? inactiveStyle : activeStyle;
+    if (dirBackLabel)  dirBackLabel.style.cssText  += isBack ? activeStyle  : inactiveStyle;
+    if (progressDirectionLabel) {
+      progressDirectionLabel.textContent = isBack
+        ? "← من سورة الناس"
+        : "من سورة البقرة ←";
+    }
+  }
+
   function updateProgressAndStats() {
     const p = cachedProfileData.participant;
+    const dir = p.memoDirection || "front";
     const targetHizb = parseInt(adultTargetHizbSelect.value) || 60;
     const logs = cachedProfileData.progressLogs || [];
+
+    // Update direction badge
+    updateDirectionUI(dir);
 
     // Total verses count mapping for targets
     const targetVersesCount = Math.round(targetHizb * (6236 / 60));
@@ -244,12 +273,14 @@ document.addEventListener("DOMContentLoaded", () => {
     statAttendanceCount.textContent = `${presentCount} حصة`;
 
     // Animate Progress Circle
+    const isBack = (dir === "back");
     const progressCircleFill = document.getElementById("progress-circle-fill");
     const progressCirclePercent = document.getElementById("progress-circle-percent");
     if (progressCircleFill) {
       const circumference = 439.82;
       const offset = circumference - (percentage / 100) * circumference;
       progressCircleFill.style.strokeDashoffset = offset;
+      progressCircleFill.parentElement.style.transform = isBack ? "rotate(90deg)" : "rotate(-90deg)";
     }
     if (progressCirclePercent) {
       progressCirclePercent.textContent = `${percentage}%`;
@@ -259,14 +290,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Handle Target Selector Change ---
   adultTargetHizbSelect.addEventListener("change", async () => {
     const newTarget = parseInt(adultTargetHizbSelect.value) || 60;
-    
-    // Save to Cache
     cachedProfileData.participant.target = newTarget;
-    
-    // Update local display immediately
     updateProgressAndStats();
-
-    // Persist in DB
     try {
       await window.DB.updateAdultParticipantTarget(activeAdultId, newTarget);
     } catch (err) {
@@ -274,7 +299,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // --- Handle Memorization Direction Change ---
+  function handleDirectionChange(newDir) {
+    cachedProfileData.participant.memoDirection = newDir;
+    updateProgressAndStats();
+    window.DB.updateAdultParticipantDirection(activeAdultId, newDir)
+      .catch(err => console.error("[Adult Portal] Saving direction failed:", err));
+  }
+  if (dirFrontRadio) dirFrontRadio.addEventListener("change", () => { if (dirFrontRadio.checked) handleDirectionChange("front"); });
+  if (dirBackRadio)  dirBackRadio.addEventListener("change",  () => { if (dirBackRadio.checked)  handleDirectionChange("back"); });
+
   // --- Render History Logs ---
+  // Helper: render N read-only stars out of 5
+  function renderReadOnlyStars(value) {
+    let html = "";
+    for (let i = 1; i <= 5; i++) {
+      html += i <= value
+        ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.25rem;"></i>`
+        : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.25rem;"></i>`;
+    }
+    return html;
+  }
+
   function renderHistoryList(logs) {
     adultHistoryList.innerHTML = "";
     
@@ -295,54 +341,70 @@ document.addEventListener("DOMContentLoaded", () => {
         badgeClass = "type-tafsir";
       }
 
-      let contentHTML = "";
+      let mainContentHTML = "";
       if (isAbsent) {
-        contentHTML = `<span style="color: #ff4d4d; font-weight: 800;">غائب عن الحضور</span>`;
-      } else {
-        const surahVal = log.surah || "غير محدد";
-        const fromVal = Number(log.fromVerse) || 0;
-        const toVal = Number(log.toVerse) || 0;
-        const rangeText = (fromVal > 0 && toVal >= fromVal) ? ` (الآيات: ${fromVal} إلى ${toVal})` : "";
-        contentHTML = `<strong>المحتوى:</strong> ${surahVal}${rangeText}`;
-      }
-
-      let starsHTML = "";
-      if (log.stars > 0) {
-        starsHTML = `
-          <div style="display: flex; gap: 3px; align-items: center; margin-top: 0.5rem; border-top: 1px dashed rgba(200,161,90,0.1); padding-top: 0.5rem;">
-        `;
-        for (let i = 1; i <= 5; i++) {
-          if (i <= log.stars) {
-            starsHTML += `<i class="ph-fill ph-star" style="color: var(--gold); font-size: 1.1rem;"></i>`;
-          } else {
-            starsHTML += `<i class="ph ph-star" style="color: #ccc; font-size: 1.1rem;"></i>`;
-          }
-        }
-        starsHTML += `
-          <span style="font-size: 0.85rem; color: var(--green-dark); font-weight: 800; margin-inline-start: 0.5rem; background: rgba(212,175,55,0.1); padding: 0.15rem 0.5rem; border-radius: 4px;">+${log.points || (log.stars * 2)} نقاط</span>
+        mainContentHTML = `
+          <div style="text-align:center;color:#ff4d4d;padding:1rem 0;font-weight:800;">
+            <i class="ph-bold ph-user-minus" style="font-size:1.8rem;display:block;margin-bottom:0.4rem;"></i>
+            غائب عن الحضور
           </div>
+        `;
+      } else {
+        // Parse criteria if available
+        let criteriaObj = {};
+        try { criteriaObj = JSON.parse(log.criteria || "{}"); } catch (e) {}
+        const criteriaKeys = Object.keys(criteriaObj);
+
+        // Surah/range block
+        const surahVal = log.surah || "";
+        const fromVal = Number(log.fromVerse) || 0;
+        const toVal   = Number(log.toVerse)   || 0;
+        const rangeText = (fromVal > 0 && toVal >= fromVal) ? ` (الآيات: ${fromVal} إلى ${toVal})` : "";
+        const contentLine = surahVal
+          ? `<div style="font-size:0.85rem;color:var(--green-dark);font-weight:700;margin-bottom:${criteriaKeys.length ? '0.75rem' : '0'}"><strong>المحتوى:</strong> ${surahVal}${rangeText}</div>`
+          : "";
+
+        // Criteria grid (same premium card as children)
+        const gridItemsHtml = criteriaKeys.map(key => {
+          const val = parseInt(criteriaObj[key]) || 0;
+          return `
+            <div style="display:flex;flex-direction:column;gap:0.3rem;background:rgba(13,92,70,0.02);padding:0.6rem 0.75rem;border-radius:8px;border:1px solid rgba(200,161,90,0.12);">
+              <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">${key}</span>
+              <div style="display:flex;gap:0.15rem;">${renderReadOnlyStars(val)}</div>
+            </div>
+          `;
+        }).join("");
+
+        // Notes
+        const notesHtml = log.notes ? `
+          <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(200,161,90,0.15);font-size:0.8rem;color:var(--text-muted);">
+            <strong style="color:var(--gold);">ملاحظات المشرف:</strong> ${log.notes}
+          </div>
+        ` : "";
+
+        // Stars + points footer
+        const starsFooter = (log.stars > 0) ? `
+          <div style="margin-top:0.7rem;padding-top:0.5rem;border-top:1px solid rgba(13,92,70,0.06);display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;gap:0.15rem;">${renderReadOnlyStars(log.stars)}</div>
+            <span style="font-size:0.88rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.2rem 0.6rem;border-radius:6px;">+${log.points || (log.stars * 2)} نقاط</span>
+          </div>
+        ` : "";
+
+        mainContentHTML = `
+          ${contentLine}
+          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;">${gridItemsHtml}</div>` : ""}
+          ${notesHtml}
+          ${starsFooter}
         `;
       }
 
       const itemHTML = `
-        <div class="history-item" style="${isAbsent ? 'background: rgba(255, 68, 68, 0.01); border-color: rgba(255, 68, 68, 0.15);' : ''}">
+        <div class="history-item" style="${isAbsent ? 'background:rgba(255,68,68,0.01);border-color:rgba(255,68,68,0.15);' : ''}">
           <div class="history-item-header">
-            <span class="history-date"><i class="ph-bold ph-calendar-check" style="color: var(--gold); vertical-align: middle; margin-left:0.25rem;"></i> حصة يوم ${log.date}</span>
+            <span class="history-date"><i class="ph-bold ph-calendar-check" style="color:var(--gold);vertical-align:middle;margin-left:0.25rem;"></i> حصة يوم ${log.date}</span>
             <span class="history-type-badge ${badgeClass}">${log.activityType || log.courseName || "تسميع"}</span>
           </div>
-          <div class="history-grid">
-            <div class="history-col">
-              <span class="history-lbl">موضوع الإنجاز</span>
-              <div class="history-val">${contentHTML}</div>
-            </div>
-            <div class="history-col">
-              <span class="history-lbl">ملاحظات المشرف وتقييمه</span>
-              <div class="history-val" style="font-weight: 700; color: var(--text-muted); font-style: italic;">
-                ${log.notes || (isAbsent ? "تم رصد الغياب عن الحلقة" : "ممتاز، واصل تقدمك في طلب العلم")}
-              </div>
-            </div>
-          </div>
-          ${starsHTML}
+          <div style="margin-top:0.6rem;">${mainContentHTML}</div>
         </div>
       `;
       adultHistoryList.insertAdjacentHTML("beforeend", itemHTML);
