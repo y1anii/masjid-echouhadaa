@@ -367,6 +367,14 @@
     <main class="page-main portal-container">
       <div class="container">
         
+        <!-- PWA Install Button Container -->
+        <div id="pwa-install-container" style="display: none; margin-bottom: 1.5rem; text-align: center;">
+          <button id="pwa-install-btn-portal" class="btn" style="background: var(--gold); color: var(--green-dark); border: 1.5px solid var(--gold); font-weight: 900; padding: 0.6rem 1.5rem; border-radius: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; box-shadow: var(--shadow); width: max-content; margin: 0 auto;">
+            <i class="ph-bold ph-device-mobile" style="font-size: 1.25rem;"></i>
+            <span>تثبيت التطبيق</span>
+          </button>
+        </div>
+
         <!-- ══ LOGIN VIEW ══ -->
         <section id="portal-login-view" class="reveal">
           <div class="login-card">
@@ -390,8 +398,80 @@
                 <i class="ph-bold ph-sign-in"></i> تسجيل الدخول
               </button>
             </form>
+
+            <!-- Forgot ID Recovery Link -->
+            <div style="text-align: center; margin-top: 1.25rem; border-top: 1px dashed rgba(200,161,90,0.15); padding-top: 1rem;">
+              <a href="#" id="forgot-id-link" style="color: var(--gold); font-size: 0.85rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
+                <i class="ph ph-question" style="vertical-align: middle; margin-left: 0.25rem;"></i> نسيت معرف الكبار (ID)؟
+              </a>
+            </div>
           </div>
         </section>
+
+        <!-- Forgot ID Modal -->
+        <div id="forgot-id-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+          <div class="profile-card animate-modal" style="max-width: 450px; width: 100%; background: #fff; padding: 2rem; border-radius: var(--radius); border-top: 4px solid var(--gold); direction: rtl; text-align: right; box-shadow: var(--shadow-lg);">
+            <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(13, 92, 70, 0.1); padding-bottom: 0.75rem;">
+              <h3 style="color: var(--green-dark); font-weight: 900; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph-bold ph-key" style="color: var(--gold);"></i> استعادة معرف الكبار (ID)
+              </h3>
+              <button id="close-forgot-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <form id="forgot-id-form">
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="recovery-phone" style="display: block; font-weight: 700; color: var(--green-dark); margin-bottom: 0.4rem;">رقم هاتف الطالب المسجل:</label>
+                <input type="tel" id="recovery-phone" placeholder="0550123456" required style="width: 100%; padding: 0.75rem; border: 1px solid #e0dcd3; border-radius: var(--radius-sm);" />
+              </div>
+              <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="recovery-name" style="display: block; font-weight: 700; color: var(--green-dark); margin-bottom: 0.4rem;">اسم الطالب كامل (كما في التسجيل):</label>
+                <input type="text" id="recovery-name" placeholder="اسمك الكامل..." required style="width: 100%; padding: 0.75rem; border: 1px solid #e0dcd3; border-radius: var(--radius-sm);" />
+              </div>
+              
+              <button type="submit" id="btn-recovery-submit" class="btn" style="width: 100%; padding: 0.8rem; font-weight: 800; background: var(--green); color: #fff;">
+                البحث عن المعرف
+              </button>
+            </form>
+
+            <div id="recovery-error" style="display: none; color: #ff4d4d; background: rgba(255, 68, 68, 0.08); border: 1px solid rgba(255, 68, 68, 0.2); padding: 0.75rem; border-radius: var(--radius-sm); margin-top: 1rem; text-align: center; font-weight: 700; font-size: 0.85rem;"></div>
+
+            <div id="recovery-results" style="display: none; margin-top: 1.5rem; border-top: 1.5px dashed rgba(13, 92, 70, 0.1); padding-top: 1rem;">
+              <h4 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.75rem;">المعرفات المكتشفة:</h4>
+              <div id="recovery-results-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- iOS PWA Installation Guide Modal -->
+        <div id="ios-pwa-modal" class="profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+          <div class="profile-card animate-modal" style="max-width: 420px; border: 2px solid var(--gold); background: #fff; padding: 2rem; border-radius: var(--radius); direction: rtl; text-align: right; box-shadow: var(--shadow-lg);">
+            <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(13, 92, 70, 0.1); padding-bottom: 0.75rem;">
+              <h3 style="color: var(--green-dark); font-weight: 900; margin: 0;">تثبيت التطبيق على أجهزة iPhone/iPad</h3>
+              <button id="close-ios-pwa-modal" class="close-btn" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;"><i class="ph-light ph-x"></i></button>
+            </div>
+            <div class="profile-content" style="text-align: center; direction: rtl; padding: 1rem 0; background: #fffdf6;">
+              <i class="ph-bold ph-arrow-down-to-line" style="font-size: 3rem; color: var(--gold); display: block; margin-bottom: 1rem;"></i>
+              <p style="font-weight: 800; color: var(--green-dark); margin-bottom: 1.5rem; font-size: 1.1rem;">لتثبيت الموقع كتطبيق على شاشتك الرئيسية، يرجى اتباع الخطوات التالية:</p>
+              
+              <div style="display: flex; flex-direction: column; gap: 1rem; text-align: right; margin-bottom: 1.5rem; background: rgba(13, 92, 70, 0.02); padding: 1.25rem; border-radius: 8px; border: 1px dashed rgba(200, 161, 90, 0.25);">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span style="background: var(--green); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">١</span>
+                  <span>اضغط على زر المشاركة <strong>(Share <i class="ph-bold ph-export" style="vertical-align: middle;"></i>)</strong> في متصفح Safari.</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span style="background: var(--green); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">٢</span>
+                  <span>اختر <strong>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen <i class="ph-bold ph-plus-square" style="vertical-align: middle;"></i>)</strong> من قائمة الخيارات.</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span style="background: var(--green); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem;">٣</span>
+                  <span>اضغط على <strong>"إضافة" (Add)</strong> في الزاوية العلوية لتأكيد التثبيت.</span>
+                </div>
+              </div>
+              
+              <button id="close-ios-pwa-modal-btn" class="btn" style="width: 100%; padding: 0.6rem; background: var(--green); color: #fff; border-radius: var(--radius-sm); font-weight: 800;">فهمت</button>
+            </div>
+          </div>
+        </div>
 
         <!-- ══ DASHBOARD VIEW ══ -->
         <section id="portal-dashboard-view" style="display: none;">

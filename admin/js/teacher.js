@@ -1762,15 +1762,35 @@ runWhenReady(() => {
               <strong>المقررات:</strong> ${s.courses}
             </p>
           </div>
-          <div style="display: flex; gap: 0.5rem;">
-            <button class="btn edit-archive-btn" data-id="${s.id}" style="padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 12px;">
-              <i class="ph-bold ph-pencil"></i> تعديل
-            </button>
-            <button class="btn delete-archive-btn" data-id="${s.id}" style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff4d4d; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 12px;">
-              <i class="ph-bold ph-trash"></i> حذف
-            </button>
-          </div>
-        </div>
+          const actionsHtml = window.DB.hasFullAccess() ? `
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn edit-archive-btn" data-id="${s.id}" style="padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 12px;">
+                <i class="ph-bold ph-pencil"></i> تعديل
+              </button>
+              <button class="btn delete-archive-btn" data-id="${s.id}" style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); color: #ff4d4d; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 12px;">
+                <i class="ph-bold ph-trash"></i> حذف
+              </button>
+            </div>
+          ` : '';
+
+          return `
+            <div class="about-card" style="margin: 0; padding: 1.25rem; background: #fff; border: 1px solid rgba(200, 161, 90, 0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-radius: 12px;">
+              <div style="flex: 1; min-width: 250px;">
+                <h4 style="color: var(--green-dark); font-weight: 800; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <i class="ph-bold ${iconClass}" style="color: var(--gold); font-size: 1.15rem;"></i>
+                  <span>جلسة يوم ${s.date} — </span>
+                  <span class="badge" style="background: ${isAdults ? 'rgba(212, 175, 55, 0.15)' : 'rgba(13, 92, 70, 0.08)'}; color: ${isAdults ? '#7a5900' : 'var(--green-dark)'}; padding: 0.2rem 0.6rem; font-size: 0.78rem; border-radius: 30px; font-weight: 800;">
+                    ${displayLabel}
+                  </span>
+                </h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+                  <strong>المشرف:</strong> ${s.supervisor} | 
+                  <strong>المقررات:</strong> ${s.courses}
+                </p>
+              </div>
+              ${actionsHtml}
+            </div>
+          `;
       `;
     }).join("");
     

@@ -430,4 +430,153 @@ document.addEventListener("DOMContentLoaded", () => {
       logoutAdult();
     }
   });
+
+  // ── PWA Installation Logic ──────────────────────────────────────────
+  const pwaInstallContainer = document.getElementById("pwa-install-container");
+  const pwaInstallBtn = document.getElementById("pwa-install-btn-portal");
+  const iosPwaModal = document.getElementById("ios-pwa-modal");
+  const closeIosPwaModal = document.getElementById("close-ios-pwa-modal");
+  const closeIosPwaModalBtn = document.getElementById("close-ios-pwa-modal-btn");
+
+  let deferredPrompt = null;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+
+  if (isIOS && !isStandalone) {
+    if (pwaInstallContainer) pwaInstallContainer.style.display = "block";
+  }
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (pwaInstallContainer && !isStandalone) {
+      pwaInstallContainer.style.display = "block";
+    }
+  });
+
+  if (pwaInstallBtn) {
+    pwaInstallBtn.addEventListener("click", async () => {
+      if (isIOS) {
+        if (iosPwaModal) iosPwaModal.style.display = "flex";
+      } else if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        deferredPrompt = null;
+        if (pwaInstallContainer) pwaInstallContainer.style.display = "none";
+      } else {
+        if (iosPwaModal) iosPwaModal.style.display = "flex";
+      }
+    });
+  }
+
+  if (closeIosPwaModal) {
+    closeIosPwaModal.onclick = () => {
+      iosPwaModal.style.display = "none";
+    };
+  }
+  if (closeIosPwaModalBtn) {
+    closeIosPwaModalBtn.onclick = () => {
+      iosPwaModal.style.display = "none";
+    };
+  }
+
+  window.addEventListener("appinstalled", (evt) => {
+    console.log("App was successfully installed!");
+    if (pwaInstallContainer) pwaInstallContainer.style.display = "none";
+  });
+
+  // ── Forgot ID Recovery Logic ─────────────────────────────────────────
+  const forgotIdLink = document.getElementById("forgot-id-link");
+  const forgotIdModal = document.getElementById("forgot-id-modal");
+  const closeForgotModal = document.getElementById("close-forgot-modal");
+  const forgotIdForm = document.getElementById("forgot-id-form");
+  const recoveryPhoneInput = document.getElementById("recovery-phone");
+  const recoveryNameInput = document.getElementById("recovery-name");
+  const recoveryError = document.getElementById("recovery-error");
+  const recoveryResults = document.getElementById("recovery-results");
+  const recoveryResultsList = document.getElementById("recovery-results-list");
+
+  if (forgotIdLink) {
+    forgotIdLink.onclick = (e) => {
+      e.preventDefault();
+      forgotIdModal.style.display = "flex";
+      recoveryError.style.display = "none";
+      recoveryResults.style.display = "none";
+      forgotIdForm.reset();
+    };
+  }
+
+  if (closeForgotModal) {
+    closeForgotModal.onclick = () => {
+      forgotIdModal.style.display = "none";
+    };
+  }
+
+  if (forgotIdForm) {
+    forgotIdForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const phone = recoveryPhoneInput.value.trim();
+      const inputName = recoveryNameInput.value.trim();
+      
+      const submitBtn = document.getElementById("btn-recovery-submit");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "جاري البحث...";
+      recoveryError.style.display = "none";
+      recoveryResults.style.display = "none";
+      recoveryResultsList.innerHTML = "";
+
+      try {
+        if (!auth.currentUser) {
+          try {
+            await signInAnonymously(auth);
+          } catch (authErr) {
+            console.warn("[Adult Portal] Anonymous auth failed, proceeding anyway:", authErr);
+          }
+        }
+        
+        const result = await window.DB.recoverAdultId(phone, inputName);
+        
+        if (!result.success) {
+          recoveryError.textContent = result.error || "حدث خطأ أثناء البحث عن المعرف.";
+          recoveryError.style.display = "block";
+          return;
+        }
+
+        const matches = result.matches || [];
+
+        if (matches.length === 0) {
+          recoveryError.textContent = "لم يتم العثور على أي حساب مطابق للاسم ورقم الهاتف المدخلين.";
+          recoveryError.style.display = "block";
+        } else {
+          recoveryResultsList.innerHTML = matches.map(m => `
+            <div style="background: rgba(13, 92, 70, 0.05); border: 1.5px solid var(--gold); border-radius: 6px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; direction: rtl;">
+              <div style="font-weight: 700; color: var(--green-dark);">الاسم: ${m.name}</div>
+              <div style="font-weight: 950; color: var(--green-dark); display: flex; align-items: center; gap: 0.5rem;">
+                <span>المعرف: <code style="background: var(--green-dark); color: var(--gold); padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace; font-size: 1rem; letter-spacing: 0.5px;">${m.id}</code></span>
+                <button type="button" class="btn-copy-id" data-copyid="${m.id}" style="background: none; border: none; color: var(--gold); cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; padding: 0.2rem;"><i class="ph ph-copy"></i></button>
+              </div>
+            </div>
+          `).join("");
+          
+          recoveryResultsList.querySelectorAll(".btn-copy-id").forEach(btn => {
+            btn.onclick = () => {
+              const textToCopy = btn.getAttribute("data-copyid");
+              navigator.clipboard.writeText(textToCopy);
+              alert("تم نسخ المعرف بنجاح: " + textToCopy);
+            };
+          });
+          
+          recoveryResults.style.display = "block";
+        }
+      } catch (err) {
+        console.error(err);
+        recoveryError.textContent = "حدث خطأ أثناء محاولة الاتصال بقاعدة البيانات.";
+        recoveryError.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "البحث عن المعرف";
+      }
+    };
+  }
 });

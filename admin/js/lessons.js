@@ -36,6 +36,12 @@ async function initLessons() {
   const rawLessons = await DB.getAllLessons();
   allLessons = rawLessons.filter(l => l && l.id && String(l.id).startsWith('LS') && l.title && String(l.title).trim() !== '');
   console.log("[Lessons] Loaded:", allLessons);
+  
+  if (!window.DB.hasFullAccess()) {
+    const formCard = document.querySelector('.lesson-form-card');
+    if (formCard) formCard.style.display = 'none';
+  }
+
   renderLessons();
 }
 
@@ -89,6 +95,7 @@ function renderLessons() {
           ${lesson.speaker ? ` · <i class="ph ph-user"></i> ${lesson.speaker}` : ''}
         </p>
         ${lesson.description ? `<p class="lesson-admin-card__desc">${lesson.description}</p>` : ''}
+        ${window.DB.hasFullAccess() ? `
         <div class="lesson-admin-card__actions">
           <button class="btn btn-secondary lesson-edit-btn" data-id="${lesson.id}" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
             <i class="ph ph-pencil-simple"></i> تعديل
@@ -97,6 +104,7 @@ function renderLessons() {
             <i class="ph ph-trash"></i> حذف
           </button>
         </div>
+        ` : ''}
       </div>
     `;
   }).join('');

@@ -543,14 +543,18 @@ window.DB = {
       ]);
       console.log("[DB Debug] User doc fetched, exists:", userDocSnap.exists());
       
+      const validRoles = ["Admin", "Teacher", "Imam", "Guide", "الإمام", "مدرس التعليم القرآني", "المرشدة الدينية"];
+
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
-        console.log("[DB Debug] User data role:", userData ? userData.role : "undefined");
-        if (userData && (userData.role === "Admin" || userData.role === "Teacher")) {
+        const role = userData ? userData.role : "";
+        console.log("[DB Debug] User data role:", role);
+        if (userData && validRoles.includes(role)) {
           sessionStorage.setItem("masjid_auth", "true");
           localStorage.setItem("masjid_auth", "true");
           localStorage.setItem("adminUser", email);
-          console.log("[DB Debug] loginAdmin returning true (authorized role)");
+          localStorage.setItem("adminRole", role);
+          console.log("[DB Debug] loginAdmin returning true (authorized role):", role);
           return true;
         }
       }
@@ -560,11 +564,12 @@ window.DB = {
         sessionStorage.setItem("masjid_auth", "true");
         localStorage.setItem("masjid_auth", "true");
         localStorage.setItem("adminUser", email);
+        localStorage.setItem("adminRole", "Imam");
         console.log("[DB Debug] loginAdmin returning true (fallback UID match)");
         return true;
       }
       
-      console.warn("[DB] User is authenticated but does not have the 'Admin' or 'Teacher' role in Firestore.");
+      console.warn("[DB] User is authenticated but does not have an authorized role in Firestore.");
       console.log("[DB Debug] loginAdmin returning false (unauthorized)");
       return false;
     } catch (error) {
@@ -1393,7 +1398,8 @@ window.DB = {
         const data = d.data();
         const sess = sessionsMap[data.SessionID];
         totalClasses++;
-        if (data["حالة الحضور"] === "حاضر" || data["حالة الحضور"].startsWith("متأخر")) {
+        const attendanceStatus = data["حالة الحضور"] || "";
+        if (attendanceStatus === "حاضر" || attendanceStatus.startsWith("متأخر")) {
           presentClasses++;
         }
         attendanceHistory.push({
@@ -2118,7 +2124,8 @@ window.DB = {
           quranLevel: data.quranLevel || "غير محدد",
           lastSurah: data.lastSurah || "",
           lastVerse: data.lastVerse || 0,
-          target: data.target || 30
+          target: data.target || 30,
+          memoDirection: data.memoDirection || "front"
         },
         progressLogs
       };
@@ -2127,6 +2134,71 @@ window.DB = {
       console.error("[DB] readAdultProfile failed:", error);
       return { success: false, error: "حدث خطأ أثناء تحميل بيانات الملف الشخصي للكبار." };
     }
+  },
+
+  async recoverAdultId(phone, name) {
+    try {
+      const q = query(collection(db, "adult_participants"), where("phone", "==", phone.trim()));
+      const qSnap = await getDocs(q);
+      const matches = [];
+      const seenIds = new Set();
+      
+      const normalizeArabic = (str) => {
+        if (!str) return "";
+        return str
+          .replace(/[أإآأ]/g, "ا")
+          .replace(/ة/g, "ه")
+          .replace(/ى/g, "ي")
+          .replace(/[\u064B-\u065F]/g, "")
+          .trim();
+      };
+      
+      const normalizedInputName = normalizeArabic(name);
+
+      qSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data && data.name && data.id) {
+          const normalizedDbName = normalizeArabic(data.name);
+          if (normalizedDbName === normalizedInputName) {
+            const lowerId = data.id.trim().toLowerCase();
+            if (!seenIds.has(lowerId)) {
+              seenIds.add(lowerId);
+              matches.push({
+                name: data.name,
+                id: data.id
+              });
+            }
+          }
+        }
+      });
+      return { success: true, matches };
+    } catch (error) {
+      console.error("[DB] recoverAdultId failed:", error);
+      return { success: false, error: "حدث خطأ أثناء البحث عن المعرف." };
+    }
+  },
+
+  getUserRole() {
+    return localStorage.getItem("adminRole") || "Teacher";
+  },
+
+  hasFullAccess() {
+    const role = this.getUserRole();
+    const email = localStorage.getItem("adminUser") || "";
+    
+    // Fallback: If it's one of the restricted admin emails, it's NOT full access
+    if (email.includes("admin1@masjid-chouhadaa.dz") || 
+        email.includes("admin2@masjid-chouhadaa.dz") || 
+        email.includes("admin3@masjid-chouhadaa.dz")) {
+      return false;
+    }
+    
+    // Admin, Imam, and الإمام roles have full access
+    if (role === "Admin" || role === "Imam" || role === "الإمام") {
+      return true;
+    }
+    
+    return false;
   }
 };
 

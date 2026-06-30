@@ -21,6 +21,41 @@ blocker.id = "auth-blocker";
 blocker.innerHTML = "body { display: none !important; }";
 document.head.appendChild(blocker);
 
+function displayRoleBadge(role) {
+  runWhenReady(() => {
+    const brand = document.querySelector(".navbar-brand");
+    if (!brand || document.getElementById("admin-role-badge")) return;
+
+    const badge = document.createElement("span");
+    badge.id = "admin-role-badge";
+    
+    let label = "مسؤول";
+    let iconClass = "ph-bold ph-shield-star";
+    let style = "background: rgba(13,92,70,0.08); color: var(--green-dark); border: 1.5px solid rgba(13,92,70,0.25);";
+
+    if (role === "Imam" || role === "الإمام" || role === "Admin") {
+      label = "الإمام";
+      iconClass = "ph-bold ph-crown";
+      style = "background: rgba(212,175,55,0.12); color: #7a5900; border: 1.5px solid var(--gold); font-weight: 900;";
+    } else if (role === "Teacher" || role === "مدرس التعليم القرآني") {
+      label = "مدرس قرآن";
+      iconClass = "ph-bold ph-book-open";
+      style = "background: rgba(13,92,70,0.08); color: var(--green-dark); border: 1.5px solid rgba(13,92,70,0.25); font-weight: 800;";
+    } else if (role === "Guide" || role === "المرشدة الدينية") {
+      label = "مرشدة دينية";
+      iconClass = "ph-bold ph-user-focus";
+      style = "background: rgba(13,92,70,0.08); color: var(--green-dark); border: 1.5px solid rgba(13,92,70,0.25); font-weight: 800;";
+    }
+
+    badge.innerHTML = `<i class="${iconClass}" style="font-size: 1rem; vertical-align: middle;"></i> ${label}`;
+    badge.style.cssText = `${style} border-radius: 30px; padding: 0.25rem 0.75rem; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.35rem; margin-inline-start: 1rem; vertical-align: middle; cursor: default; white-space: nowrap;`;
+
+    brand.appendChild(badge);
+    brand.style.display = "flex";
+    brand.style.alignItems = "center";
+  });
+}
+
 async function checkAuth(user) {
   const isLoginPage = window.location.pathname.endsWith("login.html");
   console.log("[Auth Debug] checkAuth triggered, isLoginPage:", isLoginPage, "user:", user ? user.uid : "null");
@@ -37,16 +72,19 @@ async function checkAuth(user) {
       console.log("[Auth Debug] User doc fetched, exists:", userDocSnap.exists());
       
       const role = userDocSnap.exists() ? userDocSnap.data().role : "";
-      console.log("[Auth Debug] User role loaded:", role);
-      
       const isFallback = (user.uid === "wspQno67bPbz9u47xn5GgRl8MME3" || user.uid === "df6QPQBEZMWsyc7VHQ5K8ofLOzE2");
+      const activeRole = role || (isFallback ? "Imam" : "Teacher");
+      const validRoles = ["Admin", "Teacher", "Imam", "Guide", "الإمام", "مدرس التعليم القرآني", "المرشدة الدينية"];
       
-      if (role === "Admin" || role === "Teacher" || isFallback) {
+      if (validRoles.includes(activeRole) || isFallback) {
         sessionStorage.setItem("masjid_auth", "true");
         localStorage.setItem("masjid_auth", "true");
         localStorage.setItem("adminUser", user.email || "");
-        console.log("[Auth Debug] Admin role validated. Removing blocker.");
+        localStorage.setItem("adminRole", activeRole);
+        console.log("[Auth Debug] Admin role validated:", activeRole, ". Removing blocker.");
         
+        displayRoleBadge(activeRole);
+
         // Remove blocker to show content
         const el = document.getElementById("auth-blocker");
         if (el) el.remove();
@@ -69,6 +107,7 @@ async function checkAuth(user) {
   sessionStorage.removeItem("masjid_auth");
   localStorage.removeItem("masjid_auth");
   localStorage.removeItem("adminUser");
+  localStorage.removeItem("adminRole");
   
   if (!isLoginPage) {
     console.log("[Auth Debug] Redirecting unauthorized user to login.html");
@@ -95,6 +134,7 @@ async function logoutAdmin() {
   sessionStorage.removeItem("masjid_auth");
   localStorage.removeItem("masjid_auth");
   localStorage.removeItem("adminUser");
+  localStorage.removeItem("adminRole");
   sessionStorage.removeItem("adminUser");
   window.location.href = "login.html";
 }

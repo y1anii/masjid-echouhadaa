@@ -44,6 +44,11 @@ async function init() {
   renderSkeletons();
   initTeamsPanel();
   
+  if (!window.DB.hasFullAccess()) {
+    const addStudentBtn = document.getElementById('add-student-btn');
+    if (addStudentBtn) addStudentBtn.style.display = 'none';
+  }
+  
   // Wire a live Firestore onSnapshot listener for children
   onSnapshot(collection(db, "students"), (snapshot) => {
     const rawStudents = [];
@@ -474,6 +479,14 @@ function openProfileModal(student) {
     rejectBtn.style.display = 'inline-flex';
   }
 
+  // Override: Hide all administrative action buttons for non-Imam
+  if (!window.DB.hasFullAccess()) {
+    deleteBtn.style.display = 'none';
+    editBtn.style.display = 'none';
+    acceptBtn.style.display = 'none';
+    rejectBtn.style.display = 'none';
+  }
+
   // تعديل البيانات
   editBtn.onclick = () => {
     modal.classList.remove('active');
@@ -651,6 +664,14 @@ function openAdultProfileModal(adult) {
   } else {
     acceptBtn.style.display = 'inline-flex';
     rejectBtn.style.display = 'inline-flex';
+  }
+
+  // Override: Hide all administrative action buttons for non-Imam
+  if (!window.DB.hasFullAccess()) {
+    deleteBtn.style.display = 'none';
+    editBtn.style.display = 'none';
+    acceptBtn.style.display = 'none';
+    rejectBtn.style.display = 'none';
   }
 
   // حذف المشارك
@@ -1069,6 +1090,11 @@ async function initTeamsPanel() {
   const teamStudentChecklist = document.getElementById("team-student-checklist");
 
   if (!btnOpenModal) return;
+
+  if (!window.DB.hasFullAccess()) {
+    if (btnOpenModal) btnOpenModal.style.display = "none";
+    if (btnDelete) btnDelete.style.display = "none";
+  }
 
   const loadTeams = async () => {
     const teams = await window.DB.getTeams();

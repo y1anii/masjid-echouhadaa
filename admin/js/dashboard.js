@@ -572,21 +572,25 @@ runWhenReady(() => {
   }
 
   if (toggleCourseBtn) {
-    toggleCourseBtn.onclick = async () => {
-      const isEnded = localStorage.getItem("masjid_course_ended") === "true";
-      const newValue = isEnded ? "false" : "true";
-      localStorage.setItem("masjid_course_ended", newValue);
-updateToggleUI();
-      renderAppreciationList();
-      
-      // Sync the course ended state to Firestore natively
-      try {
-        await window.DB.setSetting("courseEnded", newValue);
-        console.log("[Dashboard] Course ended state synced to server:", newValue);
-      } catch (err) {
-        console.warn("[Dashboard] Failed to sync course ended state to server:", err);
-      }
-    };
+    if (!window.DB.hasFullAccess()) {
+      toggleCourseBtn.style.display = "none";
+    } else {
+      toggleCourseBtn.onclick = async () => {
+        const isEnded = localStorage.getItem("masjid_course_ended") === "true";
+        const newValue = isEnded ? "false" : "true";
+        localStorage.setItem("masjid_course_ended", newValue);
+        updateToggleUI();
+        renderAppreciationList();
+        
+        // Sync the course ended state to Firestore natively
+        try {
+          await window.DB.setSetting("courseEnded", newValue);
+          console.log("[Dashboard] Course ended state synced to server:", newValue);
+        } catch (err) {
+          console.warn("[Dashboard] Failed to sync course ended state to server:", err);
+        }
+      };
+    }
   }
 
   // --- Weekly Honor Board Admin Logic ---
