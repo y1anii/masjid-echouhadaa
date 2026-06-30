@@ -185,76 +185,114 @@ document.addEventListener("DOMContentLoaded", () => {
       let html = "";
       for (let i = 1; i <= 5; i++) {
         html += i <= value
-          ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.15rem;"></i>`
-          : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.15rem;"></i>`;
+          ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.1rem;"></i>`
+          : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.1rem;"></i>`;
       }
       return html;
     }
 
-    let evBlocks = "";
+    // Group evaluations by sessionId (each session = one set of sections)
+    const sessionMap = new Map();
     filteredEvals.forEach(ev => {
-      let criteriaObj = {};
-      try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
+      const key = ev.sessionId || ev.date || "unknown";
+      if (!sessionMap.has(key)) sessionMap.set(key, []);
+      sessionMap.get(key).push(ev);
+    });
 
-      const criteriaKeys = Object.keys(criteriaObj);
+    let allBlocks = "";
 
-      // ── Recalculate points from criteria ─────────────────────────────────
-      const criteriaVals = criteriaKeys.map(k => parseInt(criteriaObj[k]) || 0);
-      const sectionStars = criteriaVals.length > 0
-        ? Math.min(5, Math.round(criteriaVals.reduce((a, b) => a + b, 0) / criteriaVals.length))
+    sessionMap.forEach((sessionEvals, sessionKey) => {
+      // ── Calculate session-level total (same formula as recalculateStudentRewards) ──
+      const sectionAverages = sessionEvals.map(ev => {
+        let criteriaObj = {};
+        try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
+        const vals = Object.values(criteriaObj).map(v => parseInt(v) || 0);
+        return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+      }).filter(avg => avg > 0);
+
+      const sessionStars = sectionAverages.length > 0
+        ? Math.min(5, Math.max(0, Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length)))
         : 0;
-      const sectionPoints = sectionStars * 2;
+      const sessionPoints = sessionStars * 2;
 
-      // ── Criteria grid ─────────────────────────────────────────────────────
-      const gridItemsHtml = criteriaKeys.map(key => {
-        const val = parseInt(criteriaObj[key]) || 0;
-        return `
-          <div style="display:flex;flex-direction:column;gap:0.25rem;background:rgba(13,92,70,0.025);padding:0.5rem 0.65rem;border-radius:7px;border:1px solid rgba(200,161,90,0.1);">
-            <span style="font-size:0.74rem;color:var(--text-muted);font-weight:700;line-height:1.2;">${key}</span>
-            <div style="display:flex;gap:0.1rem;">${renderReadOnlyStars(val)}</div>
+      // Session date label (from first eval in session)
+      const firstEv = sessionEvals[0];
+      const sessionDateLabel = firstEv.date || "";
+      const sessionCircle = firstEv.circleType ? `(${firstEv.circleType.split('،')[0]})` : "";
+
+      let sectionCards = "";
+      sessionEvals.forEach(ev => {
+        let criteriaObj = {};
+        try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
+        const criteriaKeys = Object.keys(criteriaObj);
+
+        const gridItemsHtml = criteriaKeys.map(key => {
+          const val = parseInt(criteriaObj[key]) || 0;
+          return `
+            <div style="display:flex;flex-direction:column;gap:0.25rem;background:rgba(13,92,70,0.025);padding:0.45rem 0.6rem;border-radius:7px;border:1px solid rgba(200,161,90,0.1);">
+              <span style="font-size:0.73rem;color:var(--text-muted);font-weight:700;line-height:1.2;">${key}</span>
+              <div style="display:flex;gap:0.08rem;">${renderReadOnlyStars(val)}</div>
+            </div>
+          `;
+        }).join("");
+
+        const notesHtml = ev.notes ? `
+          <div style="margin-top:0.45rem;padding-top:0.4rem;border-top:1px dashed rgba(200,161,90,0.13);font-size:0.75rem;color:var(--text-muted);line-height:1.5;">
+            <strong style="color:var(--gold);">ملاحظة:</strong> ${ev.notes}
+          </div>
+        ` : "";
+
+        const isGeneral = ev.activityType === "التقييم العام";
+        const iconClass = isGeneral ? "ph-user-focus" : "ph-book-open";
+        const pillColor = isGeneral
+          ? "background:rgba(13,92,70,0.08);color:var(--green-dark);"
+          : "background:rgba(200,161,90,0.1);color:#8b6914;";
+
+        sectionCards += `
+          <div style="background:#fff;border:1px solid rgba(200,161,90,0.15);border-radius:9px;padding:0.75rem 0.9rem;margin-bottom:0.55rem;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <div style="margin-bottom:0.55rem;">
+              <span style="${pillColor}border-radius:20px;padding:0.18rem 0.6rem;font-size:0.75rem;font-weight:800;display:inline-flex;align-items:center;gap:0.25rem;">
+                <i class="ph-bold ${iconClass}" style="font-size:0.8rem;"></i> ${ev.activityType}
+              </span>
+            </div>
+            ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.35rem;">${gridItemsHtml}</div>` : ""}
+            ${notesHtml}
           </div>
         `;
-      }).join("");
+      });
 
-      // ── Notes ─────────────────────────────────────────────────────────────
-      const notesHtml = ev.notes ? `
-        <div style="margin-top:0.5rem;padding-top:0.4rem;border-top:1px dashed rgba(200,161,90,0.13);font-size:0.76rem;color:var(--text-muted);line-height:1.5;">
-          <strong style="color:var(--gold);">ملاحظة:</strong> ${ev.notes}
-        </div>
-      ` : "";
-
-      // ── Section type pill ─────────────────────────────────────────────────
-      const isGeneral = ev.activityType === "التقييم العام";
-      const iconClass = isGeneral ? "ph-user-focus" : "ph-book-open";
-      const pillColor = isGeneral
-        ? "background:rgba(13,92,70,0.08);color:var(--green-dark);"
-        : "background:rgba(200,161,90,0.1);color:#8b6914;";
-      const circleLabel = ev.circleType ? `<span style="font-size:0.7rem;color:var(--text-muted);font-weight:600;">(${ev.circleType.split('،')[0]})</span>` : '';
-
-      evBlocks += `
-        <div style="background:#fff;border:1px solid rgba(200,161,90,0.18);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.7rem;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
-          <!-- header row -->
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.6rem;">
-            <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-              <span style="${pillColor}border-radius:20px;padding:0.18rem 0.6rem;font-size:0.76rem;font-weight:800;display:inline-flex;align-items:center;gap:0.25rem;">
-                <i class="ph-bold ${iconClass}" style="font-size:0.82rem;"></i> ${ev.activityType}
-              </span>
-              <span style="font-size:0.72rem;color:var(--text-muted);font-weight:700;">
-                <i class="ph-bold ph-calendar-blank" style="color:var(--gold);vertical-align:middle;"></i> ${ev.date}
-              </span>
-              ${circleLabel}
-            </div>
-            <span style="font-size:0.8rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.15rem 0.5rem;border-radius:6px;">
-              ${sectionPoints > 0 ? `+${sectionPoints} نقطة` : "—"}
+      // ── Session block wrapper ─────────────────────────────────────────────
+      allBlocks += `
+        <div style="margin-bottom:1rem;border:1px solid rgba(200,161,90,0.2);border-radius:10px;overflow:hidden;">
+          <!-- Session header -->
+          <div style="background:rgba(13,92,70,0.04);padding:0.5rem 0.9rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(200,161,90,0.15);">
+            <span style="font-size:0.8rem;font-weight:800;color:var(--green-dark);display:flex;align-items:center;gap:0.35rem;">
+              <i class="ph-bold ph-calendar-blank" style="color:var(--gold);"></i>
+              ${sessionDateLabel} ${sessionCircle}
+            </span>
+            <span style="font-size:0.78rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.1);padding:0.15rem 0.5rem;border-radius:6px;">
+              +${sessionPoints} نقطة
             </span>
           </div>
-          <!-- criteria grid -->
-          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.4rem;">${gridItemsHtml}</div>` : ""}
-          ${notesHtml}
+          <!-- Section cards -->
+          <div style="padding:0.7rem 0.8rem 0.4rem;">
+            ${sectionCards}
+            <!-- Session stars total -->
+            <div style="padding:0.45rem 0.7rem;background:linear-gradient(135deg,rgba(13,92,70,0.07),rgba(13,92,70,0.02));border:1px solid rgba(13,92,70,0.1);border-radius:7px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:0.76rem;color:var(--green-dark);font-weight:800;display:flex;align-items:center;gap:0.3rem;">
+                <i class="ph-bold ph-trophy" style="color:var(--gold);"></i> إجمالي الحصة
+              </span>
+              <div style="display:flex;align-items:center;gap:0.4rem;">
+                <div style="display:flex;gap:0.08rem;">${renderReadOnlyStars(sessionStars)}</div>
+                <span style="font-size:0.82rem;font-weight:900;color:var(--green-dark);">+${sessionPoints} نقطة</span>
+              </div>
+            </div>
+          </div>
         </div>
       `;
     });
-    return evBlocks;
+
+    return allBlocks;
   }
 
   function formatAyahCount(count) {

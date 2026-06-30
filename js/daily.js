@@ -295,19 +295,26 @@ document.addEventListener("DOMContentLoaded", () => {
       return html;
     }
 
+    // ── Calculate SESSION-LEVEL total using same formula as recalculateStudentRewards ──
+    // Average of section averages → round → cap 5 → ×2
+    const sectionAverages = filteredEvals.map(ev => {
+      let criteriaObj = {};
+      try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
+      const vals = Object.values(criteriaObj).map(v => parseInt(v) || 0);
+      return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    }).filter(avg => avg > 0);
+
+    const sessionStars = sectionAverages.length > 0
+      ? Math.min(5, Math.max(0, Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length)))
+      : 0;
+    const sessionPoints = sessionStars * 2;
+
     let evBlocks = "";
     filteredEvals.forEach(ev => {
       let criteriaObj = {};
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
 
       const criteriaKeys = Object.keys(criteriaObj);
-
-      // ── Recalculate points from criteria (accurate) ──────────────────────
-      const criteriaVals = criteriaKeys.map(k => parseInt(criteriaObj[k]) || 0);
-      const sectionStars = criteriaVals.length > 0
-        ? Math.min(5, Math.round(criteriaVals.reduce((a, b) => a + b, 0) / criteriaVals.length))
-        : 0;
-      const sectionPoints = sectionStars * 2;
 
       // ── Criteria grid ─────────────────────────────────────────────────────
       const gridItemsHtml = criteriaKeys.map(key => {
@@ -336,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       ` : "";
 
-      // ── Section type pill ─────────────────────────────────────────────────
+      // ── Section type pill (no per-section points shown) ───────────────────
       const isGeneral = ev.activityType === "التقييم العام";
       const iconClass  = isGeneral ? "ph-user-focus" : "ph-book-open";
       const pillColor  = isGeneral
@@ -345,13 +352,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       evBlocks += `
         <div style="background:#fff;border:1px solid rgba(200,161,90,0.18);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.75rem;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
-          <!-- header row -->
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem;">
+          <!-- header pill only — no per-section points -->
+          <div style="margin-bottom:0.65rem;">
             <span style="${pillColor}border-radius:20px;padding:0.2rem 0.65rem;font-size:0.78rem;font-weight:800;display:inline-flex;align-items:center;gap:0.3rem;">
               <i class="ph-bold ${iconClass}" style="font-size:0.85rem;"></i> ${ev.activityType}
-            </span>
-            <span style="font-size:0.82rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.18rem 0.55rem;border-radius:6px;">
-              ${sectionPoints > 0 ? `+${sectionPoints} نقطة` : "—"}
             </span>
           </div>
           <!-- criteria grid -->
@@ -361,7 +365,22 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     });
-    return evBlocks;
+
+    // ── Session total footer (matches recalculateStudentRewards exactly) ───
+    const sessionTotalHtml = `
+      <div style="margin-top:0.25rem;padding:0.6rem 1rem;background:linear-gradient(135deg,rgba(13,92,70,0.07),rgba(13,92,70,0.03));border:1px solid rgba(13,92,70,0.12);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <i class="ph-bold ph-trophy" style="color:var(--gold);font-size:1rem;"></i>
+          <span style="font-size:0.8rem;color:var(--green-dark);font-weight:800;">إجمالي نقاط هذه الحصة</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <div style="display:flex;gap:0.1rem;">${renderReadOnlyStars(sessionStars)}</div>
+          <span style="font-size:0.9rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.1);padding:0.2rem 0.6rem;border-radius:6px;">+${sessionPoints} نقطة</span>
+        </div>
+      </div>
+    `;
+
+    return evBlocks + sessionTotalHtml;
   }
 
   function buildQuranHtml(isAbsent, dateQuran, sessionCourses) {
