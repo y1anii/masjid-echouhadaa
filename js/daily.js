@@ -301,46 +301,63 @@ document.addEventListener("DOMContentLoaded", () => {
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
 
       const criteriaKeys = Object.keys(criteriaObj);
+
+      // ── Recalculate points from criteria (accurate) ──────────────────────
+      const criteriaVals = criteriaKeys.map(k => parseInt(criteriaObj[k]) || 0);
+      const sectionStars = criteriaVals.length > 0
+        ? Math.min(5, Math.round(criteriaVals.reduce((a, b) => a + b, 0) / criteriaVals.length))
+        : 0;
+      const sectionPoints = sectionStars * 2;
+
+      // ── Criteria grid ─────────────────────────────────────────────────────
       const gridItemsHtml = criteriaKeys.map(key => {
         const val = parseInt(criteriaObj[key]) || 0;
         return `
-          <div style="display:flex;flex-direction:column;gap:0.3rem;background:rgba(13,92,70,0.02);padding:0.6rem 0.75rem;border-radius:8px;border:1px solid rgba(200,161,90,0.12);">
-            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">${key}</span>
-            <div style="display:flex;gap:0.15rem;">${renderReadOnlyStars(val)}</div>
+          <div style="display:flex;flex-direction:column;gap:0.25rem;background:rgba(13,92,70,0.025);padding:0.5rem 0.65rem;border-radius:7px;border:1px solid rgba(200,161,90,0.1);">
+            <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;line-height:1.2;">${key}</span>
+            <div style="display:flex;gap:0.1rem;">${renderReadOnlyStars(val)}</div>
           </div>
         `;
       }).join("");
 
+      // ── Badges ────────────────────────────────────────────────────────────
       const badgesGranted = Array.isArray(ev.badgesGranted) ? ev.badgesGranted : [];
       const badgesHtml = badgesGranted.length > 0 ? `
-        <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px dashed rgba(200,161,90,0.2);">
-          <span style="font-size:0.75rem;color:var(--gold);font-weight:800;display:block;margin-bottom:0.35rem;">الشارات الممنوحة:</span>
-          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-            ${badgesGranted.map(b => `<span style="background:rgba(200,161,90,0.1);color:var(--gold);border:1.5px solid rgba(200,161,90,0.3);border-radius:6px;padding:0.2rem 0.55rem;font-size:0.73rem;font-weight:800;">🏅 ${b}</span>`).join("")}
-          </div>
+        <div style="margin-top:0.6rem;padding-top:0.45rem;border-top:1px dashed rgba(200,161,90,0.18);display:flex;flex-wrap:wrap;gap:0.3rem;align-items:center;">
+          <span style="font-size:0.72rem;color:var(--gold);font-weight:800;">الشارات:</span>
+          ${badgesGranted.map(b => `<span style="background:rgba(200,161,90,0.1);color:var(--gold);border:1.5px solid rgba(200,161,90,0.28);border-radius:20px;padding:0.15rem 0.5rem;font-size:0.72rem;font-weight:800;">🏅 ${b}</span>`).join("")}
         </div>
       ` : "";
 
+      // ── Notes ─────────────────────────────────────────────────────────────
       const notesHtml = ev.notes ? `
-        <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(200,161,90,0.15);font-size:0.8rem;color:var(--text-muted);">
-          <strong style="color:var(--gold);">ملاحظة المشرف:</strong> ${ev.notes}
+        <div style="margin-top:0.5rem;padding-top:0.45rem;border-top:1px dashed rgba(200,161,90,0.13);font-size:0.77rem;color:var(--text-muted);line-height:1.55;">
+          <strong style="color:var(--gold);">ملاحظة:</strong> ${ev.notes}
         </div>
       ` : "";
 
-      const iconClass = ev.activityType === "التقييم العام" ? "ph-user-focus" : "ph-book-open";
+      // ── Section type pill ─────────────────────────────────────────────────
+      const isGeneral = ev.activityType === "التقييم العام";
+      const iconClass  = isGeneral ? "ph-user-focus" : "ph-book-open";
+      const pillColor  = isGeneral
+        ? "background:rgba(13,92,70,0.08);color:var(--green-dark);"
+        : "background:rgba(200,161,90,0.1);color:#8b6914;";
 
       evBlocks += `
-        <div style="background:#fff;border:1px solid rgba(200,161,90,0.2);border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.9rem;box-shadow:0 1px 6px rgba(0,0,0,0.05);">
-          <h4 style="color:var(--green-dark);font-size:0.92rem;border-right:3px solid var(--gold);padding-right:0.6rem;margin:0 0 0.75rem 0;font-weight:900;display:flex;align-items:center;gap:0.4rem;">
-            <i class="ph-bold ${iconClass}" style="color:var(--gold);"></i> ${ev.activityType}
-          </h4>
-          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;">${gridItemsHtml}</div>` : ""}
+        <div style="background:#fff;border:1px solid rgba(200,161,90,0.18);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.75rem;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+          <!-- header row -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem;">
+            <span style="${pillColor}border-radius:20px;padding:0.2rem 0.65rem;font-size:0.78rem;font-weight:800;display:inline-flex;align-items:center;gap:0.3rem;">
+              <i class="ph-bold ${iconClass}" style="font-size:0.85rem;"></i> ${ev.activityType}
+            </span>
+            <span style="font-size:0.82rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.18rem 0.55rem;border-radius:6px;">
+              ${sectionPoints > 0 ? `+${sectionPoints} نقطة` : "—"}
+            </span>
+          </div>
+          <!-- criteria grid -->
+          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.4rem;">${gridItemsHtml}</div>` : ""}
           ${badgesHtml}
           ${notesHtml}
-          <div style="margin-top:0.7rem;padding-top:0.5rem;border-top:1px solid rgba(13,92,70,0.06);display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">النقاط المحصلة في القسم:</span>
-            <span style="font-size:0.88rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.2rem 0.6rem;border-radius:6px;">${ev.points} نقطة</span>
-          </div>
         </div>
       `;
     });

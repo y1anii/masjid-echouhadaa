@@ -180,26 +180,77 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
+    // Helper: render N read-only stars out of 5
+    function renderReadOnlyStars(value) {
+      let html = "";
+      for (let i = 1; i <= 5; i++) {
+        html += i <= value
+          ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.15rem;"></i>`
+          : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.15rem;"></i>`;
+      }
+      return html;
+    }
+
     let evBlocks = "";
     filteredEvals.forEach(ev => {
       let criteriaObj = {};
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
 
-      let starsDetails = Object.keys(criteriaObj).map(key => {
-        return `${key}: <strong>${criteriaObj[key]} <i class="ph-fill ph-star" style="color: var(--gold); vertical-align: middle;"></i></strong>`;
-      }).join(" | ");
+      const criteriaKeys = Object.keys(criteriaObj);
+
+      // ── Recalculate points from criteria ─────────────────────────────────
+      const criteriaVals = criteriaKeys.map(k => parseInt(criteriaObj[k]) || 0);
+      const sectionStars = criteriaVals.length > 0
+        ? Math.min(5, Math.round(criteriaVals.reduce((a, b) => a + b, 0) / criteriaVals.length))
+        : 0;
+      const sectionPoints = sectionStars * 2;
+
+      // ── Criteria grid ─────────────────────────────────────────────────────
+      const gridItemsHtml = criteriaKeys.map(key => {
+        const val = parseInt(criteriaObj[key]) || 0;
+        return `
+          <div style="display:flex;flex-direction:column;gap:0.25rem;background:rgba(13,92,70,0.025);padding:0.5rem 0.65rem;border-radius:7px;border:1px solid rgba(200,161,90,0.1);">
+            <span style="font-size:0.74rem;color:var(--text-muted);font-weight:700;line-height:1.2;">${key}</span>
+            <div style="display:flex;gap:0.1rem;">${renderReadOnlyStars(val)}</div>
+          </div>
+        `;
+      }).join("");
+
+      // ── Notes ─────────────────────────────────────────────────────────────
+      const notesHtml = ev.notes ? `
+        <div style="margin-top:0.5rem;padding-top:0.4rem;border-top:1px dashed rgba(200,161,90,0.13);font-size:0.76rem;color:var(--text-muted);line-height:1.5;">
+          <strong style="color:var(--gold);">ملاحظة:</strong> ${ev.notes}
+        </div>
+      ` : "";
+
+      // ── Section type pill ─────────────────────────────────────────────────
+      const isGeneral = ev.activityType === "التقييم العام";
+      const iconClass = isGeneral ? "ph-user-focus" : "ph-book-open";
+      const pillColor = isGeneral
+        ? "background:rgba(13,92,70,0.08);color:var(--green-dark);"
+        : "background:rgba(200,161,90,0.1);color:#8b6914;";
+      const circleLabel = ev.circleType ? `<span style="font-size:0.7rem;color:var(--text-muted);font-weight:600;">(${ev.circleType.split('،')[0]})</span>` : '';
 
       evBlocks += `
-        <div class="details-block" style="margin-bottom: 0.75rem;">
-          <div class="details-block-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.2rem;">
-            <span style="font-weight: 800; font-size: 0.9rem; color: var(--green-dark);"><i class="ph ph-calendar-blank" style="vertical-align: middle; color: var(--gold);"></i> ${ev.date} — ${ev.activityType}</span>
-            ${ev.circleType ? `<span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">(${ev.circleType.split('،')[0]})</span>` : ''}
+        <div style="background:#fff;border:1px solid rgba(200,161,90,0.18);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.7rem;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+          <!-- header row -->
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.6rem;">
+            <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+              <span style="${pillColor}border-radius:20px;padding:0.18rem 0.6rem;font-size:0.76rem;font-weight:800;display:inline-flex;align-items:center;gap:0.25rem;">
+                <i class="ph-bold ${iconClass}" style="font-size:0.82rem;"></i> ${ev.activityType}
+              </span>
+              <span style="font-size:0.72rem;color:var(--text-muted);font-weight:700;">
+                <i class="ph-bold ph-calendar-blank" style="color:var(--gold);vertical-align:middle;"></i> ${ev.date}
+              </span>
+              ${circleLabel}
+            </div>
+            <span style="font-size:0.8rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.15rem 0.5rem;border-radius:6px;">
+              ${sectionPoints > 0 ? `+${sectionPoints} نقطة` : "—"}
+            </span>
           </div>
-          <div class="details-block-val" style="font-size: 0.82rem;">
-            ${starsDetails}
-            ${ev.notes ? `<br><strong style="color: var(--gold);">ملاحظة:</strong> ${ev.notes}` : ""}
-            <br><strong style="color: var(--green);">النقاط المحصلة:</strong> ${ev.points} نقطة
-          </div>
+          <!-- criteria grid -->
+          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.4rem;">${gridItemsHtml}</div>` : ""}
+          ${notesHtml}
         </div>
       `;
     });
