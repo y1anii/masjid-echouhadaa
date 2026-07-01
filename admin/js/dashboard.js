@@ -51,16 +51,35 @@ runWhenReady(() => {
       totalSessionsEl.textContent = data.totalSessions;
       attendanceRateEl.textContent = `${data.attendanceRate}%`;
 
+      // العدادات الإضافية الموسعة
+      const braemEl = document.getElementById("dash-total-braem");
+      const ashbalEl = document.getElementById("dash-total-ashbal");
+      const adultsEl = document.getElementById("dash-total-adults");
+      const genderEl = document.getElementById("dash-gender-split");
+
+      if (braemEl) braemEl.textContent = data.totalBraem || 0;
+      if (ashbalEl) ashbalEl.textContent = data.totalAshbal || 0;
+      if (adultsEl) adultsEl.textContent = data.totalAdults || 0;
+      if (genderEl) genderEl.textContent = `ذكور: ${data.totalMales || 0} | إناث: ${data.totalFemales || 0}`;
+
       // 2. تفعيل التبديل بين قوائم المتفوقين
       setupDashboardLeaderboards();
       
       // 3. عرض جدول الترتيب العام
       renderRanksTable(data.allRanks);
 
-      // 4. عرض شهادات التقدير (إن كانت الدورة منتهية)
+      // 4. عرض تفاصيل الحفظ والانتظام
+      renderHizbBreakdown(data.hizbBreakdown);
+      renderTopCircles(data.topCircles);
+      renderRegularStudents(data.topRegularStudents);
+
+      // 5. عرض سجل العمليات الرقابي
+      loadAuditLogs();
+
+      // 6. عرض شهادات التقدير (إن كانت الدورة منتهية)
       renderAppreciationList();
 
-      // 5. تحميل بيانات لوحة الشرف الأسبوعية
+      // 7. تحميل بيانات لوحة الشرف الأسبوعية
       loadWeeklyHonorBoardData();
 
     } catch (err) {
@@ -886,5 +905,155 @@ runWhenReady(() => {
   // Load Dashboard Data
   loadDashboard();
 
-  // (poster scale no longer needed — auto calculation replaces graphic poster)
+  // --- Detailed Statistics Render Helpers ---
+  function renderHizbBreakdown(breakdown) {
+    const container = document.getElementById("stats-hizb-breakdown");
+    if (!container) return;
+
+    if (!breakdown) {
+      container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">لا تتوفر بيانات حالياً.</p>`;
+      return;
+    }
+
+    const categories = [
+      { key: "0_hizb", label: "مبتدئ / لم يبدأ بعد", color: "#6b7280" },
+      { key: "1_5_hizb", label: "حفظ من 1 إلى 5 أحزاب", color: "#3b82f6" },
+      { key: "6_10_hizb", label: "حفظ من 6 إلى 10 أحزاب", color: "#10b981" },
+      { key: "11_20_hizb", label: "حفظ من 11 إلى 20 حزباً", color: "#f59e0b" },
+      { key: "21_30_hizb", label: "حفظ من 21 إلى 30 حزباً", color: "#8b5cf6" },
+      { key: "30_plus", label: "حفظ أكثر من 30 حزباً (أكثر من نصف المصحف)", color: "#d97706" }
+    ];
+
+    const total = Object.values(breakdown).reduce((a, b) => a + b, 0) || 1;
+
+    let html = "";
+    categories.forEach(cat => {
+      const count = breakdown[cat.key] || 0;
+      const percent = Math.round((count / total) * 100);
+      html += `
+        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-dark);">
+            <span>${cat.label}</span>
+            <span>${count} طالب (${percent}%)</span>
+          </div>
+          <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; width: 100%;">
+            <div style="background: ${cat.color}; width: ${percent}%; height: 100%; border-radius: 4px; transition: width 0.5s ease-in-out;"></div>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderTopCircles(circles) {
+    const container = document.getElementById("stats-top-circles");
+    if (!container) return;
+
+    if (!circles || circles.length === 0) {
+      container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.8rem;">لا توجد حلقات نشطة حالياً.</p>`;
+      return;
+    }
+
+    let html = "";
+    circles.slice(0, 5).forEach((c, idx) => {
+      let icon = "ph-users";
+      if (c.name.includes("البراعم")) icon = "ph-baby";
+      else if (c.name.includes("الأشبال")) icon = "ph-student";
+      else if (c.name.includes("الكبار")) icon = "ph-users-three";
+
+      html += `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px dashed rgba(0,0,0,0.05);">
+          <span style="font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.35rem; color: var(--text-dark);">
+            <i class="ph-bold ${icon}" style="color: var(--green);"></i> ${c.name}
+          </span>
+          <span class="badge" style="background: rgba(13, 92, 70, 0.1); color: var(--green-dark); font-weight: 800; font-size: 0.75rem;">
+            ${c.count} حصة نشطة
+          </span>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderRegularStudents(students) {
+    const container = document.getElementById("stats-regular-students");
+    if (!container) return;
+
+    if (!students || students.length === 0) {
+      container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.8rem;">لا توجد بيانات حضور كافية.</p>`;
+      return;
+    }
+
+    let html = "";
+    students.forEach((s, idx) => {
+      html += `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px dashed rgba(0,0,0,0.05);">
+          <span style="font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.35rem; color: var(--text-dark);">
+            <span style="color: var(--gold); font-weight: 900;">#${idx+1}</span> ${s.name}
+          </span>
+          <span style="color: #10b981; font-weight: 800; font-size: 0.78rem;">
+            ${s.rate}% حضور (${s.sessions} حصص)
+          </span>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  async function loadAuditLogs() {
+    const section = document.getElementById("audit-log-section");
+    const tbody = document.getElementById("audit-log-table-body");
+    if (!section || !tbody) return;
+
+    const hasAccess = window.DB.hasFullAccess();
+    if (!hasAccess) {
+      section.style.display = "none";
+      return;
+    }
+
+    section.style.display = "block";
+
+    try {
+      const logs = await window.DB.getAuditLogs();
+      let html = "";
+      logs.forEach(data => {
+        let roleText = "مسؤول";
+        if (data.role === "Imam" || data.role === "الإمام") roleText = "الإمام 👑";
+        else if (data.role === "Teacher" || data.role === "مدرس التعليم القرآني") roleText = "مدرس 📖";
+        else if (data.role === "Guide" || data.role === "المرشدة الدينية") roleText = "مرشدة 👤";
+        else if (data.role === "Admin") roleText = "مدير الإدارة 🛡️";
+
+        const logDate = data.timestamp ? new Date(data.timestamp).toLocaleString("ar-DZ") : data.dateStr;
+        
+        let details = "لا توجد تفاصيل";
+        if (data.after) {
+          try {
+            const parsed = JSON.parse(data.after);
+            details = parsed.name || parsed.id || parsed.assignedCircle || JSON.stringify(parsed);
+          } catch(e) {
+            details = data.after;
+          }
+        }
+
+        html += `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 0.65rem 1rem; font-weight: 700; color: #1e293b;">${data.user}</td>
+            <td style="padding: 0.65rem 1rem; color: #475569;">${roleText}</td>
+            <td style="padding: 0.65rem 1rem; font-weight: 700; color: var(--green-dark);">${data.action}</td>
+            <td style="padding: 0.65rem 1rem; color: #64748b; direction: ltr; text-align: right;">${logDate}</td>
+            <td style="padding: 0.65rem 1rem; color: #64748b; font-size: 0.8rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${data.after || ''}">${details}</td>
+          </tr>
+        `;
+      });
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">لا توجد عمليات مسجلة في السجل بعد.</td></tr>`;
+      } else {
+        tbody.innerHTML = html;
+      }
+    } catch(err) {
+      console.warn("[Dashboard] Could not fetch audit logs:", err);
+      tbody.innerHTML = `<tr><td colspan="5" style="padding: 1.5rem; text-align: center; color: #ef4444;">تعذر تحميل السجل.</td></tr>`;
+    }
+  }
 });

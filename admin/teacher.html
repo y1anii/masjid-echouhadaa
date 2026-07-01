@@ -396,33 +396,33 @@
               <div id="children-agenda-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
                 <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
                   <input type="checkbox" id="agenda-quran" checked style="width: 18px; height: 18px; accent-color: var(--green);" />
-                  <span>حفظ القرآن ومراجعته</span>
+                  <span>القرآن الكريم (حفظ ومراجعة)</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
                   <input type="checkbox" id="agenda-creed" style="width: 18px; height: 18px; accent-color: var(--green);" />
-                  <span>دروس في العقيدة والسلوك</span>
+                  <span>الدروس العلمية</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-prophets" style="width: 18px; height: 18px; accent-color: var(--green);" />
-                  <span>قصص الأنبياء عليهم السلام</span>
+                  <span>قصص الأنبياء</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-catchup" style="width: 18px; height: 18px; accent-color: var(--green);" />
-                  <span>استدراك الحفظ ومراجعة القرآن</span>
+                  <span>استدراك الحفظ</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
                   <input type="checkbox" id="agenda-culture" style="width: 18px; height: 18px; accent-color: var(--green);" />
-                  <span>مسابقات ثقافية</span>
+                  <span>المسابقات الثقافية</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-health" style="width: 18px; height: 18px; accent-color: var(--green);" />
                   <span>جلسات الصحة الجسمية</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-quran-comp" style="width: 18px; height: 18px; accent-color: var(--green);" />
                   <span>مسابقات قرآنية</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-sports" style="width: 18px; height: 18px; accent-color: var(--green);" />
                   <span>نشاطات رياضية</span>
                 </label>
@@ -432,13 +432,13 @@
               <div id="adults-agenda-section" style="display: none; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
                 <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
                   <input type="checkbox" id="agenda-adult-quran" checked style="width: 18px; height: 18px; accent-color: var(--green);" />
-                  <span>تحفيظ القرآن</span>
+                  <span>تحفيظ القرآن ومراجعته</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-adult-tajweed" style="width: 18px; height: 18px; accent-color: var(--green);" />
                   <span>علوم التجويد</span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--green-dark); cursor: pointer; display: none;">
                   <input type="checkbox" id="agenda-adult-sharia" style="width: 18px; height: 18px; accent-color: var(--green);" />
                   <span>الدروس الشرعية</span>
                 </label>
@@ -564,8 +564,12 @@
     </div>
 
     <!-- Floating actions when session active -->
-    <div id="session-floating-bar" class="floating-action-container" style="display: none;">
-      <button id="submit-batch-btn" class="floating-action-btn btn-primary-float">
+    <div id="session-floating-bar" class="floating-action-container" style="display: none; align-items: center; gap: 1rem; padding: 0.75rem 1.5rem; border-radius: 50px; background: rgba(13,92,70,0.95); box-shadow: var(--shadow-lg); backdrop-filter: blur(8px); bottom: 1.5rem; right: 1.5rem; left: auto; transform: none; width: auto;">
+      <div id="autosave-indicator" style="color: white; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 0.35rem; direction: rtl;">
+        <i class="ph-bold ph-check-circle" style="color: #10b981;"></i>
+        <span>تم الحفظ محلياً</span>
+      </div>
+      <button id="submit-batch-btn" class="floating-action-btn btn-primary-float" style="margin: 0; padding: 0.5rem 1.25rem; font-size: 0.9rem; height: auto; border-radius: 25px;">
         <i class="ph-bold ph-cloud-arrow-up"></i> إنهاء الحلقة وإرسال التقارير
       </button>
     </div>

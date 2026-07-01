@@ -157,7 +157,7 @@
 <label for="studentName">اسم الطالب كامل</label>
 <input type="text" id="studentName" required placeholder="الاسم واللقب" />
 </div>
-<div class="form-field">
+<div class="form-field" id="student-gender-wrapper">
 <label for="studentGender">الجنس</label>
 <select id="studentGender" required style="width: 100%;">
 <option value="ذكر" selected>ذكر</option>
@@ -171,14 +171,14 @@
 <label for="ageGroup">الفئة العمرية</label>
 <select id="ageGroup" required>
 <option value="" disabled selected>اختر الفئة العمرية</option>
-<option value="أشبال (6 - 11 سنة)">أشبال (6 - 11 سنة)</option>
-<option value="شباب (12 - 18 سنة)">شباب (12 - 18 سنة)</option>
-<option value="كبار (أكثر من 18 سنة)">كبار (أكثر من 18 سنة)</option>
+<option value="براعم">براعم (4 - 7 سنوات)</option>
+<option value="أشبال">أشبال (8 - 14 سنة)</option>
+<option value="كبار">كبار (أكثر من 14 سنة)</option>
 </select>
 </div>
 <div class="form-field">
 <label for="age">السن (بالسنوات)</label>
-<input type="number" id="age" min="5" max="90" required placeholder="مثال: 10" />
+<input type="number" id="age" min="4" max="90" required placeholder="مثال: 10" />
 </div>
 </div>
 
@@ -200,7 +200,7 @@
 </div>
 </div>
 
-<div class="form-field">
+<div class="form-field" id="parent-name-wrapper">
 <label for="parentName">اسم ولي الأمر</label>
 <input type="text" id="parentName" required placeholder="الاسم الكامل لولي الأمر" />
 </div>
@@ -371,6 +371,52 @@
     <script src="js/main.js?v=52"></script>
     <script type="module" src="admin/js/db.js?v=40"></script>
     <script type="module">
+      const ageGroupSelect = document.getElementById("ageGroup");
+      const ageInput = document.getElementById("age");
+      const genderWrapper = document.getElementById("student-gender-wrapper");
+      const genderSelect = document.getElementById("studentGender");
+      const parentNameWrapper = document.getElementById("parent-name-wrapper");
+      const parentNameInput = document.getElementById("parentName");
+
+      const handleAgeGroupChange = () => {
+        const val = ageGroupSelect.value;
+        if (val === "براعم") {
+          genderWrapper.style.display = "none";
+          genderSelect.value = "ذكر"; // fallback for routing
+          genderSelect.required = false;
+          ageInput.min = 4;
+          ageInput.max = 7;
+          parentNameWrapper.style.display = "block";
+          parentNameInput.required = true;
+          if (parentNameInput.value === "كبير (نفسه)") {
+            parentNameInput.value = "";
+          }
+        } else if (val === "أشبال") {
+          genderWrapper.style.display = "block";
+          genderSelect.required = true;
+          ageInput.min = 8;
+          ageInput.max = 14;
+          parentNameWrapper.style.display = "block";
+          parentNameInput.required = true;
+          if (parentNameInput.value === "كبير (نفسه)") {
+            parentNameInput.value = "";
+          }
+        } else if (val === "كبار") {
+          genderWrapper.style.display = "block";
+          genderSelect.required = true;
+          ageInput.min = 15;
+          ageInput.max = 90;
+          parentNameWrapper.style.display = "none";
+          parentNameInput.value = "كبير (نفسه)";
+          parentNameInput.required = false;
+        }
+      };
+
+      if (ageGroupSelect) {
+        ageGroupSelect.addEventListener("change", handleAgeGroupChange);
+        handleAgeGroupChange();
+      }
+
       document.getElementById('student-register-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -399,11 +445,17 @@
         let finalStudentId = "";
 
         try {
-          if (!window.DB || !window.DB.registerStudent) {
+          if (!window.DB || !window.DB.registerStudent || !window.DB.registerAdultParticipant) {
             throw new Error("قاعدة البيانات غير مهيأة بعد.");
           }
-          const res = await window.DB.registerStudent(studentData, false);
-          finalStudentId = res;
+          
+          if (studentData.ageGroup === "كبار") {
+            const res = await window.DB.registerAdultParticipant(studentData);
+            finalStudentId = res;
+          } else {
+            const res = await window.DB.registerStudent(studentData, false);
+            finalStudentId = res;
+          }
           console.log("[Register] Registered successfully with Firestore ID:", finalStudentId);
         } catch (error) {
           console.error('Registration failed:', error);

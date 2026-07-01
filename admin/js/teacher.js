@@ -365,8 +365,8 @@ runWhenReady(() => {
       const val = circleCategory.value;
       if (val === "الكبار") {
         circleGroupType.innerHTML = `
-          <option value="رجال" selected>ذكور</option>
-          <option value="نساء">إناث</option>
+          <option value="حلقة الكبار - ذكور" selected>حلقة الكبار - ذكور</option>
+          <option value="حلقة الكبار - إناث">حلقة الكبار - إناث</option>
         `;
         if (circlePeriod) {
           circlePeriod.innerHTML = `
@@ -378,9 +378,9 @@ runWhenReady(() => {
         if (adultsAgendaSection) adultsAgendaSection.style.display = "grid";
       } else {
         circleGroupType.innerHTML = `
-          <option value="حلقة ذكور" selected>حلقة ذكور</option>
-          <option value="حلقة إناث">حلقة إناث</option>
-          <option value="حلقة مشتركة">حلقة مشتركة</option>
+          <option value="حلقة البراعم (مختلطة)" selected>حلقة البراعم (مختلطة)</option>
+          <option value="حلقة الأشبال - ذكور">حلقة الأشبال - ذكور</option>
+          <option value="حلقة الأشبال - إناث">حلقة الأشبال - إناث</option>
         `;
         if (circlePeriod) {
           circlePeriod.innerHTML = `
@@ -408,7 +408,7 @@ runWhenReady(() => {
     const category = circleCategory.value;
     const period = circlePeriod.value;
     const groupType = circleGroupType.value;
-    const circle = `${groupType} - ${period}`;
+    const circle = groupType.includes("البراعم") || groupType.includes("الأشبال") || groupType.includes("الكبار") ? groupType : `${groupType} - ${period}`;
     const supervisor = supervisorNameInput.value.trim();
     const dateStr = sessionDateInput.value;
 
@@ -609,7 +609,7 @@ runWhenReady(() => {
     filtered.forEach(s => {
       const card = document.createElement("div");
       card.className = "teacher-student-card";
-      
+
       const rep = reportsData[s.id];
       let statusBadgeHtml = `<span class="status-badge" style="color: var(--text-muted);">⏳ قيد الانتظار</span>`;
       let starsHtml = "";
@@ -626,7 +626,11 @@ runWhenReady(() => {
         } else {
           card.classList.add("provisional");
           statusBadgeHtml = `<span class="status-badge" style="color: var(--green); display: inline-flex; align-items: center; gap: 0.25rem;"><i class="ph-bold ph-check-circle"></i> رصد مؤقت</span>`;
-          starsHtml = `<div class="stars-counter"><i class="ph-fill ph-star"></i> <span>${rep.totalStarsEarned}</span></div>`;
+          if (s.id && s.id.startsWith("AD")) {
+            starsHtml = `<div class="stars-counter" style="color:var(--green);"><i class="ph-bold ph-check"></i> تم التقييم</div>`;
+          } else {
+            starsHtml = `<div class="stars-counter"><i class="ph-fill ph-star"></i> <span>${rep.totalStarsEarned}</span></div>`;
+          }
         }
       }
 
@@ -643,7 +647,7 @@ runWhenReady(() => {
             <span class="student-card-level ${levelClass}">${s.level || 'برونزي'}</span>
           </div>
           <div class="student-card-meta">
-            <span><strong>معرف الطالب:</strong> ${s.id}</span>
+            <span><strong>المعرف:</strong> ${s.id}</span>
             <span><strong>السن:</strong> ${s.age ? s.age + ' سنة' : '-'} | <strong>المستوى القرآني:</strong> ${s.quranLevel || '-'}</span>
           </div>
         </div>
@@ -652,8 +656,6 @@ runWhenReady(() => {
           ${starsHtml}
         </div>
       `;
-
-
 
       card.addEventListener("click", () => {
         openEvaluationModal(s);
@@ -665,22 +667,20 @@ runWhenReady(() => {
     updateCounts();
   }
 
-
-
   function updateCounts() {
     totalCount.textContent = allStudents.length;
     const rated = Object.keys(reportsData).length;
     ratedCount.textContent = rated;
   }
 
-  // Filter listener
   studentFilter.addEventListener("input", renderStudentsGrid);
 
-  // --- Dynamic Evaluation Modal logic ---
   function openEvaluationModal(student) {
     currentEvalStudent = student;
     evalStudentName.textContent = student.name;
     evalStudentId.textContent = `المعرف: ${student.id} | السن: ${student.age || '-'} سنة | مستوى: ${student.quranLevel || '-'}`;
+
+    const rep = reportsData[student.id];
 
     const rep = reportsData[student.id];
 
@@ -692,40 +692,130 @@ runWhenReady(() => {
       
       if (student.id && student.id.startsWith("AD")) {
         // Populate adult fields
-        const adultCourseEl = document.getElementById("eval-adult-course");
         const adultTypeEl = document.getElementById("eval-adult-type");
         const adultSurahEl = document.getElementById("eval-adult-surah");
         const adultFromEl = document.getElementById("eval-adult-from");
         const adultToEl = document.getElementById("eval-adult-to");
         const adultNotesEl = document.getElementById("eval-adult-notes");
 
-        if (adultCourseEl) {
-          adultCourseEl.value = rep.courseName || "تحفيظ القرآن";
-          // Dispatch change event to toggle the fields
-          adultCourseEl.dispatchEvent(new Event("change"));
+        if (adultTypeEl) {
+          adultTypeEl.value = rep.activityType || "حفظ جديد";
+          adultTypeEl.dispatchEvent(new Event("change"));
         }
-        if (adultTypeEl) adultTypeEl.value = rep.activityType || "حفظ";
         if (adultSurahEl) adultSurahEl.value = rep.surah || "";
         if (adultFromEl) adultFromEl.value = rep.fromVerse || "";
         if (adultToEl) adultToEl.value = rep.toVerse || "";
         if (adultNotesEl) adultNotesEl.value = rep.notes || "";
 
-        if (rep.courseName === "تحفيظ القرآن" || (!rep.courseName && rep.activityType)) {
-          setStarValue("adult-quran", rep.stars || 0);
-        } else if (rep.courseName === "علوم التجويد" || rep.courseName === "علم التجويد") {
-          setStarValue("adult-tajweed", rep.stars || 0);
+        if (rep.grades) {
+          if (rep.activityType === "مراجعة") {
+            const levelEl = document.getElementById("metric-adult-rev-level");
+            if (levelEl) levelEl.value = rep.grades.revLevel || "ممتاز";
+            const focusEl = document.getElementById("metric-adult-rev-focus");
+            if (focusEl) focusEl.value = rep.grades.focus || "ممتاز";
+            const tajweedEl = document.getElementById("metric-adult-rev-tajweed");
+            if (tajweedEl) tajweedEl.value = rep.grades.tajweed || "ممتاز";
+          } else {
+            const qtyEl = document.getElementById("metric-adult-hifz-qty");
+            if (qtyEl) qtyEl.value = rep.grades.qty || "ممتاز";
+            const focusEl = document.getElementById("metric-adult-hifz-focus");
+            if (focusEl) focusEl.value = rep.grades.focus || "ممتاز";
+            const tajweedEl = document.getElementById("metric-adult-hifz-tajweed");
+            if (tajweedEl) tajweedEl.value = rep.grades.tajweed || "ممتاز";
+          }
         }
       } else {
-        // Populate general stars
-        setStarValue("behavior", rep.generalCriteria ? (rep.generalCriteria["السلوك"] || 0) : 0);
-        setStarValue("discipline", rep.generalCriteria ? (rep.generalCriteria["الانضباط"] || 0) : 0);
-        setStarValue("respect", rep.generalCriteria ? (rep.generalCriteria["الاحترام والآداب"] || 0) : 0);
-        setStarValue("participation", rep.generalCriteria ? (rep.generalCriteria["المشاركة العامة"] || 0) : 0);
+        // Populate child fields
+        if (rep.generalCriteria) {
+          setStarValue("behavior", rep.generalCriteria["السلوك"] || 0);
+          setStarValue("discipline", rep.generalCriteria["الانضباط"] || 0);
+        }
         
         const genNotesInput = document.getElementById("metric-notes-general");
         if (genNotesInput) genNotesInput.value = rep.notes || "";
 
         // Populate quran progress (if active)
+        if (rep.quranProgress && agendaQuran.checked) {
+          const surahEl = document.getElementById("eval-quran-surah");
+          const fromEl = document.getElementById("eval-quran-from");
+          const toEl = document.getElementById("eval-quran-to");
+          const countEl = document.getElementById("eval-quran-count");
+          const typeEl = document.getElementById("eval-quran-type");
+          const notesEl = document.getElementById("metric-notes-quran");
+
+          if (surahEl) surahEl.value = rep.quranProgress.surah || "";
+          if (fromEl) fromEl.value = rep.quranProgress.fromVerse || "";
+          if (toEl) toEl.value = rep.quranProgress.toVerse || "";
+          if (fromEl && toEl && countEl) {
+            countEl.value = (parseInt(toEl.value) - parseInt(fromEl.value) + 1) || "";
+          }
+          if (typeEl) {
+            typeEl.value = rep.quranProgress.type || "حفظ جديد";
+            typeEl.dispatchEvent(new Event("change"));
+          }
+          if (notesEl) notesEl.value = rep.quranProgress.notes || "";
+
+          // Populate Quran stars
+          if (rep.courseEvaluations && Array.isArray(rep.courseEvaluations)) {
+            const qEval = rep.courseEvaluations.find(c => c.courseName === "حفظ القرآن ومراجعته");
+            if (qEval && qEval.criteria) {
+              const qtyRevVal = qEval.criteria["مقدار الحفظ / مستوى المراجعة"] || 0;
+              const focusVal = qEval.criteria["التركيز"] || 0;
+              const tajweedVal = qEval.criteria["التجويد"] || 0;
+
+              if (rep.quranProgress.type === "مراجعة") {
+                setStarValue("quran-مستوى المراجعة", qtyRevVal);
+                setStarValue("quran-التركيز-مراجعة", focusVal);
+                setStarValue("quran-التجويد-مراجعة", tajweedVal);
+              } else {
+                setStarValue("quran-مقدار الحفظ", qtyRevVal);
+                setStarValue("quran-التركيز", focusVal);
+                setStarValue("quran-التجويد", tajweedVal);
+              }
+            }
+          }
+        }
+
+        // Populate other courses
+        if (rep.courseEvaluations && Array.isArray(rep.courseEvaluations)) {
+          // Scientific lessons
+          if (agendaCreed.checked) {
+            const cEval = rep.courseEvaluations.find(c => c.courseName === "الدروس العلمية");
+            if (cEval) {
+              const typeEl = document.getElementById("eval-creed-lesson-type");
+              if (typeEl) typeEl.value = cEval.lessonType || "السلوك";
+              const partEl = document.getElementById("eval-creed-participated");
+              if (partEl) partEl.checked = cEval.participated || false;
+              const notesEl = document.getElementById("metric-notes-creed");
+              if (notesEl) notesEl.value = cEval.notes || "";
+            }
+          }
+
+          // Cultural competitions
+          if (agendaCulture.checked) {
+            const cEval = rep.courseEvaluations.find(c => c.courseName === "المسابقات الثقافية");
+            if (cEval) {
+              const partEl = document.getElementById("eval-culture-participated");
+              if (partEl) partEl.checked = cEval.participated || false;
+              const notesEl = document.getElementById("metric-notes-culture");
+              if (notesEl) notesEl.value = cEval.notes || "";
+            }
+          }
+        }
+
+        // Populate manual stars earned
+        const starsEarnedInput = document.getElementById("eval-stars-earned");
+        if (starsEarnedInput) {
+          starsEarnedInput.value = rep.totalStarsEarned || 0;
+        }
+      }
+    }
+    const attendanceRow = document.getElementById("eval-attendance-row");
+    if (attendanceRow) attendanceRow.style.display = "block";
+
+    handleAttendanceToggle();
+    updatePointsSummary();
+  })
         if (rep.quranProgress && agendaQuran.checked) {
           document.getElementById("eval-quran-surah").value = rep.quranProgress.surah || "";
           document.getElementById("eval-quran-from").value = rep.quranProgress.fromVerse || "";
@@ -787,165 +877,150 @@ runWhenReady(() => {
     updatePointsSummary();
   });
 
-  /**
-   * بناء الحقول الديناميكية في النموذج حسب المقررات النشطة
-   */
+  function renderAdultGradeSelect(label, metricKey) {
+    return `
+      <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">${label}:</span>
+        <select id="metric-${metricKey}" class="adult-grade-select" style="width: 100%; border: 1px solid rgba(200, 161, 90, 0.3); border-radius: 6px; padding: 0.35rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--green-dark);">
+          <option value="ممتاز" selected>ممتاز</option>
+          <option value="جيد جداً">جيد جداً</option>
+          <option value="جيد">جيد</option>
+          <option value="مقبول">مقبول</option>
+          <option value="ضعيف">ضعيف</option>
+        </select>
+      </div>
+    `;
+  }
+
+  function renderStarGroup(label, metricKey, maxStars = 3) {
+    let starsHtml = "";
+    for (let i = 1; i <= maxStars; i++) {
+      starsHtml += `<i class="ph ph-star" data-value="${i}"></i>`;
+    }
+    return `
+      <div class="stars-rating-group" data-metric="${metricKey}" style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">${label}:</span>
+        <div class="stars-stars-container" style="display: flex; gap: 0.25rem; font-size: 1.4rem; color: #ccc; cursor: pointer; direction: ltr; width: max-content;">
+          ${starsHtml}
+        </div>
+        <input type="hidden" id="metric-${metricKey}" class="stars-hidden-val" value="0" />
+      </div>
+    `;
+  }
+
   function buildDynamicForm() {
     let html = "";
 
     if (currentEvalStudent && currentEvalStudent.id && currentEvalStudent.id.startsWith("AD")) {
-      const activeCourses = activeSession && activeSession.selectedCourses ? activeSession.selectedCourses : ["تحفيظ القرآن"];
-      const activeCoursesArray = Array.isArray(activeCourses) ? activeCourses : String(activeCourses).split("، ");
+      // Adults form
+      const memoDirection = currentEvalStudent.memoDirection || "من الفاتحة إلى الناس";
       
-      const isSingleCourse = activeCoursesArray.length === 1;
-      const autoSelectedCourse = isSingleCourse ? activeCoursesArray[0].trim() : null;
-
       html += `
         <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
           <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
             <i class="ph-bold ph-notebook" style="color:var(--gold);"></i> تفاصيل الحصة للكبار
           </h4>
-          <div class="form-grid">
-            <div class="form-group full-width">
-              <label>المقرر / المادة:</label>
-              ${ isSingleCourse
-                ? `<div style="font-weight:900; color:var(--green-dark); background:rgba(13,92,70,0.06); border:1px solid rgba(200,161,90,0.3); border-radius:8px; padding:0.65rem 1rem; font-size:1rem;">
-                     <i class="ph-bold ph-check-circle" style="color:var(--gold); vertical-align:middle; margin-left:0.35rem;"></i>${activeCoursesArray[0].trim()}
-                   </div>
-                   <input type="hidden" id="eval-adult-course" value="${activeCoursesArray[0].trim()}" />`
-                : `<select id="eval-adult-course" style="width: 100%;">
-                     ${activeCoursesArray.map(c => `<option value="${c.trim()}">${c.trim()}</option>`).join("")}
-                   </select>`
-              }
-            </div>
-            
-            <!-- Quranic Memorization Evaluation Sub-Fields (visible only if course is تحفيظ القرآن) -->
-            <div id="eval-adult-quran-fields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; grid-column: span 2;">
-              <div class="form-group" style="margin: 0;">
-                <label>نوع الإنجاز:</label>
-                <select id="eval-adult-type" style="width: 100%;">
-                  <option value="حفظ" selected>حفظ</option>
-                  <option value="مراجعة">مراجعة</option>
-                </select>
-              </div>
-              <div class="form-group" style="margin: 0;">
-                <label>السورة:</label>
-                <input type="text" id="eval-adult-surah" placeholder="اسم السورة..." style="width: 100%;" />
-              </div>
-              <div class="form-group" style="margin: 0;">
-                <label>من آية / صفحة:</label>
-                <input type="number" id="eval-adult-from" min="0" placeholder="0" style="width: 100%;" />
-              </div>
-              <div class="form-group" style="margin: 0;">
-                <label>إلى آية / صفحة:</label>
-                <input type="number" id="eval-adult-to" min="0" placeholder="0" style="width: 100%;" />
-              </div>
-              <div class="form-group" style="margin: 0; grid-column: span 2;">
-                ${renderStarGroup("تقييم الحفظ والترتيل", "adult-quran")}
-              </div>
-            </div>
+          
+          <div style="font-size:0.85rem; color:var(--green-dark); font-weight:800; margin-bottom:1.25rem; padding: 0.5rem; background: rgba(212, 175, 55, 0.07); border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i class="ph-bold ph-compass" style="color: var(--gold);"></i> 
+            مسار الحفظ الحالي: <strong>${memoDirection}</strong>
+          </div>
 
-            <!-- Tajweed Evaluation Sub-Fields (visible only if course is علوم التجويد) -->
-            <div id="eval-adult-tajweed-fields" style="display: grid; grid-template-columns: 1fr; gap: 1rem; grid-column: span 2;">
-              <div class="form-group" style="margin: 0; grid-column: span 2;">
-                ${renderStarGroup("تقييم التجويد والأداء", "adult-tajweed")}
-              </div>
-            </div>
+          <input type="hidden" id="eval-adult-course" value="تحفيظ القرآن" />
 
-            <!-- Sharia Lesson Title Field (visible only if course is الدروس الشرعية) -->
-            <div id="eval-adult-sharia-fields" style="display: none; grid-column: span 2; padding: 1rem; background: rgba(13, 92, 70, 0.03); border: 1px dashed rgba(200, 161, 90, 0.35); border-radius: 8px;">
-              <div class="form-group" style="margin: 0;">
-                <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.5rem;">
-                  <i class="ph-bold ph-book-open" style="color: var(--gold);"></i>
-                  عنوان الدرس الشرعي:
-                </label>
-                <input type="text" id="eval-adult-sharia-title"
-                  placeholder="مثال: أحكام الطهارة، صفة الصلاة، فقه الصيام..."
-                  style="width: 100%; font-size: 1rem;"
-                />
-                <small style="color: var(--text-muted); font-weight: 600; margin-top: 0.4rem; display: block;">
-                  يُسجَّل عنوان الدرس في ملف المشارك لمتابعة المقررات الشرعية.
-                </small>
-              </div>
+          <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label>نوع الإنجاز:</label>
+              <select id="eval-adult-type" style="width: 100%;">
+                <option value="حفظ جديد" selected>حفظ جديد</option>
+                <option value="مراجعة">مراجعة</option>
+                <option value="استدراك">استدراك</option>
+              </select>
             </div>
-            
-            <div class="form-group full-width" style="margin-top: 0.5rem;">
-              <label>ملاحظات وتقييم الأداء:</label>
-              <input type="text" id="eval-adult-notes" placeholder="ملاحظات المشرف حول الحفظ أو الفهم..." style="width: 100%;" />
+            <div class="form-group">
+              <label>السورة:</label>
+              <input type="text" id="eval-adult-surah" placeholder="اسم السورة..." style="width: 100%;" required />
             </div>
+            <div class="form-group">
+              <label>من آية:</label>
+              <input type="number" id="eval-adult-from" min="1" placeholder="1" style="width: 100%;" />
+            </div>
+            <div class="form-group">
+              <label>إلى آية:</label>
+              <input type="number" id="eval-adult-to" min="1" placeholder="10" style="width: 100%;" />
+            </div>
+          </div>
+
+          <h5 style="color: var(--gold); font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 0.95rem; border-bottom: 1px dashed rgba(200,161,90,0.3); padding-bottom: 0.25rem;">[ تقييم الأداء والتمكن ]</h5>
+          
+          <!-- Hifz specific evaluation grades -->
+          <div id="adult-hifz-grades" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+            ${renderAdultGradeSelect("مقدار الحفظ", "adult-hifz-qty")}
+            ${renderAdultGradeSelect("التركيز أثناء التسميع", "adult-hifz-focus")}
+            ${renderAdultGradeSelect("أحكام التجويد", "adult-hifz-tajweed")}
+          </div>
+
+          <!-- Revision specific evaluation grades -->
+          <div id="adult-revision-grades" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+            ${renderAdultGradeSelect("مستوى المراجعة", "adult-rev-level")}
+            ${renderAdultGradeSelect("التركيز", "adult-rev-focus")}
+            ${renderAdultGradeSelect("أحكام التجويد", "adult-rev-tajweed")}
+          </div>
+
+          <div class="form-group full-width" style="margin-top: 1.25rem;">
+            <label>ملاحظات المشرف:</label>
+            <input type="text" id="eval-adult-notes" placeholder="ملاحظات حول جودة الحفظ، التسميع أو الأخطاء..." style="width: 100%;" />
           </div>
         </div>
-        <div style="background: rgba(13, 92, 70, 0.08); border: 1px dashed var(--gold); padding: 1.25rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-weight: 900; color: var(--green-dark);">
-          <div>
-            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">إجمالي النجوم اليوم:</span>
-            <span style="font-size: 1.4rem; color: var(--gold); display: inline-flex; align-items: center; gap: 0.25rem;">
-              <span id="stars-total-val">0</span> <i class="ph-fill ph-star"></i>
-            </span>
-          </div>
-          <div style="text-align: left;">
-            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">النقاط التلقائية المحسوبة (النجمة = 2 نقاط):</span>
-            <span style="font-size: 1.6rem; color: var(--green); display: inline-flex; align-items: center; gap: 0.25rem;">
-              <span id="points-total-val">0</span> نقطة
-            </span>
-          </div>
+        
+        <!-- stars total elements for adult page compatibility, but hidden -->
+        <div style="display: none;">
+          <span id="stars-total-val">0</span>
+          <span id="points-total-val">0</span>
         </div>
       `;
       evalDynamicFieldsContainer.innerHTML = html;
-      
-      // Attach dynamic toggle listener
-      const courseSelect = document.getElementById("eval-adult-course");
-      const quranFields = document.getElementById("eval-adult-quran-fields");
-      const tajweedFields = document.getElementById("eval-adult-tajweed-fields");
-      const shariaFields = document.getElementById("eval-adult-sharia-fields");
 
-      const toggleFields = () => {
-        const val = courseSelect ? courseSelect.value : "";
-        const surahEl = document.getElementById("eval-adult-surah");
-        const shariaTitleEl = document.getElementById("eval-adult-sharia-title");
+      // Handle toggling adult grades based on type (حفظ جديد / استدراك vs مراجعة)
+      const adultTypeSelect = document.getElementById("eval-adult-type");
+      const hifzGrades = document.getElementById("adult-hifz-grades");
+      const revisionGrades = document.getElementById("adult-revision-grades");
 
-        if (val === "تحفيظ القرآن") {
-          if (quranFields) quranFields.style.display = "grid";
-          if (tajweedFields) tajweedFields.style.display = "none";
-          if (shariaFields) shariaFields.style.display = "none";
-          if (surahEl) surahEl.required = true;
-          if (shariaTitleEl) shariaTitleEl.required = false;
-        } else if (val === "علوم التجويد" || val === "علم التجويد") {
-          if (quranFields) quranFields.style.display = "none";
-          if (tajweedFields) tajweedFields.style.display = "grid";
-          if (shariaFields) shariaFields.style.display = "none";
-          if (surahEl) surahEl.required = false;
-          if (shariaTitleEl) shariaTitleEl.required = false;
+      const toggleAdultGrades = () => {
+        const val = adultTypeSelect ? adultTypeSelect.value : "";
+        if (val === "مراجعة") {
+          if (hifzGrades) hifzGrades.style.display = "none";
+          if (revisionGrades) revisionGrades.style.display = "grid";
         } else {
-          // الدروس الشرعية — يدخل الإمام عنوان الدرس
-          if (quranFields) quranFields.style.display = "none";
-          if (tajweedFields) tajweedFields.style.display = "none";
-          if (shariaFields) shariaFields.style.display = "block";
-          if (surahEl) surahEl.required = false;
-          if (shariaTitleEl) shariaTitleEl.required = true;
+          if (hifzGrades) hifzGrades.style.display = "grid";
+          if (revisionGrades) revisionGrades.style.display = "none";
         }
-        updatePointsSummary();
       };
-      
-      if (courseSelect) {
-        courseSelect.addEventListener("change", toggleFields);
-        toggleFields();
+
+      if (adultTypeSelect) {
+        adultTypeSelect.addEventListener("change", toggleAdultGrades);
       }
       
-      activateStarsInteractive();
+      // Auto save on any input change
+      const inputs = evalDynamicFieldsContainer.querySelectorAll("input, select");
+      inputs.forEach(input => {
+        input.addEventListener("input", triggerAutoSave);
+        input.addEventListener("change", triggerAutoSave);
+      });
+
       return;
     }
 
-    // 1. التقييم العام (ثابت)
+    // Children Form
+    // 1. التقييم العام (السلوك والتربية، الانضباط والالتزام)
     html += `
       <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
         <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
           <i class="ph-bold ph-user-focus"></i> التقييم العام (ثابت لكل حلقة)
         </h4>
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
-          ${renderStarGroup("السلوك والأدب", "behavior")}
-          ${renderStarGroup("الانضباط والالتزام", "discipline")}
-          ${renderStarGroup("الاحترام والآداب", "respect")}
-          ${renderStarGroup("المشاركة العامة", "participation")}
+          ${renderStarGroup("السلوك والتربية", "behavior", 3)}
+          ${renderStarGroup("الانضباط والالتزام", "discipline", 3)}
         </div>
         <div class="form-group full-width">
           <label>ملاحظات المشرف:</label>
@@ -954,22 +1029,30 @@ runWhenReady(() => {
       </div>
     `;
 
-    // 2. المقررات الاختيارية المحددة في الجلسة
+    // 2. المقررات المحددة
     // حفظ القرآن ومراجعته
     if (agendaQuran.checked) {
       html += `
         <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
           <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
-            <i class="ph-bold ph-book-open" style="color:var(--gold);"></i> مقرر حفظ القرآن ومراجعته
+            <i class="ph-bold ph-book-open" style="color:var(--gold);"></i> مقرر القرآن الكريم (حفظ ومراجعة)
           </h4>
           
           <h5 style="color: var(--gold); font-weight: 800; margin-bottom: 0.75rem; font-size: 0.95rem;">[ تقدم الحفظ والتلاوة ]</h5>
-          <div class="form-grid" style="margin-bottom: 1.25rem;">
+          <div class="form-grid" style="margin-bottom: 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label>نوع الإنجاز:</label>
+              <select id="eval-quran-type" style="width: 100%;">
+                <option value="حفظ جديد" selected>حفظ جديد</option>
+                <option value="مراجعة">مراجعة</option>
+                <option value="استدراك">استدراك</option>
+              </select>
+            </div>
             <div class="form-group">
               <label>السورة الحالية:</label>
               <input type="text" id="eval-quran-surah" placeholder="اسم السورة..." style="width: 100%;" />
             </div>
-            <div class="form-group" style="display: flex; gap: 0.5rem; align-items: flex-end;">
+            <div class="form-group" style="grid-column: span 2; display: flex; gap: 0.5rem;">
               <div style="flex: 1;">
                 <label>من الآية:</label>
                 <input type="number" id="eval-quran-from" min="1" style="width: 100%;" />
@@ -983,113 +1066,97 @@ runWhenReady(() => {
                 <input type="number" id="eval-quran-count" min="0" readonly style="width: 100%; background: #f5f5f5;" />
               </div>
             </div>
-            <div class="form-group">
-              <label>نوع الإنجاز:</label>
-              <select id="eval-quran-type" style="width: 100%;">
-                <option value="حفظ جديد">حفظ جديد</option>
-                <option value="مراجعة">مراجعة</option>
-                <option value="استدراك">استدراك الحفظ ومراجعة القرآن</option>
-              </select>
-            </div>
           </div>
 
           <h5 style="color: var(--gold); font-weight: 800; margin-bottom: 0.75rem; font-size: 0.95rem;">[ تقييم الأداء ]</h5>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
-            ${renderStarGroup("مقدار الحفظ", "quran-مقدار الحفظ")}
-            ${renderStarGroup("إتقان التلاوة", "quran-إتقان التلاوة")}
-            ${renderStarGroup("أحكام التجويد", "quran-أحكام التجويد")}
-            ${renderStarGroup("المراجعة السابقة", "quran-المراجعة السابقة")}
-            ${renderStarGroup("التركيز أثناء التسميع", "quran-التركيز أثناء التسميع")}
+          
+          <!-- Hifz specific star ratings -->
+          <div id="stars-quran-hifz-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+            ${renderStarGroup("مقدار الحفظ", "quran-مقدار الحفظ", 3)}
+            ${renderStarGroup("التركيز", "quran-التركيز", 3)}
+            ${renderStarGroup("التجويد", "quran-التجويد", 3)}
           </div>
+
+          <!-- Revision specific star ratings -->
+          <div id="stars-quran-rev-container" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+            ${renderStarGroup("مستوى المراجعة", "quran-مستوى المراجعة", 3)}
+            ${renderStarGroup("التركيز", "quran-التركيز-مراجعة", 3)}
+            ${renderStarGroup("التجويد", "quran-التجويد-مراجعة", 3)}
+          </div>
+
           <div class="form-group full-width">
             <label>ملاحظات الحفظ:</label>
-            <input type="text" id="metric-notes-quran" placeholder="ملاحظات حول جودة التسميع أو التجويد..." style="width:100%;" />
+            <input type="text" id="metric-notes-quran" placeholder="ملاحظات حول جودة التسميع أو الأخطاء..." style="width:100%;" />
           </div>
         </div>
       `;
     }
 
-    // استدراك الحفظ ومراجعة القرآن
-    if (agendaCatchup.checked) {
-      html += renderCourseSection("استدراك الحفظ ومراجعة القرآن", "catchup", [
-        "إكمال المطلوب", "تصحيح الأخطاء", "الالتزام بالمراجعة", "سرعة الاستجابة للتوجيهات"
-      ]);
-    }
-
-    // دروس في العقيدة والسلوك
+    // الدروس العلمية
     if (agendaCreed.checked) {
-      html += renderCourseSection("دروس في العقيدة والسلوك", "creed", [
-        "الانتباه للدرس", "المشاركة", "فهم المحتوى", "تطبيق السلوك الإسلامي"
-      ]);
-    }
-
-    // قصص الأنبياء عليهم السلام
-    if (agendaProphets.checked) {
-      html += renderCourseSection("قصص الأنبياء عليهم السلام", "prophets", [
-        "حسن الاستماع", "التفاعل", "الإجابة على الأسئلة", "استيعاب الدروس والعبر"
-      ]);
-    }
-
-    // مسابقات ثقافية
-    if (agendaCulture.checked) {
-      html += renderCourseSection("مسابقات ثقافية", "culture", [
-        "المشاركة", "عدد الإجابات الصحيحة", "التعاون", "روح المنافسة"
-      ]);
-    }
-
-    // جلسات الصحة الجسمية
-    if (agendaHealth.checked) {
-      html += renderCourseSection("جلسات الصحة الجسمية", "health", [
-        "النشاط", "الالتزام بالتعليمات", "المشاركة", "المحافظة على السلامة"
-      ]);
-    }
-
-    // رحلات ترفيهية تمت إزالتها من التقييم الحصدي المباشر كمقرر
-
-
-    // مسابقات قرآنية
-    if (agendaQuranComp.checked) {
-      html += renderCourseSection("مسابقات قرآنية", "qurancomp", [
-        "الحفظ", "التجويد", "سرعة الإجابة", "الثقة بالنفس"
-      ]);
-    }
-
-    // نشاطات رياضية
-    if (agendaSports.checked) {
-      html += renderCourseSection("نشاطات رياضية", "sports", [
-        "المشاركة", "الالتزام بالقوانين", "التعاون", "الروح الرياضية"
-      ]);
-    }
-
-    // 3. نظام الشارات المتميز والمحفز
-    html += `
-      <div class="eval-card-section" style="background: rgba(212, 175, 55, 0.03); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
-        <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 0.5rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
-          <i class="ph-bold ph-award" style="color:var(--gold);"></i> شارات التميز للحلقة (نظام الشارات)
-        </h4>
-        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 1rem;">يتم منح الشارات للطلاب كتحفيز إضافي، وتظهر على ملفهم الشخصي. يتم اختيارها يدوياً أو تمنح تلقائياً عند الحصول على تقييم 5 نجوم.</p>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;" id="badges-checkbox-grid">
-          ${renderBadgeCheckbox("حافظ متميز")}
-          ${renderBadgeCheckbox("أفضل سلوك")}
-          ${renderBadgeCheckbox("الأكثر انضباطاً")}
-          ${renderBadgeCheckbox("الطالب المثالي")}
-          ${renderBadgeCheckbox("نجم الحلقة")}
-          ${renderBadgeCheckbox("متفوق في التجويد")}
-          ${renderBadgeCheckbox("الأكثر مشاركة")}
-          ${renderBadgeCheckbox("قائد الفريق")}
+      html += `
+        <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
+            <i class="ph-bold ph-chalkboard-teacher" style="color:var(--gold);"></i> مقرر الدروس العلمية
+          </h4>
+          <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center;">
+            <div class="form-group">
+              <label>نوع الدرس العلمي:</label>
+              <select id="eval-creed-lesson-type" style="width: 100%;">
+                <option value="السلوك" selected>السلوك</option>
+                <option value="الأخلاق">الأخلاق</option>
+                <option value="الفقه">الفقه</option>
+                <option value="قصص الأنبياء">قصص الأنبياء</option>
+                <option value="آداب المسلم">آداب المسلم</option>
+                <option value="السيرة">السيرة</option>
+              </select>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1.25rem;">
+              <input type="checkbox" id="eval-creed-participated" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--green);" />
+              <label for="eval-creed-participated" style="font-weight: 800; color: var(--green-dark); cursor: pointer;">شارك بفاعلية في الدرس</label>
+            </div>
+          </div>
+          <div class="form-group full-width" style="margin-top: 1rem;">
+            <label>ملاحظات الدرس العلمي:</label>
+            <input type="text" id="metric-notes-creed" placeholder="ملاحظات حول مدى الفهم والتفاعل..." style="width: 100%;" />
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
+
+    // المسابقات الثقافية
+    if (agendaCulture.checked) {
+      html += `
+        <div class="eval-card-section" style="background: rgba(13, 92, 70, 0.02); border: 1px solid rgba(200, 161, 90, 0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="color: var(--green-dark); font-size: 1.15rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; margin-bottom: 1rem; font-weight: 900; display: flex; align-items: center; gap: 0.35rem;">
+            <i class="ph-bold ph-trophy" style="color:var(--gold);"></i> مقرر المسابقات الثقافية
+          </h4>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="eval-culture-participated" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--green);" />
+            <label for="eval-culture-participated" style="font-weight: 800; color: var(--green-dark); cursor: pointer;">شارك في المسابقة الثقافية</label>
+          </div>
+          <div class="form-group full-width" style="margin-top: 1rem;">
+            <label>ملاحظات المسابقة الثقافية:</label>
+            <input type="text" id="metric-notes-culture" placeholder="أداء الطالب في المسابقة ونشاطه..." style="width: 100%;" />
+          </div>
+        </div>
+      `;
+    }
 
     // 4. ملخص النقاط والنجوم المحصلة في أسفل المودال
     html += `
-      <div style="background: rgba(13, 92, 70, 0.08); border: 1px dashed var(--gold); padding: 1.25rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-weight: 900; color: var(--green-dark);">
-        <div>
-          <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">إجمالي النجوم اليوم:</span>
-          <span style="font-size: 1.4rem; color: var(--gold); display: inline-flex; align-items: center; gap: 0.25rem;">
-            <span id="stars-total-val">0</span> <i class="ph-fill ph-star"></i>
-          </span>
+      <div style="background: rgba(13, 92, 70, 0.08); border: 1px dashed var(--gold); padding: 1.25rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-weight: 900; color: var(--green-dark); margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">إجمالي النجوم:</span>
+            <span style="font-size: 1.4rem; color: var(--gold); display: inline-flex; align-items: center; gap: 0.25rem;">
+              <span id="stars-total-val">0</span> <i class="ph-fill ph-star"></i>
+            </span>
+          </div>
+          <div style="border-right: 1px dashed rgba(200,161,90,0.3); padding-right: 1rem;">
+            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">النجوم المستحقة (من 3):</label>
+            <input type="number" id="eval-stars-earned" min="0" max="3" value="0" style="width: 70px; border: 1px solid var(--gold); border-radius: 6px; padding: 0.25rem; text-align: center; font-weight: 900; color: var(--gold); font-size: 1.1rem; background: white;" />
+          </div>
         </div>
         <div style="text-align: left;">
           <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 700; margin-bottom: 0.25rem;">النقاط التلقائية المحسوبة (النجمة = 2 نقاط):</span>
@@ -1296,17 +1363,7 @@ runWhenReady(() => {
 
   function calculateOverallStarsAndPointsFromUI() {
     if (currentEvalStudent && currentEvalStudent.id && currentEvalStudent.id.startsWith("AD")) {
-      const courseSelect = document.getElementById("eval-adult-course");
-      const activeCourse = courseSelect ? courseSelect.value : "";
-      let stars = 0;
-      if (activeCourse === "تحفيظ القرآن") {
-        const quranVal = document.getElementById("metric-adult-quran");
-        stars = quranVal ? (parseInt(quranVal.value) || 0) : 0;
-      } else if (activeCourse === "علوم التجويد" || activeCourse === "علم التجويد") {
-        const tajweedVal = document.getElementById("metric-adult-tajweed");
-        stars = tajweedVal ? (parseInt(tajweedVal.value) || 0) : 0;
-      }
-      return { stars: stars, points: stars * 2 };
+      return { stars: 0, points: 0 };
     } else {
       // Children calculation
       const sectionAverages = [];
@@ -1316,53 +1373,249 @@ runWhenReady(() => {
       if (behaviorEl) {
         const behavior = parseInt(behaviorEl.value) || 0;
         const discipline = parseInt(document.getElementById("metric-discipline").value) || 0;
-        const respect = parseInt(document.getElementById("metric-respect").value) || 0;
-        const participation = parseInt(document.getElementById("metric-participation").value) || 0;
-        const genStarsSum = behavior + discipline + respect + participation;
-        const genStarsAvg = genStarsSum / 4;
+        const genStarsSum = behavior + discipline;
+        const genStarsAvg = genStarsSum / 2;
         sectionAverages.push(genStarsAvg);
       }
 
-      // 2. المقررات الاختيارية
+      // 2. مقرر القرآن الكريم
       if (agendaQuran.checked) {
-        const p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ").value) || 0;
-        const p2 = parseInt(document.getElementById("metric-quran-إتقان التلاوة").value) || 0;
-        const p3 = parseInt(document.getElementById("metric-quran-أحكام التجويد").value) || 0;
-        const p4 = parseInt(document.getElementById("metric-quran-المراجعة السابقة").value) || 0;
-        const p5 = parseInt(document.getElementById("metric-quran-التركيز أثناء التسميع").value) || 0;
-        const qStarsSum = p1 + p2 + p3 + p4 + p5;
-        const qStarsAvg = qStarsSum / 5;
+        const qTypeSelect = document.getElementById("eval-quran-type");
+        const qType = qTypeSelect ? qTypeSelect.value : "حفظ جديد";
+        
+        let p1 = 0;
+        let p2 = 0;
+        let p3 = 0;
+        
+        if (qType === "مراجعة") {
+          p1 = parseInt(document.getElementById("metric-quran-مستوى المراجعة").value) || 0;
+          p2 = parseInt(document.getElementById("metric-quran-التركيز-مراجعة").value) || 0;
+          p3 = parseInt(document.getElementById("metric-quran-التجويد-مراجعة").value) || 0;
+        } else {
+          p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ").value) || 0;
+          p2 = parseInt(document.getElementById("metric-quran-التركيز").value) || 0;
+          p3 = parseInt(document.getElementById("metric-quran-التجويد").value) || 0;
+        }
+        
+        const qStarsSum = p1 + p2 + p3;
+        const qStarsAvg = qStarsSum / 3;
         sectionAverages.push(qStarsAvg);
       }
 
-      const otherCourses = [
-        { prefix: "catchup", metrics: ["إكمال المطلوب", "تصحيح الأخطاء", "الالتزام بالمراجعة", "سرعة الاستجابة للتوجيهات"], active: agendaCatchup.checked },
-        { prefix: "creed", metrics: ["الانتباه للدرس", "المشاركة", "فهم المحتوى", "تطبيق السلوك الإسلامي"], active: agendaCreed.checked },
-        { prefix: "prophets", metrics: ["حسن الاستماع", "التفاعل", "الإجابة على الأسئلة", "استيعاب الدروس والعبر"], active: agendaProphets.checked },
-        { prefix: "culture", metrics: ["المشاركة", "عدد الإجابات الصحيحة", "التعاون", "روح المنافسة"], active: agendaCulture.checked },
-        { prefix: "health", metrics: ["النشاط", "الالتزام بالتعليمات", "المشاركة", "المحافظة على السلامة"], active: agendaHealth.checked },
-        { prefix: "qurancomp", metrics: ["الحفظ", "التجويد", "سرعة الإجابة", "الثقة بالنفس"], active: agendaQuranComp.checked },
-        { prefix: "sports", metrics: ["المشاركة", "الالتزام بالقوانين", "التعاون", "الروح الرياضية"], active: agendaSports.checked }
-      ];
+      const overallStars = sectionAverages.length > 0 ? (sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length) : 0;
+      let totalStars = Math.min(3, Math.max(0, Math.round(overallStars)));
 
-      otherCourses.forEach(c => {
-        if (c.active) {
-          let cStarsSum = 0;
-          c.metrics.forEach(m => {
-            const valEl = document.getElementById(`metric-${c.prefix}-${m}`);
-            const val = valEl ? (parseInt(valEl.value) || 0) : 0;
-            cStarsSum += val;
-          });
-          const cStarsAvg = cStarsSum / c.metrics.length;
-          sectionAverages.push(cStarsAvg);
-        }
-      });
+      // Check for manual override in the UI
+      const starsEarnedInput = document.getElementById("eval-stars-earned");
+      if (starsEarnedInput && document.activeElement === starsEarnedInput) {
+        totalStars = Math.min(3, Math.max(0, parseInt(starsEarnedInput.value) || 0));
+      }
 
-      const overallStars = sectionAverages.length > 0 ? Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length) : 0;
-      const totalStars = Math.min(5, Math.max(0, overallStars));
-      const totalPoints = totalStars * 2;
+      let totalPoints = totalStars * 2;
+
+      // Add participation bonuses
+      const creedPart = document.getElementById("eval-creed-participated");
+      if (creedPart && creedPart.checked) {
+        totalPoints += 1;
+      }
+      const culturePart = document.getElementById("eval-culture-participated");
+      if (culturePart && culturePart.checked) {
+        totalPoints += 1;
+      }
+
       return { stars: totalStars, points: totalPoints };
     }
+  }
+
+  let autoSaveTimeout = null;
+  function triggerAutoSave() {
+    if (!currentEvalStudent) return;
+    
+    if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+    
+    const indicator = document.getElementById("autosave-indicator");
+    if (indicator) {
+      indicator.innerHTML = `<i class="ph-bold ph-spinner-gap" style="color: #fbbf24; animation: spin 1s linear infinite;"></i> <span>جارٍ الحفظ تلقائياً...</span>`;
+    }
+    
+    autoSaveTimeout = setTimeout(() => {
+      try {
+        const attendanceVal = evalAttendance.value;
+        const isAbsent = (attendanceVal === "غائب");
+        let draftObj;
+
+        if (currentEvalStudent.id && currentEvalStudent.id.startsWith("AD")) {
+          // Adults
+          if (isAbsent) {
+            draftObj = {
+              studentId: currentEvalStudent.id,
+              studentName: currentEvalStudent.name,
+              attendance: "غائب",
+              activityType: "حفظ",
+              surah: "",
+              fromVerse: 0,
+              toVerse: 0,
+              notes: "غائب عن الحضور",
+              courseName: "تحفيظ القرآن",
+              stars: 0,
+              points: 0,
+              grades: null
+            };
+          } else {
+            const type = document.getElementById("eval-adult-type")?.value || "حفظ جديد";
+            const surah = document.getElementById("eval-adult-surah")?.value.trim() || "";
+            const fromVerse = Number(document.getElementById("eval-adult-from")?.value) || 0;
+            const toVerse = Number(document.getElementById("eval-adult-to")?.value) || 0;
+            const notes = document.getElementById("eval-adult-notes")?.value.trim() || "";
+            
+            let grades = {};
+            if (type === "مراجعة") {
+              grades = {
+                revLevel: document.getElementById("metric-adult-rev-level")?.value || "ممتاز",
+                focus: document.getElementById("metric-adult-rev-focus")?.value || "ممتاز",
+                tajweed: document.getElementById("metric-adult-rev-tajweed")?.value || "ممتاز"
+              };
+            } else {
+              grades = {
+                qty: document.getElementById("metric-adult-hifz-qty")?.value || "ممتاز",
+                focus: document.getElementById("metric-adult-hifz-focus")?.value || "ممتاز",
+                tajweed: document.getElementById("metric-adult-hifz-tajweed")?.value || "ممتاز"
+              };
+            }
+
+            draftObj = {
+              studentId: currentEvalStudent.id,
+              studentName: currentEvalStudent.name,
+              attendance: "حاضر",
+              activityType: type,
+              surah: surah,
+              fromVerse: fromVerse,
+              toVerse: toVerse,
+              notes: notes,
+              courseName: "تحفيظ القرآن",
+              stars: 0,
+              points: 0,
+              grades: grades
+            };
+          }
+        } else {
+          // Kids
+          let totalStars = 0;
+          let totalPoints = 0;
+          let generalCriteria = {};
+          let courseEvaluations = [];
+          let quranProgress = null;
+          const notesStr = isAbsent ? "" : (document.getElementById("metric-notes-general")?.value || "");
+
+          if (!isAbsent) {
+            const behavior = parseInt(document.getElementById("metric-behavior")?.value) || 0;
+            const discipline = parseInt(document.getElementById("metric-discipline")?.value) || 0;
+            
+            generalCriteria = {
+              "السلوك": behavior,
+              "الانضباط": discipline
+            };
+
+            if (agendaQuran.checked) {
+              const qSurah = document.getElementById("eval-quran-surah")?.value.trim() || "";
+              const qFrom = Number(document.getElementById("eval-quran-from")?.value) || 0;
+              const qTo = Number(document.getElementById("eval-quran-to")?.value) || 0;
+              const qType = document.getElementById("eval-quran-type")?.value || "حفظ جديد";
+              const qNotes = document.getElementById("metric-notes-quran")?.value.trim() || "";
+
+              let p1 = 0, p2 = 0, p3 = 0;
+              if (qType === "مراجعة") {
+                p1 = parseInt(document.getElementById("metric-quran-مستوى المراجعة")?.value) || 0;
+                p2 = parseInt(document.getElementById("metric-quran-التركيز-مراجعة")?.value) || 0;
+                p3 = parseInt(document.getElementById("metric-quran-التجويد-مراجعة")?.value) || 0;
+              } else {
+                p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ")?.value) || 0;
+                p2 = parseInt(document.getElementById("metric-quran-التركيز")?.value) || 0;
+                p3 = parseInt(document.getElementById("metric-quran-التجويد")?.value) || 0;
+              }
+
+              courseEvaluations.push({
+                courseName: "حفظ القرآن ومراجعته",
+                criteria: {
+                  "مقدار الحفظ / مستوى المراجعة": p1,
+                  "التركيز": p2,
+                  "التجويد": p3
+                },
+                points: (p1 + p2 + p3) * 2,
+                notes: qNotes
+              });
+
+              if (qSurah) {
+                quranProgress = {
+                  surah: qSurah,
+                  fromVerse: qFrom,
+                  toVerse: qTo,
+                  type: qType,
+                  notes: qNotes
+                };
+              }
+            }
+
+            if (agendaCreed.checked) {
+              const lessonType = document.getElementById("eval-creed-lesson-type")?.value || "السلوك";
+              const participated = document.getElementById("eval-creed-participated")?.checked || false;
+              const creedNotes = document.getElementById("metric-notes-creed")?.value.trim() || "";
+              
+              courseEvaluations.push({
+                courseName: "الدروس العلمية",
+                lessonType: lessonType,
+                participated: participated,
+                points: participated ? 1 : 0,
+                notes: creedNotes
+              });
+            }
+
+            if (agendaCulture.checked) {
+              const participated = document.getElementById("eval-culture-participated")?.checked || false;
+              const cultureNotes = document.getElementById("metric-notes-culture")?.value.trim() || "";
+              
+              courseEvaluations.push({
+                courseName: "المسابقات الثقافية",
+                participated: participated,
+                points: participated ? 1 : 0,
+                notes: cultureNotes
+              });
+            }
+
+            const score = calculateOverallStarsAndPointsFromUI();
+            totalStars = score.stars;
+            totalPoints = score.points;
+          }
+
+          draftObj = {
+            studentId: currentEvalStudent.id,
+            studentName: currentEvalStudent.name,
+            attendance: attendanceVal,
+            generalCriteria: generalCriteria,
+            generalPoints: (generalCriteria["السلوك"] ? ((generalCriteria["السلوك"] + generalCriteria["الانضباط"]) * 2) : 0),
+            courseEvaluations: courseEvaluations,
+            quranProgress: quranProgress,
+            badgesGranted: [],
+            totalPointsEarned: totalPoints,
+            totalStarsEarned: totalStars,
+            notes: notesStr
+          };
+        }
+
+        reportsData[currentEvalStudent.id] = draftObj;
+        localStorage.setItem("masjid_session_reports", JSON.stringify(reportsData));
+        
+        if (indicator) {
+          if (navigator.onLine) {
+            indicator.innerHTML = `<i class="ph-bold ph-check-circle" style="color: #10b981;"></i> <span>تم حفظ التعديلات</span>`;
+          } else {
+            indicator.innerHTML = `<i class="ph-bold ph-check-circle" style="color: #3b82f6;"></i> <span>تم الحفظ محلياً (دون اتصال)</span>`;
+          }
+        }
+      } catch (err) {
+        console.error("[AutoSave] Error during auto saving:", err);
+      }
+    }, 300);
   }
 
   /**
@@ -1381,6 +1634,11 @@ runWhenReady(() => {
 
     const totalStarsVal = document.getElementById("stars-total-val");
     const totalPointsVal = document.getElementById("points-total-val");
+    const starsEarnedInput = document.getElementById("eval-stars-earned");
+
+    if (starsEarnedInput && document.activeElement !== starsEarnedInput) {
+      starsEarnedInput.value = stars;
+    }
     
     if (totalStarsVal) totalStarsVal.textContent = stars;
     if (totalPointsVal) totalPointsVal.textContent = points;
@@ -1410,43 +1668,44 @@ runWhenReady(() => {
           notes: "غائب عن الحضور",
           courseName: "تحفيظ القرآن",
           stars: 0,
-          points: 0
+          points: 0,
+          grades: null
         };
       } else {
-        const selectedCourse = document.getElementById("eval-adult-course").value;
-        const isQuran = (selectedCourse === "تحفيظ القرآن");
-        const isTajweed = (selectedCourse === "علوم التجويد" || selectedCourse === "علم التجويد");
-        const isSharia = (selectedCourse === "الدروس الشرعية");
-
-        let stars = 0;
-        if (isQuran) {
-          stars = Number(document.getElementById("metric-adult-quran").value) || 0;
-        } else if (isTajweed) {
-          stars = Number(document.getElementById("metric-adult-tajweed").value) || 0;
+        const type = document.getElementById("eval-adult-type").value;
+        const surah = document.getElementById("eval-adult-surah").value.trim();
+        const fromVerse = Number(document.getElementById("eval-adult-from").value) || 0;
+        const toVerse = Number(document.getElementById("eval-adult-to").value) || 0;
+        const notes = document.getElementById("eval-adult-notes").value.trim();
+        
+        let grades = {};
+        if (type === "مراجعة") {
+          grades = {
+            revLevel: document.getElementById("metric-adult-rev-level")?.value || "ممتاز",
+            focus: document.getElementById("metric-adult-rev-focus")?.value || "ممتاز",
+            tajweed: document.getElementById("metric-adult-rev-tajweed")?.value || "ممتاز"
+          };
+        } else {
+          grades = {
+            qty: document.getElementById("metric-adult-hifz-qty")?.value || "ممتاز",
+            focus: document.getElementById("metric-adult-hifz-focus")?.value || "ممتاز",
+            tajweed: document.getElementById("metric-adult-hifz-tajweed")?.value || "ممتاز"
+          };
         }
-        // للدروس الشرعية لا توجد نجوم — فقط عنوان الدرس
-        const points = stars * 2;
-
-        // عنوان الدرس الشرعي يُحفظ في حقل surah لعرضه في بوابة المشارك
-        const shariaTitleEl = document.getElementById("eval-adult-sharia-title");
-        const shariaTitle = shariaTitleEl ? shariaTitleEl.value.trim() : "";
 
         reportObj = {
           studentId: currentEvalStudent.id,
           studentName: currentEvalStudent.name,
           attendance: "حاضر",
-          activityType: isQuran
-            ? document.getElementById("eval-adult-type").value
-            : (isSharia ? "درس شريعة" : "دراسة تجويد"),
-          surah: isQuran
-            ? document.getElementById("eval-adult-surah").value.trim()
-            : (isSharia ? shariaTitle : ""),
-          fromVerse: isQuran ? (Number(document.getElementById("eval-adult-from").value) || 0) : 0,
-          toVerse: isQuran ? (Number(document.getElementById("eval-adult-to").value) || 0) : 0,
-          notes: document.getElementById("eval-adult-notes").value.trim(),
-          courseName: selectedCourse,
-          stars: stars,
-          points: points
+          activityType: type,
+          surah: surah,
+          fromVerse: fromVerse,
+          toVerse: toVerse,
+          notes: notes,
+          courseName: "تحفيظ القرآن",
+          stars: 0,
+          points: 0,
+          grades: grades
         };
       }
     } else {
@@ -1456,57 +1715,45 @@ runWhenReady(() => {
       let generalCriteria = {};
       let courseEvaluations = [];
       let quranProgress = null;
-      let badgesGranted = [];
       const notesStr = isAbsent ? "" : (document.getElementById("metric-notes-general").value || "");
 
       if (!isAbsent) {
-        let sectionAverages = [];
-
-        // 1. التقييم العام
+        // 1. التقييم العام (السلوك والتربية، الانضباط والالتزام)
         const behavior = parseInt(document.getElementById("metric-behavior").value) || 0;
         const discipline = parseInt(document.getElementById("metric-discipline").value) || 0;
-        const respect = parseInt(document.getElementById("metric-respect").value) || 0;
-        const participation = parseInt(document.getElementById("metric-participation").value) || 0;
         
         generalCriteria = {
           "السلوك": behavior,
-          "الانضباط": discipline,
-          "الاحترام والآداب": respect,
-          "المشاركة العامة": participation
+          "الانضباط": discipline
         };
-        
-        const genStarsSum = behavior + discipline + respect + participation;
-        const genStarsAvg = genStarsSum / 4;
-        sectionAverages.push(genStarsAvg);
 
-        // 2. المقررات الاختيارية
+        // 2. القرآن الكريم
         if (agendaQuran.checked) {
           const qSurah = document.getElementById("eval-quran-surah").value.trim();
-          const qFrom = document.getElementById("eval-quran-from").value;
-          const qTo = document.getElementById("eval-quran-to").value;
+          const qFrom = Number(document.getElementById("eval-quran-from").value) || 0;
+          const qTo = Number(document.getElementById("eval-quran-to").value) || 0;
           const qType = document.getElementById("eval-quran-type").value;
           const qNotes = document.getElementById("metric-notes-quran").value.trim();
 
-          const p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ").value) || 0;
-          const p2 = parseInt(document.getElementById("metric-quran-إتقان التلاوة").value) || 0;
-          const p3 = parseInt(document.getElementById("metric-quran-أحكام التجويد").value) || 0;
-          const p4 = parseInt(document.getElementById("metric-quran-المراجعة السابقة").value) || 0;
-          const p5 = parseInt(document.getElementById("metric-quran-التركيز أثناء التسميع").value) || 0;
-
-          const qStarsSum = p1 + p2 + p3 + p4 + p5;
-          const qStarsAvg = qStarsSum / 5;
-          sectionAverages.push(qStarsAvg);
+          let p1 = 0, p2 = 0, p3 = 0;
+          if (qType === "مراجعة") {
+            p1 = parseInt(document.getElementById("metric-quran-مستوى المراجعة").value) || 0;
+            p2 = parseInt(document.getElementById("metric-quran-التركيز-مراجعة").value) || 0;
+            p3 = parseInt(document.getElementById("metric-quran-التجويد-مراجعة").value) || 0;
+          } else {
+            p1 = parseInt(document.getElementById("metric-quran-مقدار الحفظ").value) || 0;
+            p2 = parseInt(document.getElementById("metric-quran-التركيز").value) || 0;
+            p3 = parseInt(document.getElementById("metric-quran-التجويد").value) || 0;
+          }
 
           courseEvaluations.push({
             courseName: "حفظ القرآن ومراجعته",
             criteria: {
-              "مقدار الحفظ": p1,
-              "إتقان التلاوة": p2,
-              "أحكام التجويد": p3,
-              "المراجعة السابقة": p4,
-              "التركيز أثناء التسميع": p5
+              "مقدار الحفظ / مستوى المراجعة": p1,
+              "التركيز": p2,
+              "التجويد": p3
             },
-            points: qStarsSum * 2,
+            points: (p1 + p2 + p3) * 2,
             notes: qNotes
           });
 
@@ -1521,50 +1768,38 @@ runWhenReady(() => {
           }
         }
 
-        const otherCourses = [
-          { name: "استدراك الحفظ ومراجعة القرآن", prefix: "catchup", metrics: ["إكمال المطلوب", "تصحيح الأخطاء", "الالتزام بالمراجعة", "سرعة الاستجابة للتوجيهات"], active: agendaCatchup.checked },
-          { name: "دروس في العقيدة والسلوك", prefix: "creed", metrics: ["الانتباه للدرس", "المشاركة", "فهم المحتوى", "تطبيق السلوك الإسلامي"], active: agendaCreed.checked },
-          { name: "قصص الأنبياء عليهم السلام", prefix: "prophets", metrics: ["حسن الاستماع", "التفاعل", "الإجابة على الأسئلة", "استيعاب الدروس والعبر"], active: agendaProphets.checked },
-          { name: "مسابقات ثقافية", prefix: "culture", metrics: ["المشاركة", "عدد الإجابات الصحيحة", "التعاون", "روح المنافسة"], active: agendaCulture.checked },
-          { name: "جلسات الصحة الجسمية", prefix: "health", metrics: ["النشاط", "الالتزام بالتعليمات", "المشاركة", "المحافظة على السلامة"], active: agendaHealth.checked },
-          { name: "رحلات ترفيهية", prefix: "trip", metrics: ["الانضباط", "التعاون", "حسن السلوك", "المحافظة على الممتلكات"], active: false },
-          { name: "مسابقات قرآنية", prefix: "qurancomp", metrics: ["الحفظ", "التجويد", "سرعة الإجابة", "الثقة بالنفس"], active: agendaQuranComp.checked },
-          { name: "نشاطات رياضية", prefix: "sports", metrics: ["المشاركة", "الالتزام بالقوانين", "التعاون", "الروح الرياضية"], active: agendaSports.checked }
-        ];
+        // 3. الدروس العلمية
+        if (agendaCreed.checked) {
+          const lessonType = document.getElementById("eval-creed-lesson-type").value;
+          const participated = document.getElementById("eval-creed-participated").checked;
+          const creedNotes = document.getElementById("metric-notes-creed")?.value.trim() || "";
+          
+          courseEvaluations.push({
+            courseName: "الدروس العلمية",
+            lessonType: lessonType,
+            participated: participated,
+            points: participated ? 1 : 0,
+            notes: creedNotes
+          });
+        }
 
-        otherCourses.forEach(c => {
-          if (c.active) {
-            const criteriaObj = {};
-            let cStarsSum = 0;
-            c.metrics.forEach(m => {
-              const val = parseInt(document.getElementById(`metric-${c.prefix}-${m}`).value) || 0;
-              criteriaObj[m] = val;
-              cStarsSum += val;
-            });
-            const cStarsAvg = cStarsSum / c.metrics.length;
-            sectionAverages.push(cStarsAvg);
+        // 4. المسابقات الثقافية
+        if (agendaCulture.checked) {
+          const participated = document.getElementById("eval-culture-participated").checked;
+          const cultureNotes = document.getElementById("metric-notes-culture")?.value.trim() || "";
+          
+          courseEvaluations.push({
+            courseName: "المسابقات الثقافية",
+            participated: participated,
+            points: participated ? 1 : 0,
+            notes: cultureNotes
+          });
+        }
 
-            const notesInput = document.getElementById(`metric-notes-${c.prefix}`);
-            courseEvaluations.push({
-              courseName: c.name,
-              criteria: criteriaObj,
-              points: cStarsSum * 2,
-              notes: notesInput ? notesInput.value.trim() : ""
-            });
-          }
-        });
-
-        // Calculate overall session stars as the average of active sections, capped at 5 stars max.
-        const overallStars = sectionAverages.length > 0 ? Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length) : 0;
-        totalStars = Math.min(5, Math.max(0, overallStars));
-
-        // 3. الشارات الممنوحة
-        const chks = evalDynamicFieldsContainer.querySelectorAll('input[name="badges-chk"]:checked');
-        chks.forEach(chk => {
-          badgesGranted.push(chk.value);
-        });
-
-        totalPoints = totalStars * 2;
+        // Read total stars and points from calculation helper
+        const score = calculateOverallStarsAndPointsFromUI();
+        totalStars = score.stars;
+        totalPoints = score.points;
       }
 
       reportObj = {
@@ -1572,10 +1807,10 @@ runWhenReady(() => {
         studentName: currentEvalStudent.name,
         attendance: attendanceVal,
         generalCriteria: generalCriteria,
-        generalPoints: (generalCriteria["السلوك"] ? (Object.values(generalCriteria).reduce((a,b)=>a+b, 0) * 2) : 0),
+        generalPoints: (generalCriteria["السلوك"] ? ((generalCriteria["السلوك"] + generalCriteria["الانضباط"]) * 2) : 0),
         courseEvaluations: courseEvaluations,
         quranProgress: quranProgress,
-        badgesGranted: badgesGranted,
+        badgesGranted: [],
         totalPointsEarned: totalPoints,
         totalStarsEarned: totalStars,
         notes: notesStr
@@ -1586,6 +1821,16 @@ runWhenReady(() => {
     
     // Save to sessionStorage
     localStorage.setItem("masjid_session_reports", JSON.stringify(reportsData));
+
+    // Reset indicator to saved successfully
+    const indicator = document.getElementById("autosave-indicator");
+    if (indicator) {
+      if (navigator.onLine) {
+        indicator.innerHTML = `<i class="ph-bold ph-check-circle" style="color: #10b981;"></i> <span>تم الحفظ تلقائياً</span>`;
+      } else {
+        indicator.innerHTML = `<i class="ph-bold ph-check-circle" style="color: #3b82f6;"></i> <span>تم الحفظ محلياً (دون اتصال)</span>`;
+      }
+    }
 
     closeEval();
     renderStudentsGrid();
@@ -1612,10 +1857,8 @@ runWhenReady(() => {
         const g = rep.generalCriteria || {};
         const behavior = g["السلوك"] || 0;
         const discipline = g["الانضباط"] || 0;
-        const respect = g["الاحترام والآداب"] || 0;
-        const participation = g["المشاركة العامة"] || 0;
-        
-        if (behavior === 0 || discipline === 0 || respect === 0 || participation === 0) {
+
+        if (behavior === 0 || discipline === 0) {
           missingStudents.push(s.name);
         }
       }

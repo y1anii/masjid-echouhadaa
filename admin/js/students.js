@@ -1,4 +1,4 @@
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, onSnapshot, query, where, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 let db;
 
@@ -590,7 +590,7 @@ function openAdultProfileModal(adult) {
     const backupPhoneRow = document.getElementById('pm-child-backup-phone-row');
     const rewardsBlock = document.getElementById('pm-child-rewards-block');
     const teamRow = document.getElementById('pm-team-row');
-    
+
     if (childFieldsGroup) childFieldsGroup.style.display = 'none';
     if (adultFieldsGroup) adultFieldsGroup.style.display = 'block';
     if (backupPhoneRow) backupPhoneRow.style.display = 'none';
@@ -607,15 +607,141 @@ function openAdultProfileModal(adult) {
     setElText('pm-name-val', adult.name);
     setElText('pm-id', adult.id);
     setElText('pm-gender', "قسم الكبار (" + adult.section + ")");
-    
+
     const teamEl = document.getElementById('pm-team-name');
     if (teamEl) teamEl.textContent = adult.teamName || 'غير معين لفريق';
-    
-    setElText('pm-phone', adult.phone || 'غير محدد');
+
+    setElText('pm-phone', adult.phone || 'غير مححدد');
     setElText('pm-reg-date', adult.regDate || 'غير محدد');
-    setElText('pm-adult-quranLevel', adult.quranLevel || 'غير محدد');
+    
+    // Quran level is updated dynamically below
+    const completed = adult.completedHizbs !== undefined ? adult.completedHizbs : (parseInt(String(adult.quranLevel).replace(/\D/g, '')) || 0);
+    const target = adult.target || 30;
+    const direction = adult.memoDirection || "من الفاتحة إلى الناس";
+    
+    setElText('pm-adult-quranLevel', `حفظ ${completed} حزب (المستهدف: ${target} حزب)`);
     setElText('pm-adult-age', adult.age ? adult.age + ' سنة' : 'غير محدد');
-    setElText('pm-adult-prior', adult.lastSurah ? `سورة ${adult.lastSurah} (آية ${adult.lastVerse || 1})` : 'لا يوجد حفظ سابق');
+    setElText('pm-adult-direction-text', direction);
+
+    // Populate edit controls
+    const completedInput = document.getElementById("pm-adult-edit-completed");
+    const targetInput = document.getElementById("pm-adult-edit-target");
+    const directionSelect = document.getElementById("pm-adult-edit-direction");
+    
+    if (completedInput) completedInput.value = completed;
+    if (targetInput) targetInput.value = target;
+    if (directionSelect) directionSelect.value = direction;
+
+    // Helper to update progress bar
+    const updateAdultProgressBar = (comp, targ) => {
+      const bar = document.getElementById("pm-adult-progress-bar");
+      const text = document.getElementById("pm-adult-progress-text");
+      if (bar && text) {
+        const pct = Math.min(100, Math.round((comp / targ) * 100));
+        bar.style.width = pct + "%";
+        text.textContent = `${comp} / ${targ} حزباً (${pct}%)`;
+      }
+    };
+    updateAdultProgressBar(completed, target);
+
+    // Save button wiring
+    const saveSettingsBtn = document.getElementById("pm-adult-save-settings-btn");
+    if (saveSettingsBtn) {
+      saveSettingsBtn.onclick = async () => {
+        const compVal = Number(completedInput.value) || 0;
+        const targVal = Number(targetInput.value) || 30;
+        const dirVal = directionSelect.value;
+
+        if (compVal < 0 || compVal > 60) {
+          alert("يرجى إدخال عدد أحزاب صحيح (0 إلى 60 حزباً).");
+          return;
+        }
+        if (targVal < 1 || targVal > 60) {
+          alert("يرجى إدخال هدف أحزاب صحيح (1 إلى 60 حزباً).");
+          return;
+        }
+
+        saveSettingsBtn.disabled = true;
+        saveSettingsBtn.textContent = "جاري الحفظ...";
+
+        try {
+          const dbInstance = window.DB.db;
+          await setDoc(doc(dbInstance, "adult_participants", adult.id), {
+            quranLevel: `حفظ ${compVal} حزب`,
+            completedHizbs: compVal,
+            target: targVal,
+            memoDirection: dirVal
+          }, { merge: true });
+
+          // Update local adult object
+          adult.quranLevel = `حفظ ${compVal} حزب`;
+          adult.completedHizbs = compVal;
+          adult.target = targVal;
+          adult.memoDirection = dirVal;
+
+          // Update profile modal text and bar
+          setElText('pm-adult-quranLevel', `حفظ ${compVal} حزب (المستهدف: ${targVal} حزب)`);
+          setElText('pm-adult-direction-text', dirVal);
+          updateAdultProgressBar(compVal, targVal);
+
+          alert("✅ تم تحديث إعدادات مسار التسميع والهدف بنجاح!");
+        } catch (err) {
+          console.error("[Students] Failed to save settings:", err);
+          alert("❌ فشل حفظ الإعدادات. يرجى التحقق من اتصالك بالإنترنت.");
+        } finally {
+          saveSettingsBtn.disabled = false;
+          saveSettingsBtn.textContent = "تحديث مسار الحفظ والهدف";
+        }
+      };
+    }
+
+    // Load progress history logs
+    const historyLogEl = document.getElementById("pm-adult-history-log");
+    if (historyLogEl) {
+      historyLogEl.innerHTML = "<div style='color:var(--text-muted); text-align:center; padding:1rem;'><i class='ph-bold ph-spinner-gap animate-spin'></i> جاري تحميل سجل الحفظ...</div>";
+      (async () => {
+        try {
+          const dbInstance = window.DB.db;
+          const q = query(collection(dbInstance, "adult_progress"), where("participantId", "==", adult.id));
+          const qSnap = await getDocs(q);
+          const logs = [];
+          qSnap.forEach(d => logs.push(d.data()));
+          
+          logs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          
+          if (logs.length === 0) {
+            historyLogEl.innerHTML = "<div style='color:var(--text-muted); text-align:center; padding:1rem;'>لا يوجد سجل تقييمات سابق لهذا المشارك.</div>";
+          } else {
+            historyLogEl.innerHTML = logs.map(log => {
+              const dt = log.createdAt ? new Date(log.createdAt).toLocaleDateString("ar-DZ", { day: 'numeric', month: 'long', year: 'numeric' }) : "-";
+              let gradesHtml = "";
+              if (log.grades) {
+                if (log.activityType === "مراجعة") {
+                  gradesHtml = `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">مستوى المراجعة: <strong>${log.grades.revLevel || "-"}</strong> | تركيز: <strong>${log.grades.focus || "-"}</strong> | تجويد: <strong>${log.grades.tajweed || "-"}</strong></div>`;
+                } else {
+                  gradesHtml = `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">مقدار الحفظ: <strong>${log.grades.qty || "-"}</strong> | تركيز: <strong>${log.grades.focus || "-"}</strong> | تجويد: <strong>${log.grades.tajweed || "-"}</strong></div>`;
+                }
+              }
+              
+              return `
+                <div style="border-bottom:1px solid #f5f5f5; padding:0.5rem 0; direction:rtl;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:800; color:var(--green-dark);">${log.activityType || "حفظ"} - ${log.surah || "غير محدد"}</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">${dt}</span>
+                  </div>
+                  ${log.fromVerse ? `<div style="font-size:0.78rem;">من آية <strong>${log.fromVerse}</strong> إلى <strong>${log.toVerse}</strong></div>` : ""}
+                  ${gradesHtml}
+                  ${log.notes ? `<div style="font-size:0.75rem; color:var(--gold); font-style:italic; margin-top:0.25rem;">ملاحظة: ${log.notes}</div>` : ""}
+                </div>
+              `;
+            }).join("");
+          }
+        } catch (err) {
+          console.error("[Students] Error loading adult progress logs:", err);
+          historyLogEl.innerHTML = "<div style='color:var(--text-muted); text-align:center; padding:1rem;'>فشل تحميل السجل.</div>";
+        }
+      })();
+    }
 
     const statusSpan = document.getElementById('pm-status');
     if (statusSpan) {
@@ -624,11 +750,12 @@ function openAdultProfileModal(adult) {
       if (adult.status === 'مقبول') statusSpan.classList.add('badge-accepted');
       else if (adult.status === 'مرفوض') statusSpan.classList.add('badge-rejected');
       else statusSpan.classList.add('badge-pending');
-    } else {
-      console.warn("[Students] Element #pm-status not found in profile modal!");
     }
 
     modal.classList.add('active');
+  } catch (err) {
+    console.error("[Students] Error in openAdultProfileModal:", err);
+    alert("حدث خطأ أثناء تحميل بيانات المشارك: " + err.message);
   } catch (err) {
     console.error("[Students] Error in openAdultProfileModal:", err);
     alert("حدث خطأ أثناء تحميل بيانات المشارك: " + err.message);

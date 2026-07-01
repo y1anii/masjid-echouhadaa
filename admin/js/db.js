@@ -194,13 +194,11 @@ async function recalculateStudentRewards(studentId) {
       if (sess.general) {
         try {
           const criteria = JSON.parse(sess.general["عناصر التقييم"] || "{}");
-          const behavior = Number(criteria["السلوك"]) || 0;
-          const discipline = Number(criteria["الانضباط"]) || 0;
-          const respect = Number(criteria["الاحترام والآداب"]) || 0;
-          const participation = Number(criteria["المشاركة العامة"]) || 0;
-          const genStarsSum = behavior + discipline + respect + participation;
-          const genStarsAvg = genStarsSum / 4;
-          sectionAverages.push(genStarsAvg);
+          const vals = Object.values(criteria).map(Number).filter(x => !isNaN(x));
+          if (vals.length > 0) {
+            const genStarsAvg = vals.reduce((a, b) => a + b, 0) / vals.length;
+            sectionAverages.push(genStarsAvg);
+          }
         } catch (e) {
           console.error("Error parsing general criteria during recalculate:", e);
         }
@@ -224,7 +222,7 @@ async function recalculateStudentRewards(studentId) {
 
       if (sectionAverages.length > 0) {
         const overallStars = Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length);
-        const cappedStars = Math.min(5, Math.max(0, overallStars));
+        const cappedStars = Math.min(3, Math.max(0, overallStars));
         totalPoints += cappedStars * 2;
       }
     });
@@ -713,6 +711,23 @@ window.DB = {
       
       const regDate = getCurrentDateStr();
       const status = isSupervisor ? "مقبول" : "قيد المراجعة";
+
+      // التوجيه التلقائي للمجموعات والحلقات
+      let assignedCircle = "غير محدد";
+      let category = "أشبال";
+      const age = Number(studentData.age) || 0;
+      const gender = studentData.gender || "";
+
+      if (age >= 4 && age <= 7) {
+        assignedCircle = "حلقة البراعم (مختلطة)";
+        category = "براعم";
+      } else if (age >= 8 && age <= 14) {
+        category = "أشبال";
+        assignedCircle = gender === "أنثى" ? "حلقة الأشبال - إناث" : "حلقة الأشبال - ذكور";
+      } else {
+        category = "كبار";
+        assignedCircle = gender === "أنثى" ? "حلقة الكبار - إناث" : "حلقة الكبار - ذكور";
+      }
       
       const studentDoc = {
         id: studentId,
@@ -722,9 +737,10 @@ window.DB = {
         "النجوم التراكمية": Number(studentData.initialStars) || 0,
         "المستوى": studentData.level || "بذرة المسجد",
         "تاريخ التسجيل": regDate,
-        "الجنس": studentData.gender || "",
-        "السن": Number(studentData.age) || 0,
-        "الفئة العمرية": studentData.ageGroup || "",
+        "الجنس": gender,
+        "السن": age,
+        "الفئة العمرية": category,
+        "الحلقة": assignedCircle,
         "المستوى الدراسي": studentData.studyLevel || "",
         "المستوى القرآني": studentData.quranLevel || "",
         "رقم احتياطي": studentData.backupPhone || "",
@@ -751,6 +767,9 @@ window.DB = {
       // تحديث كشاف استعادة المعرفات
       await _updateRecoveryIndex(studentId, studentDoc["سليماني ياني :اسم الطالب كامل"], studentDoc["رقم الهاتف"]);
       
+      // سجل العمليات
+      await this.writeAuditLog("تسجيل طالب جديد", null, { id: studentId, name: studentData.name, category, assignedCircle });
+
       return studentId;
     } catch (error) {
       console.error("[DB] registerStudent failed:", error);
@@ -1065,14 +1084,12 @@ window.DB = {
         const sectionAverages = [];
 
         // 1. التقييم العام
-        if (ev.generalCriteria && ev.generalCriteria["السلوك"] !== undefined) {
-          const behavior = Number(ev.generalCriteria["السلوك"]) || 0;
-          const discipline = Number(ev.generalCriteria["الانضباط"]) || 0;
-          const respect = Number(ev.generalCriteria["الاحترام والآداب"]) || 0;
-          const participation = Number(ev.generalCriteria["المشاركة العامة"]) || 0;
-          const genStarsSum = behavior + discipline + respect + participation;
-          const genStarsAvg = genStarsSum / 4;
-          sectionAverages.push(genStarsAvg);
+        if (ev.generalCriteria && Object.keys(ev.generalCriteria).length > 0) {
+          const values = Object.values(ev.generalCriteria).map(Number).filter(x => !isNaN(x));
+          if (values.length > 0) {
+            const genStarsAvg = values.reduce((a, b) => a + b, 0) / values.length;
+            sectionAverages.push(genStarsAvg);
+          }
         }
 
         // 2. المقررات الاختيارية
@@ -1089,7 +1106,7 @@ window.DB = {
 
         if (sectionAverages.length > 0) {
           const overallStars = Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length);
-          const cappedStars = Math.min(5, Math.max(0, overallStars));
+          const cappedStars = Math.min(3, Math.max(0, overallStars));
           ev.totalStarsEarned = cappedStars;
           ev.totalPointsEarned = cappedStars * 2;
         } else {
@@ -1179,78 +1196,219 @@ window.DB = {
   async readDashboardData() {
     try {
       const studentsSnap = await getDocs(collection(db, "students"));
+      const adultsSnap = await getDocs(collection(db, "adult_participants"));
       const sessionsSnap = await getDocs(collection(db, "sessions"));
       const presenceSnap = await getDocs(collection(db, "Presence"));
       const pointsSnap = await getDocs(collection(db, "point"));
       const ratingsSnap = await getDocs(collection(db, "Ratings"));
       
       const acceptedStudents = [];
+      let braemCount = 0;
+      let ashbalCount = 0;
+      let kidsMales = 0;
+      let kidsFemales = 0;
+
       studentsSnap.forEach(d => {
         const data = d.data();
-        if (data["حالة الطلب"] === "مقبول") {
-          acceptedStudents.push({
+        if (data["حالة الطلب"] === "مقبول" || data.status === "مقبول") {
+          const age = Number(data["السن"] || data.age) || 0;
+          const gender = data["الجنس"] || data.gender || "ذكر";
+          const studentInfo = {
             id: d.id,
-            name: data["سليماني ياني :اسم الطالب كامل"] || ""
-          });
+            name: data["سليماني ياني :اسم الطالب كامل"] || data.name || "",
+            age: age,
+            gender: gender,
+            quranLevel: data["المستوى القرآني"] || data.quranLevel || ""
+          };
+          acceptedStudents.push(studentInfo);
+
+          if (age >= 4 && age <= 7) {
+            braemCount++;
+          } else if (age >= 8 && age <= 14) {
+            ashbalCount++;
+          }
+          
+          if (gender === "أنثى") {
+            kidsFemales++;
+          } else {
+            kidsMales++;
+          }
         }
       });
       
-      let endedSessionsCount = sessionsSnap.size || 0;
+      const acceptedAdults = [];
+      let adultsMales = 0;
+      let adultsFemales = 0;
+      
+      adultsSnap.forEach(d => {
+        const data = d.data();
+        if (data.status === "مقبول") {
+          const section = data.section || "رجال";
+          const adultInfo = {
+            id: d.id,
+            name: data.name || "",
+            section: section,
+            quranLevel: data.quranLevel || "0"
+          };
+          acceptedAdults.push(adultInfo);
+          
+          if (section === "نساء") {
+            adultsFemales++;
+          } else {
+            adultsMales++;
+          }
+        }
+      });
+
+      const totalStudents = acceptedStudents.length;
+      const totalAdults = acceptedAdults.length;
+      const totalBraem = braemCount;
+      const totalAshbal = ashbalCount;
+      const totalMales = kidsMales + adultsMales;
+      const totalFemales = kidsFemales + adultsFemales;
       
       const acceptedStudentIds = new Set(acceptedStudents.map(s => s.id));
-      
+      const acceptedAdultIds = new Set(acceptedAdults.map(a => a.id));
+      const allAcceptedIds = new Set([...acceptedStudentIds, ...acceptedAdultIds]);
+
+      // Calculate attendance
       let totalPresence = 0;
       let presentCount = 0;
+      const studentPresenceStats = {}; // id -> { present: 0, total: 0 }
+
       presenceSnap.forEach(d => {
         const data = d.data();
-        if (acceptedStudentIds.has(data.StudentID)) {
+        const studentId = data.StudentID;
+        if (allAcceptedIds.has(studentId)) {
           totalPresence++;
           const status = data["حالة الحضور"] || "";
-          if (status === "حاضر" || status.startsWith("متأخر") || status === "حاظر") {
+          const isPresent = (status === "حاضر" || status.startsWith("متأخر") || status === "حاظر");
+          if (isPresent) {
             presentCount++;
+          }
+          if (!studentPresenceStats[studentId]) {
+            studentPresenceStats[studentId] = { present: 0, total: 0 };
+          }
+          studentPresenceStats[studentId].total += 1;
+          if (isPresent) {
+            studentPresenceStats[studentId].present += 1;
           }
         }
       });
       const attendanceRate = totalPresence > 0 ? Math.round((presentCount / totalPresence) * 100) : 0;
-      
+
+      // Regular students (top 10 based on presence rate)
+      const regularStudents = [];
+      allAcceptedIds.forEach(id => {
+        const stats = studentPresenceStats[id];
+        let name = "";
+        const kid = acceptedStudents.find(s => s.id === id);
+        if (kid) name = kid.name;
+        else {
+          const adult = acceptedAdults.find(a => a.id === id);
+          if (adult) name = adult.name;
+        }
+
+        if (stats && stats.total > 0) {
+          regularStudents.push({
+            id: id,
+            name: name,
+            rate: Math.round((stats.present / stats.total) * 100),
+            sessions: stats.total
+          });
+        }
+      });
+      const topRegularStudents = regularStudents
+        .sort((a, b) => b.rate - a.rate || b.sessions - a.sessions)
+        .slice(0, 10);
+
+      // Level / Hizb breakdown
+      const parseHizb = (levelStr) => {
+        if (!levelStr) return 0;
+        const clean = levelStr.trim();
+        if (clean.includes("60") || clean.includes("كامل")) return 60;
+        if (clean.includes("30") || clean.includes("نصف")) return 30;
+        const match = clean.match(/\d+/);
+        return match ? parseInt(match[0]) || 0 : 0;
+      };
+
+      const hizbBreakdown = {
+        "0_hizb": 0,    // لم يبدأ بعد / 0 حزب
+        "1_5_hizb": 0,  // 1-5 أحزاب
+        "6_10_hizb": 0, // 6-10 أحزاب
+        "11_20_hizb": 0,// 11-20 حزب
+        "21_30_hizb": 0,// 21-30 حزب
+        "30_plus": 0    // أكثر من 30 حزب
+      };
+
+      acceptedStudents.forEach(s => {
+        const hz = parseHizb(s.quranLevel || "");
+        if (hz === 0) hizbBreakdown["0_hizb"]++;
+        else if (hz <= 5) hizbBreakdown["1_5_hizb"]++;
+        else if (hz <= 10) hizbBreakdown["6_10_hizb"]++;
+        else if (hz <= 20) hizbBreakdown["11_20_hizb"]++;
+        else if (hz <= 30) hizbBreakdown["21_30_hizb"]++;
+        else hizbBreakdown["30_plus"]++;
+      });
+
+      acceptedAdults.forEach(a => {
+        const hz = parseHizb(a.quranLevel || "");
+        if (hz === 0) hizbBreakdown["0_hizb"]++;
+        else if (hz <= 5) hizbBreakdown["1_5_hizb"]++;
+        else if (hz <= 10) hizbBreakdown["6_10_hizb"]++;
+        else if (hz <= 20) hizbBreakdown["11_20_hizb"]++;
+        else if (hz <= 30) hizbBreakdown["21_30_hizb"]++;
+        else hizbBreakdown["30_plus"]++;
+      });
+
+      // Top circles
+      const circleSessionsCount = {};
+      sessionsSnap.forEach(d => {
+        const data = d.data();
+        const circleName = data["اسم الحلقة"] || data.circleName || "عامة";
+        circleSessionsCount[circleName] = (circleSessionsCount[circleName] || 0) + 1;
+      });
+      const topCircles = Object.entries(circleSessionsCount)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count);
+
+      // Remaining dashboard data elements (ranks and leaderboards)
       const pointsMap = {};
       pointsSnap.forEach(d => {
         const data = d.data();
         pointsMap[d.id] = {
           points: Number(data["النقاط الكلية"]) || 0,
-          stars: Number(data["عدد النجوم"]) || 0,
-          badgesCount: Number(data["عدد الشارات"]) || 0,
-          badgesList: data["الشارات"] || ""
+          stars: Number(data["عدد النجوم"]) || 0
         };
       });
-      
+
       const studentRewards = acceptedStudents.map(stud => {
-        const r = pointsMap[stud.id] || { points: 0, stars: 0, badgesCount: 0, badgesList: "" };
+        const r = pointsMap[stud.id] || { points: 0, stars: 0 };
         return {
           studentId: stud.id,
           studentName: stud.name,
           points: r.points,
-          stars: r.stars,
-          badgesCount: r.badgesCount,
-          badgesList: r.badgesList
+          stars: r.stars
         };
       });
-      
+
       const allRanks = [...studentRewards].sort((a, b) => b.points - a.points);
       const leaderboardPoints = [...allRanks].slice(0, 10);
-      
+
       const quranMap = {};
       ratingsSnap.forEach(d => {
         const data = d.data();
         const studentId = data.StudentID;
         const act = data["نوع النشاط"];
-        const isQuran = isQuranActivity(act);
-        if (isQuran && (data["نوع الإنجاز"] === "حفظ جديد" || data["نوع الإنجاز"] === "استدراك")) {
-          const count = Number(data["عدد الآيات"]) || 0;
-          quranMap[studentId] = (quranMap[studentId] || 0) + count;
+        if (acceptedStudentIds.has(studentId)) {
+          const isQuran = (act === "حفظ القرآن" || act === "تسميع" || act === "مراجعة القرآن");
+          if (isQuran && (data["نوع الإنجاز"] === "حفظ جديد" || data["نوع الإنجاز"] === "استدراك")) {
+            const count = Number(data["عدد الآيات"]) || 0;
+            quranMap[studentId] = (quranMap[studentId] || 0) + count;
+          }
         }
       });
-      
+
       const leaderboardQuran = acceptedStudents.map(stud => {
         return {
           studentId: stud.id,
@@ -1258,15 +1416,15 @@ window.DB = {
           totalAyahs: quranMap[stud.id] || 0
         };
       }).sort((a, b) => b.totalAyahs - a.totalAyahs).slice(0, 10);
-      
+
       const behaviorMap = {};
       ratingsSnap.forEach(d => {
         const data = d.data();
         const studentId = data.StudentID;
-        if (data["نوع النشاط"] === "التقييم العام") {
+        if (acceptedStudentIds.has(studentId) && data["نوع النشاط"] === "التقييم العام") {
           try {
             const crit = JSON.parse(data["عناصر التقييم"] || "{}");
-            const behavior = Number(crit["السلوك"] || crit["behavior"] || 0);
+            const behavior = Number(crit["السلوك"] || crit["behavior"] || crit["السلوك والتربية"] || 0);
             if (behavior > 0) {
               if (!behaviorMap[studentId]) behaviorMap[studentId] = { total: 0, count: 0 };
               behaviorMap[studentId].total += behavior;
@@ -1275,7 +1433,7 @@ window.DB = {
           } catch(e) {}
         }
       });
-      
+
       const leaderboardBehavior = acceptedStudents.map(stud => {
         const b = behaviorMap[stud.id] || { total: 0, count: 0 };
         return {
@@ -1284,19 +1442,27 @@ window.DB = {
           avgBehavior: b.count > 0 ? Math.round((b.total / b.count) * 10) / 10 : 0
         };
       }).sort((a, b) => b.avgBehavior - a.avgBehavior).slice(0, 10);
-      
+
       return {
-        totalStudents: acceptedStudents.length,
-        totalSessions: endedSessionsCount,
-        attendanceRate: attendanceRate,
-        leaderboardPoints: leaderboardPoints,
-        leaderboardQuran: leaderboardQuran,
-        leaderboardBehavior: leaderboardBehavior,
-        allRanks: allRanks
+        totalStudents,
+        totalAdults,
+        totalBraem,
+        totalAshbal,
+        totalMales,
+        totalFemales,
+        totalSessions: sessionsSnap.size || 0,
+        attendanceRate,
+        leaderboardPoints,
+        leaderboardQuran,
+        leaderboardBehavior,
+        allRanks,
+        hizbBreakdown,
+        topCircles,
+        topRegularStudents
       };
     } catch (error) {
       console.error("[DB] readDashboardData failed:", error);
-      return null;
+      throw error;
     }
   },
 
@@ -1878,7 +2044,8 @@ window.DB = {
   async addAdultParticipant(name, section, phone = "", quranLevel = "غير محدد", lastSurah = "", lastVerse = 0) {
     try {
       const id = "AD" + Math.floor(10000 + Math.random() * 90000);
-      await setDoc(doc(db, "adult_participants", id), {
+      const assignedCircle = section === "نساء" ? "حلقة الكبار - إناث" : "حلقة الكبار - ذكور";
+      const adultDoc = {
         id: id,
         name: name,
         section: section, // "رجال" or "نساء"
@@ -1888,8 +2055,14 @@ window.DB = {
         lastVerse: Number(lastVerse) || 0,
         status: "مقبول",
         target: 30, // default target: 30 Juz'
-        createdAt: Date.now()
-      });
+        createdAt: Date.now(),
+        "الفئة العمرية": "كبار",
+        "الحلقة": assignedCircle
+      };
+      await setDoc(doc(db, "adult_participants", id), adultDoc);
+      
+      await this.writeAuditLog("إضافة مشارك كبير يدوياً", null, { id, name, section, assignedCircle });
+
       return { success: true, id: id };
     } catch (error) {
       console.error("[DB] addAdultParticipant failed:", error);
@@ -1913,10 +2086,11 @@ window.DB = {
         throw new Error("تعذر إنشاء معرف فريد للمشارك بعد عدة محاولات.");
       }
 
-      await setDoc(doc(db, "adult_participants", id), {
+      const assignedCircle = adultData.gender === "أنثى" ? "حلقة الكبار - إناث" : "حلقة الكبار - ذكور";
+      const adultDoc = {
         id: id,
         name: adultData.name || "",
-        section: adultData.gender === "ذكر" ? "رجال" : "نساء",
+        section: adultData.gender === "أنثى" ? "نساء" : "رجال",
         phone: adultData.phone || "",
         age: Number(adultData.age) || 0,
         quranLevel: adultData.quranLevel || "غير محدد",
@@ -1924,8 +2098,15 @@ window.DB = {
         lastVerse: Number(adultData.lastVerse) || 0,
         status: "قيد المراجعة",
         target: 30, // default target: 30 Juz'
-        createdAt: Date.now()
-      });
+        createdAt: Date.now(),
+        "الفئة العمرية": "كبار",
+        "الحلقة": assignedCircle
+      };
+
+      await setDoc(doc(db, "adult_participants", id), adultDoc);
+      
+      await this.writeAuditLog("تسجيل مشارك كبير جديد", null, { id, name: adultData.name, section: adultDoc.section, assignedCircle });
+
       return id;
     } catch (error) {
       console.error("[DB] registerAdultParticipant failed:", error);
@@ -2138,7 +2319,11 @@ window.DB = {
 
   async recoverAdultId(phone, name) {
     try {
-      const q = query(collection(db, "adult_participants"), where("phone", "==", phone.trim()));
+      let canonicalPhone = phone.trim();
+      if (canonicalPhone.length === 9 && /^[567]/.test(canonicalPhone)) {
+        canonicalPhone = '0' + canonicalPhone;
+      }
+      const q = query(collection(db, "adult_participants"), where("phone", "==", canonicalPhone));
       const qSnap = await getDocs(q);
       const matches = [];
       const seenIds = new Set();
@@ -2179,26 +2364,73 @@ window.DB = {
   },
 
   getUserRole() {
-    return localStorage.getItem("adminRole") || "Teacher";
+    return localStorage.getItem("adminRole") || "";
   },
 
   hasFullAccess() {
     const role = this.getUserRole();
     const email = localStorage.getItem("adminUser") || "";
     
-    // Fallback: If it's one of the restricted admin emails, it's NOT full access
+    // Explicitly check for the restricted accounts and roles
     if (email.includes("admin1@masjid-chouhadaa.dz") || 
         email.includes("admin2@masjid-chouhadaa.dz") || 
-        email.includes("admin3@masjid-chouhadaa.dz")) {
+        email.includes("admin3@masjid-chouhadaa.dz") ||
+        role === "Teacher" || 
+        role === "مدرس التعليم القرآني" || 
+        role === "Guide" || 
+        role === "المرشدة الدينية") {
       return false;
     }
     
-    // Admin, Imam, and الإمام roles have full access
+    // Default to true for Admin, Imam and الإمام roles
     if (role === "Admin" || role === "Imam" || role === "الإمام") {
       return true;
     }
     
+    // If no role is set but email is not a restricted admin, allow access
+    if (!role) return true;
+    
     return false;
+  },
+
+  async writeAuditLog(action, beforeData = null, afterData = null) {
+    try {
+      const email = localStorage.getItem("adminUser") || "غير معروف";
+      const role = localStorage.getItem("adminRole") || "غير معروف";
+      
+      const logDoc = {
+        user: email,
+        role: role,
+        action: action,
+        timestamp: Date.now(),
+        dateStr: getCurrentDateStr(),
+        before: beforeData ? JSON.stringify(beforeData) : null,
+        after: afterData ? JSON.stringify(afterData) : null
+      };
+      
+      const logId = "LOG_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+      await setDoc(doc(db, "audit_logs", logId), logDoc);
+      console.log("[DB Audit] Log written successfully:", action);
+      return true;
+    } catch (err) {
+      console.error("[DB Audit] writeAuditLog failed:", err);
+      return false;
+    }
+  },
+
+  async getAuditLogs() {
+    try {
+      const q = query(collection(db, "audit_logs"), orderBy("timestamp", "desc"), limit(15));
+      const qSnap = await getDocs(q);
+      const logs = [];
+      qSnap.forEach(d => {
+        logs.push(d.data());
+      });
+      return logs;
+    } catch (error) {
+      console.error("[DB] getAuditLogs failed:", error);
+      return [];
+    }
   }
 };
 

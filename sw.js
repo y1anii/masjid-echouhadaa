@@ -1,8 +1,9 @@
-const CACHE_NAME = 'masjid-portal-v47';
+const CACHE_NAME = 'masjid-portal-v48';
 const ASSETS = [
   'parent-portal.html',
   'parent-daily.html',
   'parent-reports.html',
+  'adult-portal.html',
   'index.html',
   'quran-course.html',
   'lessons.html',
@@ -13,6 +14,7 @@ const ASSETS = [
   'js/parent.js',
   'js/daily.js',
   'js/reports.js',
+  'js/adult.js',
   'admin/js/db.js',
   'images/masjidlogo.png',
   'images/parent-portal-icon.png'

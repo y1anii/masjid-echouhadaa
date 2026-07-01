@@ -254,7 +254,36 @@
             sessionStorage.setItem('masjid_auth', 'true');
             localStorage.setItem('masjid_auth', 'true');
             localStorage.setItem('adminUser', email);
-            window.location.href = 'index.html';
+            
+            const role = localStorage.getItem('adminRole') || 'مسؤول';
+            let roleLabel = 'مسؤول';
+            if (role === 'Imam' || role === 'الإمام' || role === 'Admin') {
+              roleLabel = 'الإمام (صلاحيات كاملة)';
+            } else if (role === 'Teacher' || role === 'مدرس التعليم القرآني') {
+              roleLabel = 'مدرس التعليم القرآني (تسيير الحلقات)';
+            } else if (role === 'Guide' || role === 'المرشدة الدينية') {
+              roleLabel = 'المرشدة الدينية (تسيير الحلقات)';
+            }
+
+            // Create dynamic role success alert
+            submitBtn.style.background = 'var(--green)';
+            submitBtn.style.color = '#fff';
+            submitBtn.innerHTML = '<i class="ph-bold ph-check-circle"></i> تم التحقق بنجاح';
+            
+            errorEl.style.color = '#0d5c46';
+            errorEl.style.background = 'rgba(13, 92, 70, 0.08)';
+            errorEl.style.borderColor = 'rgba(13, 92, 70, 0.2)';
+            errorEl.innerHTML = `
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; width: 100%; padding: 0.25rem 0;">
+                <span style="font-weight: 900; font-size: 1.05rem; color: var(--green-dark);">✅ مرحباً بك في النظام</span>
+                <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 700;">تم الدخول بصلاحية: <strong style="color: var(--gold);">${roleLabel}</strong></span>
+              </div>
+            `;
+            errorEl.style.display = 'flex';
+
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1800);
           } else {
             errorEl.style.display = 'flex';
             submitBtn.disabled = false;

@@ -236,40 +236,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update direction badge
     updateDirectionUI(dir);
 
-    // Total verses count mapping for targets
-    const targetVersesCount = Math.round(targetHizb * (6236 / 60));
+    // Calculate starting Hizbs
+    const startingHizbs = p.completedHizbs !== undefined ? p.completedHizbs : parseStartingHizbs(p.quranLevel);
 
-    // Calculate starting verses
-    const startingHizbs = parseStartingHizbs(p.quranLevel);
-    const startingVersesCount = Math.round(startingHizbs * (6236 / 60));
-
-    // Calculate unique verses from "حفظ" logs
-    const uniqueVerses = new Set();
     let presentCount = 0;
-
     logs.forEach(log => {
       if (log.attendance === "حاضر") {
         presentCount++;
-        const isQuran = (log.courseName === "تحفيظ القرآن" || log.courseName === "حفظ القرآن ومراجعته" || log.activityType === "حفظ" || log.activityType === "مراجعة");
-        if (isQuran && (log.activityType === "حفظ" || log.activityType === "حفظ جديد")) {
-          const surah = (log.surah || "").trim();
-          const from = Number(log.fromVerse) || 0;
-          const to = Number(log.toVerse) || 0;
-          if (surah && from > 0 && to >= from) {
-            for (let i = from; i <= to; i++) {
-              uniqueVerses.add(`${surah}:${i}`);
-            }
-          }
-        }
       }
     });
 
-    const memorizedCount = startingVersesCount + uniqueVerses.size;
-    const percentage = targetVersesCount > 0 ? Math.min(100, Math.round((memorizedCount / targetVersesCount) * 100)) : 0;
+    const percentage = targetHizb > 0 ? Math.min(100, Math.round((startingHizbs / targetHizb) * 100)) : 0;
 
     // Update UI Stats
-    statMemorizedVerses.textContent = `${memorizedCount} آية`;
-    statTargetVerses.textContent = `${targetVersesCount} آية`;
+    statMemorizedVerses.textContent = `${startingHizbs} حزب`;
+    statTargetVerses.textContent = `${targetHizb} حزب`;
     statAttendanceCount.textContent = `${presentCount} حصة`;
 
     // Animate Progress Circle
@@ -323,17 +304,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderHistoryList(logs) {
     adultHistoryList.innerHTML = "";
-    
+
     if (logs.length === 0) {
       noHistoryMsg.style.display = "block";
       return;
     }
-    
+
     noHistoryMsg.style.display = "none";
-    
+
     logs.forEach(log => {
       const isAbsent = (log.attendance === "غائب");
-      
+
       let badgeClass = "type-quran";
       if (log.activityType === "فقه" || log.courseName === "علوم الفقه") {
         badgeClass = "type-fiqh";
@@ -350,30 +331,47 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
       } else {
-        // Parse criteria if available
-        let criteriaObj = {};
-        try { criteriaObj = JSON.parse(log.criteria || "{}"); } catch (e) {}
-        const criteriaKeys = Object.keys(criteriaObj);
-
         // Surah/range block
         const surahVal = log.surah || "";
         const fromVal = Number(log.fromVerse) || 0;
         const toVal   = Number(log.toVerse)   || 0;
         const rangeText = (fromVal > 0 && toVal >= fromVal) ? ` (الآيات: ${fromVal} إلى ${toVal})` : "";
         const contentLine = surahVal
-          ? `<div style="font-size:0.85rem;color:var(--green-dark);font-weight:700;margin-bottom:${criteriaKeys.length ? '0.75rem' : '0'}"><strong>المحتوى:</strong> ${surahVal}${rangeText}</div>`
+          ? `<div style="font-size:0.85rem;color:var(--green-dark);font-weight:700;margin-bottom:0.5rem;"><i class="ph-bold ph-book-open" style="vertical-align:middle;margin-left:0.3rem;"></i> ${surahVal}${rangeText}</div>`
           : "";
 
-        // Criteria grid (same premium card as children)
-        const gridItemsHtml = criteriaKeys.map(key => {
-          const val = parseInt(criteriaObj[key]) || 0;
-          return `
-            <div style="display:flex;flex-direction:column;gap:0.3rem;background:rgba(13,92,70,0.02);padding:0.6rem 0.75rem;border-radius:8px;border:1px solid rgba(200,161,90,0.12);">
-              <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">${key}</span>
-              <div style="display:flex;gap:0.15rem;">${renderReadOnlyStars(val)}</div>
+        // Grade metrics
+        let gradesHtml = "";
+        if (log.grades) {
+          const isRev = log.activityType === "مراجعة";
+          const qtyOrRevLabel = isRev ? "مستوى المراجعة" : "مقدار الحفظ";
+          const qtyOrRevVal = isRev ? (log.grades.revLevel || "ممتاز") : (log.grades.qty || "ممتاز");
+          const focusVal = log.grades.focus || "ممتاز";
+          const tajweedVal = log.grades.tajweed || "ممتاز";
+
+          const renderGradeBadge = (label, val) => {
+            let color = "#10b981"; // green for ممتاز
+            if (val === "جيد جداً") color = "#3b82f6"; // blue
+            else if (val === "جيد") color = "#f59e0b"; // yellow
+            else if (val === "مقبول") color = "#fb923c"; // orange
+            else if (val === "ضعيف") color = "#ef4444"; // red
+
+            return `
+              <div style="display:flex;flex-direction:column;gap:0.3rem;background:rgba(13,92,70,0.02);padding:0.6rem 0.75rem;border:1px solid rgba(200,161,90,0.15);border-radius:6px;text-align:center;">
+                <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">${label}</span>
+                <span style="font-size:0.9rem;color:${color};font-weight:900;">${val}</span>
+              </div>
+            `;
+          };
+
+          gradesHtml = `
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem;">
+              ${renderGradeBadge(qtyOrRevLabel, qtyOrRevVal)}
+              ${renderGradeBadge("التركيز", focusVal)}
+              ${renderGradeBadge("التجويد", tajweedVal)}
             </div>
           `;
-        }).join("");
+        }
 
         // Notes
         const notesHtml = log.notes ? `
@@ -382,26 +380,17 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         ` : "";
 
-        // Stars + points footer
-        const starsFooter = (log.stars > 0) ? `
-          <div style="margin-top:0.7rem;padding-top:0.5rem;border-top:1px solid rgba(13,92,70,0.06);display:flex;justify-content:space-between;align-items:center;">
-            <div style="display:flex;gap:0.15rem;">${renderReadOnlyStars(log.stars)}</div>
-            <span style="font-size:0.88rem;color:var(--green-dark);font-weight:900;background:rgba(13,92,70,0.07);padding:0.2rem 0.6rem;border-radius:6px;">+${log.points || (log.stars * 2)} نقاط</span>
-          </div>
-        ` : "";
-
         mainContentHTML = `
           ${contentLine}
-          ${criteriaKeys.length > 0 ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;">${gridItemsHtml}</div>` : ""}
+          ${gradesHtml}
           ${notesHtml}
-          ${starsFooter}
         `;
       }
 
       const itemHTML = `
-        <div class="history-item" style="${isAbsent ? 'background:rgba(255,68,68,0.01);border-color:rgba(255,68,68,0.15);' : ''}">
+        <div class="history-item" style="${isAbsent ? 'background:rgba(255,68,68,0.01);border-color:rgba(255,68,68,0.15)' : ''}">
           <div class="history-item-header">
-            <span class="history-date"><i class="ph-bold ph-calendar-check" style="color:var(--gold);vertical-align:middle;margin-left:0.25rem;"></i> حصة يوم ${log.date}</span>
+            <span class="history-date"><i class="ph-bold ph-calendar-check" style="color:var(--gold);vertical-align:middle;margin-left:0.35rem;"></i> ${log.createdAt ? new Date(log.createdAt).toLocaleDateString("ar-DZ", {day:'numeric',month:'short'}) : '-'}</span>
             <span class="history-type-badge ${badgeClass}">${log.activityType || log.courseName || "تسميع"}</span>
           </div>
           <div style="margin-top:0.6rem;">${mainContentHTML}</div>

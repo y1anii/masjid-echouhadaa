@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Helper: render N read-only stars out of 5
     function renderReadOnlyStars(value) {
       let html = "";
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 3; i++) {
         html += i <= value
           ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.25rem;"></i>`
           : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.25rem;"></i>`;
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ── Calculate SESSION-LEVEL total using same formula as recalculateStudentRewards ──
-    // Average of section averages → round → cap 5 → ×2
+    // Average of section averages → round → cap 3 → ×2
     const sectionAverages = filteredEvals.map(ev => {
       let criteriaObj = {};
       try { criteriaObj = JSON.parse(ev.criteria); } catch (e) {}
@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }).filter(avg => avg > 0);
 
     const sessionStars = sectionAverages.length > 0
-      ? Math.min(5, Math.max(0, Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length)))
+      ? Math.min(3, Math.max(0, Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length)))
       : 0;
     const sessionPoints = sessionStars * 2;
 

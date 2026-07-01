@@ -221,11 +221,91 @@ navigator.serviceWorker.register('sw.js');
 
 
 <div class="stat-label">نسبة الحضور الشهري</div>
+</div>
+</section>
 
+<!-- Detailed Age and Gender stats grid -->
+<section class="stats-inner" style="margin-bottom: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+  <div class="stat-item" style="border-color: #3b82f6; flex: 1;">
+    <i class="ph-bold ph-baby stat-icon" style="color: #3b82f6;"></i>
+    <div class="stat-num-static" id="dash-total-braem">0</div>
+    <div class="stat-label">عدد البراعم (4-7)</div>
+  </div>
+  <div class="stat-item" style="border-color: #10b981; flex: 1;">
+    <i class="ph-bold ph-student stat-icon" style="color: #10b981;"></i>
+    <div class="stat-num-static" id="dash-total-ashbal">0</div>
+    <div class="stat-label">عدد الأشبال (8-14)</div>
+  </div>
+  <div class="stat-item" style="border-color: #f59e0b; flex: 1;">
+    <i class="ph-bold ph-users-three stat-icon" style="color: #f59e0b;"></i>
+    <div class="stat-num-static" id="dash-total-adults">0</div>
+    <div class="stat-label">عدد الكبار (+14)</div>
+  </div>
+  <div class="stat-item" style="border-color: #ec4899; flex: 1;">
+    <i class="ph-bold ph-gender-intersex stat-icon" style="color: #ec4899;"></i>
+    <div class="stat-num-static" id="dash-gender-split" style="font-size: 1.2rem; font-weight: 900; margin: 0.5rem 0;">ذكور: 0 | إناث: 0</div>
+    <div class="stat-label">توزيع الجنسين</div>
+  </div>
+</section>
 
+<!-- Detailed Tables and Breakdown Grid -->
+<div class="stats-details-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+  <!-- Memorization levels chart/table -->
+  <div class="about-card" style="margin: 0; padding: 1.5rem; border-top: 4px solid var(--gold); background: white; border-radius: 12px; box-shadow: var(--shadow);">
+    <h3 style="color: var(--green-dark); font-weight: 800; font-size: 1.15rem; margin-bottom: 1.25rem; border-right: 3px solid var(--gold); padding-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+      <i class="ph-bold ph-book-open" style="color: var(--gold);"></i> مستويات الحفظ (بالأحزاب)
+    </h3>
+    <div id="stats-hizb-breakdown" style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">جاري تحميل البيانات...</p>
+    </div>
+  </div>
+
+  <!-- Top Performing Circles & Regularity -->
+  <div class="about-card" style="margin: 0; padding: 1.5rem; border-top: 4px solid var(--green); background: white; border-radius: 12px; box-shadow: var(--shadow);">
+    <h3 style="color: var(--green-dark); font-weight: 800; font-size: 1.15rem; margin-bottom: 1.25rem; border-right: 3px solid var(--green); padding-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+      <i class="ph-bold ph-chart-line-up" style="color: var(--green);"></i> الحلقات والطلاب الأكثر تميزاً
+    </h3>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div>
+        <h4 style="font-size: 0.9rem; color: var(--green-dark); font-weight: 800; margin-bottom: 0.5rem;">أفضل الحلقات أداءً:</h4>
+        <div id="stats-top-circles" style="display: flex; flex-direction: column; gap: 0.4rem;">
+          <p style="color: var(--text-muted); font-size: 0.8rem;">لا توجد حلقات جارية حالياً.</p>
+        </div>
+      </div>
+      <div style="border-top: 1px dashed rgba(200, 161, 90, 0.2); padding-top: 0.85rem;">
+        <h4 style="font-size: 0.9rem; color: var(--green-dark); font-weight: 800; margin-bottom: 0.5rem;">الطلاب الأكثر انضباطاً وحضوراً:</h4>
+        <div id="stats-regular-students" style="display: flex; flex-direction: column; gap: 0.4rem;">
+          <p style="color: var(--text-muted); font-size: 0.8rem;">جاري جلب القائمة...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-
+<!-- Admin Audit Log Section (visible only to Imam/Admin) -->
+<section id="audit-log-section" class="about-card reveal" style="display: none; margin-bottom: 2.5rem; padding: 1.5rem; border-top: 4px solid #4b5563; background: white; border-radius: 12px; box-shadow: var(--shadow);">
+  <h3 style="color: #374151; font-weight: 800; font-size: 1.2rem; margin-bottom: 1.25rem; border-right: 3px solid #4b5563; padding-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+    <i class="ph-bold ph-shield-warning" style="color: #4b5563;"></i> سجل العمليات الرقابي الإداري (Audit Log)
+  </h3>
+  <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">سجل تفصيلي بكافة العمليات الحساسة التي تمت على النظام للمساءلة الرقابية.</p>
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.85rem;">
+      <thead>
+        <tr style="border-bottom: 2px solid #e5e7eb; color: #475569; font-weight: 800; background: #f8fafc;">
+          <th style="padding: 0.75rem 1rem;">المسؤول</th>
+          <th style="padding: 0.75rem 1rem;">الصفة</th>
+          <th style="padding: 0.75rem 1rem;">العملية</th>
+          <th style="padding: 0.75rem 1rem;">التاريخ والوقت</th>
+          <th style="padding: 0.75rem 1rem;">التفاصيل</th>
+        </tr>
+      </thead>
+      <tbody id="audit-log-table-body">
+        <tr>
+          <td colspan="5" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">جاري تحميل سجل الرقابة...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 

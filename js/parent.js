@@ -338,9 +338,9 @@ function normalizeArabic(text) {
     const finalAttRate = parseFloat(portalDataCache.attendance.rate) || 0;
     const finalStars = portalDataCache.rewards.stars || 0;
     let finalGrade = "مقبول";
-    if (finalAttRate >= 90 && finalStars >= 40) finalGrade = "ممتاز مع مرتبة الشرف (تميز مطلق)";
-    else if (finalAttRate >= 80 && finalStars >= 25) finalGrade = "ممتاز (أداء عالي)";
-    else if (finalAttRate >= 70 && finalStars >= 15) finalGrade = "جيد جداً (مستوى رائع)";
+    if (finalAttRate >= 90 && finalStars >= 24) finalGrade = "ممتاز مع مرتبة الشرف (تميز مطلق)";
+    else if (finalAttRate >= 80 && finalStars >= 15) finalGrade = "ممتاز (أداء عالي)";
+    else if (finalAttRate >= 70 && finalStars >= 9) finalGrade = "جيد جداً (مستوى رائع)";
     else if (finalAttRate >= 50) finalGrade = "جيد";
 
     if (certStudentName) certStudentName.textContent = student.name;

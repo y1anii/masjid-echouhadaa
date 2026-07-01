@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function getWeeklyGrade(present, total, stars) {
     if (total === 0) return "لا توجد حصص";
     const rate = present / total;
-    if (rate >= 0.9 && stars >= 12) return "ممتاز 🌟";
-    if (rate >= 0.8 && stars >= 8) return "جيد جداً ✨";
+    if (rate >= 0.9 && stars >= 7) return "ممتاز 🌟";
+    if (rate >= 0.8 && stars >= 5) return "جيد جداً ✨";
     if (rate >= 0.6) return "جيد";
     return "مقبول";
   }
@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function getMonthlyGrade(present, total, stars) {
     if (total === 0) return "لا توجد حصص";
     const rate = present / total;
-    if (rate >= 0.9 && stars >= 45) return "ممتاز 🌟";
-    if (rate >= 0.8 && stars >= 30) return "جيد جداً ✨";
+    if (rate >= 0.9 && stars >= 27) return "ممتاز 🌟";
+    if (rate >= 0.8 && stars >= 18) return "جيد جداً ✨";
     if (rate >= 0.6) return "جيد";
     return "مقبول";
   }
@@ -147,9 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const finalAttRate = parseFloat(result.attendance.rate) || 0;
         const finalStars = result.rewards.stars || 0;
         let finalGrade = "مقبول";
-        if (finalAttRate >= 90 && finalStars >= 40) finalGrade = "ممتاز مع مرتبة الشرف (تميز مطلق)";
-        else if (finalAttRate >= 80 && finalStars >= 25) finalGrade = "ممتاز (أداء عالي)";
-        else if (finalAttRate >= 70 && finalStars >= 15) finalGrade = "جيد جداً (مستوى رائع)";
+        if (finalAttRate >= 90 && finalStars >= 24) finalGrade = "ممتاز مع مرتبة الشرف (تميز مطلق)";
+        else if (finalAttRate >= 80 && finalStars >= 15) finalGrade = "ممتاز (أداء عالي)";
+        else if (finalAttRate >= 70 && finalStars >= 9) finalGrade = "جيد جداً (مستوى رائع)";
         else if (finalAttRate >= 50) finalGrade = "جيد";
 
         if (certOverallGrade) certOverallGrade.textContent = finalGrade;
@@ -180,10 +180,10 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
-    // Helper: render N read-only stars out of 5
+    // Helper: render N read-only stars out of 3
     function renderReadOnlyStars(value) {
       let html = "";
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 3; i++) {
         html += i <= value
           ? `<i class="ph-fill ph-star" style="color:var(--gold);font-size:1.1rem;"></i>`
           : `<i class="ph-bold ph-star" style="color:#ddd;font-size:1.1rem;"></i>`;
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }).filter(avg => avg > 0);
 
       const sessionStars = sectionAverages.length > 0
-        ? Math.min(5, Math.max(0, Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length)))
+        ? Math.min(3, Math.max(0, Math.round(sectionAverages.reduce((a, b) => a + b, 0) / sectionAverages.length)))
         : 0;
       const sessionPoints = sessionStars * 2;
 
